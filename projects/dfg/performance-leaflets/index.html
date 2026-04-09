@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light" data-lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Leaflets · DFG! — Sangeun Lee</title>
+    <link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+
+    <!-- NAV -->
+    <div class="nav-wrapper">
+        <div class="nav-inner">
+            <a class="logo" href="../../../">SANGEUN<br>LEE</a>
+            <div class="nav-links">
+                <a href="../../../"              data-nav="current"  data-key="nav_current">Current</a>
+                <a href="../../../works/"        data-nav="works"    data-key="nav_works">Works</a>
+                <a href="../../../projects/"     data-nav="projects" data-key="nav_projects">Projects</a>
+                <a href="../../../research/"     data-nav="research" data-key="nav_research">Research</a>
+                <a href="../../../archive/"      data-nav="archive"  data-key="nav_archive">Archive</a>
+                <a href="../../../about/"        data-nav="about"    data-key="nav_about">About</a>
+            </div>
+            <div class="nav-controls">
+                <button class="ctrl-btn" id="langBtn">EN</button>
+                <button class="ctrl-btn" id="themeBtn">●</button>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="../../../"              onclick="closeMenu()" data-key="nav_current">Current</a>
+        <a href="../../../works/"        onclick="closeMenu()" data-key="nav_works">Works</a>
+        <a href="../../../projects/"     onclick="closeMenu()" data-key="nav_projects">Projects</a>
+        <a href="../../../research/"     onclick="closeMenu()" data-key="nav_research">Research</a>
+        <a href="../../../archive/"      onclick="closeMenu()" data-key="nav_archive">Archive</a>
+        <a href="../../../about/"        onclick="closeMenu()" data-key="nav_about">About</a>
+    </div>
+
+    <main>
+        <div class="fade-in">
+            <h1 class="page-title" data-key="page_title">Performance Leaflets</h1>
+            <div class="breadcrumb">
+                <a href="../../../projects/" data-key="nav_projects">Projects</a>
+                <span>›</span>
+                <a href="../">Don't Forget (  )!</a>
+                <span>›</span>
+                <span data-key="page_title">Performance Leaflets</span>
+            </div>
+            <div class="leaflets-grid">
+                <!--
+                <a class="leaflet-card" href="leaflet-01/">
+                    <div class="leaflet-thumb"><img src="" alt="Leaflet 01"></div>
+                    <div class="leaflet-info">
+                        <div class="leaflet-date">2026.04</div>
+                        <div class="leaflet-name">Leaflet 01</div>
+                    </div>
+                </a>
+                -->
+                <div style="grid-column:1/-1;text-align:center;padding:80px 0;color:var(--text-secondary);">
+                    <p data-key="empty">Leaflets will be added soon.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <div>SANGEUN LEE</div>
+            <div class="footer-copy">© 2025 Sangeun Lee. ALL RIGHTS RESERVED.</div>
+            <div class="footer-social">
+                <a href="#" aria-label="Instagram">@</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../../assets/nav.js"></script>
+    <script>
+        Object.assign(T.en, {
+            page_title: "Performance Leaflets",
+            empty:      "Leaflets will be added soon.",
+        });
+        Object.assign(T.ko, {
+            page_title: "퍼포먼스 리플렛",
+            empty:      "리플렛이 곧 추가될 예정입니다.",
+        });
+        document.addEventListener('DOMContentLoaded', () => setActive('projects'));
+    </script>
+</body>
+</html>

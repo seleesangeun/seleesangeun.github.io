@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light" data-lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archive — Sangeun Lee</title>
+    <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+    <!-- NAV -->
+    <div class="nav-wrapper">
+        <div class="nav-inner">
+            <a class="logo" href="../">SANGEUN<br>LEE</a>
+            <div class="nav-links">
+                <a href="../"              data-nav="current"  data-key="nav_current">Current</a>
+                <a href="../works/"        data-nav="works"    data-key="nav_works">Works</a>
+                <a href="../projects/"     data-nav="projects" data-key="nav_projects">Projects</a>
+                <a href="../research/"     data-nav="research" data-key="nav_research">Research</a>
+                <a href="../archive/"      data-nav="archive"  data-key="nav_archive">Archive</a>
+                <a href="../about/"        data-nav="about"    data-key="nav_about">About</a>
+            </div>
+            <div class="nav-controls">
+                <button class="ctrl-btn" id="langBtn">EN</button>
+                <button class="ctrl-btn" id="themeBtn">●</button>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="../"              onclick="closeMenu()" data-key="nav_current">Current</a>
+        <a href="../works/"        onclick="closeMenu()" data-key="nav_works">Works</a>
+        <a href="../projects/"     onclick="closeMenu()" data-key="nav_projects">Projects</a>
+        <a href="../research/"     onclick="closeMenu()" data-key="nav_research">Research</a>
+        <a href="../archive/"      onclick="closeMenu()" data-key="nav_archive">Archive</a>
+        <a href="../about/"        onclick="closeMenu()" data-key="nav_about">About</a>
+    </div>
+
+    <main>
+        <div class="fade-in">
+            <div class="list-wrap">
+                <h1 class="page-title" data-key="nav_archive">Archive</h1>
+                <div class="filter-tabs" id="archive-tabs">
+                    <button class="tab-btn active" onclick="filter('archive','all',this)">All</button>
+                    <button class="tab-btn"         onclick="filter('archive','exhibition',this)">Exhibitions</button>
+                    <button class="tab-btn"         onclick="filter('archive','press',this)">Press</button>
+                </div>
+                <div id="archive-list">
+                    <a class="list-item" data-cat="press" href="#">
+                        <div class="item-date">2024.12</div>
+                        <div class="item-content">
+                            <h3>"title" - Interview</h3>
+                            <p>: Webzine</p>
+                        </div>
+                        <div class="item-arrow">→</div>
+                    </a>
+                    <div class="list-item" data-cat="exhibition">
+                        <div class="item-date">2026.04</div>
+                        <div class="item-content">
+                            <h3>Group Exhibition: Don't Forget (   ) !</h3>
+                            <p>Gallery Space Route (@route_ysn)</p>
+                        </div>
+                        <div class="item-arrow">→</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <div>SANGEUN LEE</div>
+            <div class="footer-copy">© 2025 Sangeun Lee. ALL RIGHTS RESERVED.</div>
+            <div class="footer-social">
+                <a href="#" aria-label="Instagram">@</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/nav.js"></script>
+    <script>
+        
+        document.addEventListener('DOMContentLoaded', () => setActive('archive'));
+    </script>
+</body>
+</html>

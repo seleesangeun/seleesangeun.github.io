@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light" data-lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About — Sangeun Lee</title>
+    <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+    <!-- NAV -->
+    <div class="nav-wrapper">
+        <div class="nav-inner">
+            <a class="logo" href="../">SANGEUN<br>LEE</a>
+            <div class="nav-links">
+                <a href="../"              data-nav="current"  data-key="nav_current">Current</a>
+                <a href="../works/"        data-nav="works"    data-key="nav_works">Works</a>
+                <a href="../projects/"     data-nav="projects" data-key="nav_projects">Projects</a>
+                <a href="../research/"     data-nav="research" data-key="nav_research">Research</a>
+                <a href="../archive/"      data-nav="archive"  data-key="nav_archive">Archive</a>
+                <a href="../about/"        data-nav="about"    data-key="nav_about">About</a>
+            </div>
+            <div class="nav-controls">
+                <button class="ctrl-btn" id="langBtn">EN</button>
+                <button class="ctrl-btn" id="themeBtn">●</button>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="../"              onclick="closeMenu()" data-key="nav_current">Current</a>
+        <a href="../works/"        onclick="closeMenu()" data-key="nav_works">Works</a>
+        <a href="../projects/"     onclick="closeMenu()" data-key="nav_projects">Projects</a>
+        <a href="../research/"     onclick="closeMenu()" data-key="nav_research">Research</a>
+        <a href="../archive/"      onclick="closeMenu()" data-key="nav_archive">Archive</a>
+        <a href="../about/"        onclick="closeMenu()" data-key="nav_about">About</a>
+    </div>
+
+    <main>
+        <div class="fade-in">
+            <div class="about-wrap">
+                <h1 class="page-title" data-key="nav_about">About</h1>
+                <p data-key="about_txt">[ Science : Art : Philosophy] =[ Atmosphere : Body : Sense] =[ Environment : Medium : Human ]<br>I think and question through the body.<br>After studying environmental science and atmospheric modeling, I began practicing Contact Improvisation (CI), and since then have continued to deepen and expand my experience of the body through movement workshops.<br>My research in atmospheric science centered on making invisible data visible, and in that process I came to see how the natural environment and human beings shape one another.<br>In an age of expanding technology, I explore new structures of sensation and perception that art can open up, and I ask how scientific thought experiments and embodied practices might expand sensory experience.<br>I am especially interested in the field of performance: for both performer and audience, narratives that remain and liveness that vanishes appear side by side.</p>
+                <p class="about-contact">Contact: sangeunlee.contact@gmail.com</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <div>SANGEUN LEE</div>
+            <div class="footer-copy">© 2025 Sangeun Lee. ALL RIGHTS RESERVED.</div>
+            <div class="footer-social">
+                <a href="#" aria-label="Instagram">@</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/nav.js"></script>
+    <script>
+        Object.assign(T.en, {
+            about_txt: "[ Science : Art : Philosophy] =[ Atmosphere : Body : Sense] =[ Environment : Medium : Human ]<br>I think and question through the body.<br>After studying environmental science and atmospheric modeling, I began practicing Contact Improvisation (CI), and since then have continued to deepen and expand my experience of the body through movement workshops.<br>My research in atmospheric science centered on making invisible data visible, and in that process I came to see how the natural environment and human beings shape one another.<br>In an age of expanding technology, I explore new structures of sensation and perception that art can open up, and I ask how scientific thought experiments and embodied practices might expand sensory experience.<br>I am especially interested in the field of performance: for both performer and audience, narratives that remain and liveness that vanishes appear side by side.",
+        });
+        Object.assign(T.ko, {
+            about_txt: "[ 과학 : 예술 : 철학] =[ 대기 : 신체 : 감각] =[ 환경 : 매체 : 인간 ]<br>신체를 사유와 질문의 핵심 매체로 삼는다.<br>환경학과 대기 모델링을 공부한 뒤 컨택즉흥을 시작으로 신체 경험을 꾸준히 이어가고 있다.<br>대기과학 연구를 통하여 비가시적 데이터를 시각화 분석하며 인간과 연결되는 자연환경 관계성을 확인하였다.<br>기술이 팽창하는 시대에 예술이 제안할 수 있는 새로운 감각 구조와 인식 체계를 모색하며 과학적 사고실험과 신체의 행위실험을 결합하여 감각경험의 확장 가능성을 탐험한다.<br>특히 퍼포먼스 현장에서 퍼포머와 감상자에게 출현하는 휘발되지 않고 남아있는 내러티브와 휘발되어 사라지는 일시적인 공연성에 매력을 느낀다.",
+        });
+        document.addEventListener('DOMContentLoaded', () => setActive('about'));
+    </script>
+</body>
+</html>

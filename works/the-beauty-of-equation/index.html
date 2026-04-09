@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light" data-lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"식(의 시)적 아름다움" — Sangeun Lee</title>
+    <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+
+    <!-- NAV -->
+    <div class="nav-wrapper">
+        <div class="nav-inner">
+            <a class="logo" href="../../">SANGEUN<br>LEE</a>
+            <div class="nav-links">
+                <a href="../../"              data-nav="current"  data-key="nav_current">Current</a>
+                <a href="../../works/"        data-nav="works"    data-key="nav_works">Works</a>
+                <a href="../../projects/"     data-nav="projects" data-key="nav_projects">Projects</a>
+                <a href="../../research/"     data-nav="research" data-key="nav_research">Research</a>
+                <a href="../../archive/"      data-nav="archive"  data-key="nav_archive">Archive</a>
+                <a href="../../about/"        data-nav="about"    data-key="nav_about">About</a>
+            </div>
+            <div class="nav-controls">
+                <button class="ctrl-btn" id="langBtn">EN</button>
+                <button class="ctrl-btn" id="themeBtn">●</button>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="../../"              onclick="closeMenu()" data-key="nav_current">Current</a>
+        <a href="../../works/"        onclick="closeMenu()" data-key="nav_works">Works</a>
+        <a href="../../projects/"     onclick="closeMenu()" data-key="nav_projects">Projects</a>
+        <a href="../../research/"     onclick="closeMenu()" data-key="nav_research">Research</a>
+        <a href="../../archive/"      onclick="closeMenu()" data-key="nav_archive">Archive</a>
+        <a href="../../about/"        onclick="closeMenu()" data-key="nav_about">About</a>
+    </div>
+
+    <main>
+        <div class="fade-in">
+            <div style="max-width:1200px;margin:60px auto;padding:0 20px;">
+                <a class="back-btn" href="../">← <span data-key="nav_works">Works</span></a>
+                <h1 style="font-size:2.5rem;font-weight:300;margin-bottom:15px;">"식(의 시)적 아름다움"</h1>
+                <div style="display:flex;gap:20px;color:var(--text-secondary);margin-bottom:50px;font-size:0.95rem;">
+                    <span>2024 – 2026</span>
+                    <span>own my room</span>
+                    <span>Installation</span>
+                </div>
+                <img src="" alt="Main View" style="width:100%;margin-bottom:20px;border-radius:4px;">
+                <div style="display:grid;grid-template-columns:2fr 1fr;gap:60px;margin-top:60px;">
+                    <div>
+                        <h2 style="margin-bottom:20px;" data-key="work_about">About the work</h2>
+                        <p data-key="work_desc1">"세상을 바꾼 수식에서 시적인 아름다움을 발견하고 액자에 식을 써 넣는다."</p>
+                        <br>
+                        <p data-key="work_desc2">"5 Pieces 2024 | 1 Piece 2025 | 1 Piece 2026"</p>
+                    </div>
+                    <div>
+                        <h3 style="font-size:0.8rem;text-transform:uppercase;color:var(--text-secondary);margin-bottom:8px;margin-top:20px;">Material</h3>
+                        <p>Frame, Paper, Pen</p>
+                        <h3 style="font-size:0.8rem;text-transform:uppercase;color:var(--text-secondary);margin-bottom:8px;margin-top:20px;">Dimensions</h3>
+                        <p>Variable Dimensions</p>
+                        <h3 style="font-size:0.8rem;text-transform:uppercase;color:var(--text-secondary);margin-bottom:8px;margin-top:20px;">Credit</h3>
+                        <p>Collector: Sang-eun LEE<br>Builder: Sang-eun LEE</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <div>SANGEUN LEE</div>
+            <div class="footer-copy">© 2025 Sangeun Lee. ALL RIGHTS RESERVED.</div>
+            <div class="footer-social">
+                <a href="#" aria-label="Instagram">@</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../assets/nav.js"></script>
+    <script>
+        Object.assign(T.en, {
+            work_about: "About the work",
+            work_desc1: '"세상을 바꾼 수식에서 시적인 아름다움을 발견하고 액자에 식을 써 넣는다."',
+            work_desc2: '"5 Pieces 2024 | 1 Piece 2025 | 1 Piece 2026"',
+        });
+        Object.assign(T.ko, {
+            work_about: "작품 소개",
+            work_desc1: '"세상을 바꾼 수식에서 시적인 아름다움을 발견하고 액자에 식을 써 넣는다."',
+            work_desc2: '"5점 2024 | 1점 2025 | 1점 2026"',
+        });
+        document.addEventListener('DOMContentLoaded', () => setActive('works'));
+    </script>
+</body>
+</html>
