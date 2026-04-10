@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Node Nods 경험노드 — AR</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: #000; font-family: sans-serif; }
+    #ui {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+      padding: 10px 14px;
+      display: flex; justify-content: space-between; align-items: center;
+      pointer-events: none;
+    }
+    #title { color: #fff; font-size: 13px; opacity: 0.7; }
+    #info {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 999;
+      padding: 12px 14px 20px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.6));
+      color: #fff; font-size: 12px; opacity: 0.8;
+      pointer-events: none; text-align: center;
+    }
+    #selected-label {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      z-index: 999; color: #fff; font-size: 15px; font-weight: 500;
+      background: rgba(0,0,0,0.5); padding: 8px 16px; border-radius: 20px;
+      pointer-events: none; opacity: 0; transition: opacity 0.3s;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/aframe@1.4.2/dist/aframe.min.js"></script>
+</head>
+<body>
+
+<div id="ui">
+  <span id="title">Node Nods 경험노드</span>
+</div>
+<div id="info">Hiro 마커를 카메라로 비춰주세요</div>
+<div id="selected-label" id="sel-label"></div>
+
+<script>
+// ── Data ──────────────────────────────────────────────
+const eps = [
+  {id:'e1', yymm:'2312', label:'AI vs 인간 생명체',  concepts:['실재','몸','생명체','언어','충돌']},
+  {id:'e2', yymm:'2401', label:'사적인 유체 과학사', concepts:['몸','감각','충돌','경계','연결']},
+  {id:'e3', yymm:'2402', label:'시간←[시계]→똑딱',  concepts:['실재','맥락','측정','리듬']},
+  {id:'e4', yymm:'2403', label:'생명체 사이 연결감', concepts:['생명체','연결','다양성','맥락']},
+  {id:'e5', yymm:'2404', label:'선 넘는 슈뢰딩거',   concepts:['충돌','경계','언어','탐구']},
+  {id:'e6', yymm:'2405', label:'인식론적 위기',       concepts:['생명체','맥락','언어','가능성']},
+  {id:'e7', yymm:'2406', label:'버블 현재',           concepts:['실재','경계','감각','시간']},
+  {id:'e8', yymm:'2407', label:'귀여워..ㅠㅠ♥',      concepts:['실재','탐구','가능성']},
+  {id:'e9', yymm:'2408', label:'요란한 변이의 우연', concepts:['생명체','다양성','맥락','우연']},
+  {id:'e10',yymm:'2409', label:'욕망이라는 언어',     concepts:['언어','맥락','연결','감각']},
+  {id:'e11',yymm:'2410', label:'Quantum AI',          concepts:['언어','실재','충돌']},
+  {id:'e12',yymm:'2411', label:'Into the Unknown',    concepts:['측정','가능성','탐구','경계']},
+  {id:'e13',yymm:'2412', label:'수식이 작품이 될 때',concepts:['언어','실재','시간','감각']},
+  {id:'e14',yymm:'2501', label:'기후변화의 위기',     concepts:['생명체','맥락','다양성']},
+  {id:'e15',yymm:'2502', label:'각자 놓인 맥락',      concepts:['맥락','언어','몸','감각']},
+  {id:'e16',yymm:'2503', label:'파인만 씨',           concepts:['탐구','언어','실재']},
+  {id:'e17',yymm:'2504', label:'직관이라는 확증편향',concepts:['맥락','가능성','경계','측정']},
+  {id:'e18',yymm:'2505', label:'유전자스러움',        concepts:['생명체','맥락','연결','다양성']},
+  {id:'e19',yymm:'2506', label:'우연한 믿음',         concepts:['몸','감각','맥락','실재']},
+  {id:'e20',yymm:'2507', label:'Assemble Ensemble',   concepts:['연결','다양성','경계','가능성']},
+  {id:'e21',yymm:'2508', label:'AI라는',              concepts:['실재','언어','연결','경계']},
+  {id:'e22',yymm:'2509', label:'어쩔수가없다',        concepts:['연결','언어','맥락']},
+  {id:'e23',yymm:'2510', label:'주인공이 되기까지는',concepts:['생명체','감각','언어']},
+  {id:'e24',yymm:'2511', label:'미지를 향한 언어',    concepts:['언어','실재','탐구','가능성']},
+  {id:'e25',yymm:'2512', label:'매스미디어',          concepts:['언어','실재','측정','충돌']},
+  {id:'e26',yymm:'2601', label:'우주에서 건져내기',   concepts:['실재','측정','탐구','감각']},
+  {id:'e27',yymm:'2602', label:'잘 잤으면 좋겠다',    concepts:['몸','감각','리듬']},
+];
+
+const cList = ['실재','몸','감각','언어','맥락','생명체','연결','충돌','경계','다양성','탐구','가능성','측정','시간','우연','리듬'];
+const cCol = {
+  '실재':'#534AB7','몸':'#0F6E56','감각':'#1D9E75','언어':'#993C1D',
+  '맥락':'#7F77DD','생명체':'#1D9E75','연결':'#185FA5','충돌':'#D85A30',
+  '경계':'#BA7517','다양성':'#3B6D11','탐구':'#185FA5','가능성':'#534AB7',
+  '측정':'#378ADD','시간':'#D85A30','우연':'#BA7517','리듬':'#0F6E56'
+};
+
+function hexToRgb(h) {
+  const r = parseInt(h.slice(1,3),16)/255;
+  const g = parseInt(h.slice(3,5),16)/255;
+  const b = parseInt(h.slice(5,7),16)/255;
+  return `${r} ${g} ${b}`;
+}
+
+function countC(c){ return eps.filter(e=>e.concepts.includes(c)).length; }
+
+// ── Spiral positions (3D, Y is up in A-Frame) ────────
+function getSpiralPositions() {
+  const N = eps.length;
+  const turns = 2.3;
+  const rMin = 0.04, rMax = 0.28;
+  const yBot = -0.35, yTop = 0.35;
+  return eps.map((ep, i) => {
+    const t = i / (N - 1);
+    const angle = -Math.PI/2 + t * turns * Math.PI * 2;
+    const r = rMin + (rMax - rMin) * t;
+    return {
+      x: r * Math.cos(angle),
+      y: yBot + t * (yTop - yBot),
+      z: r * Math.sin(angle)
+    };
+  });
+}
+
+// ── Concept sphere positions (scattered around spiral) ─
+function getConceptPositions() {
+  return cList.map((c, i) => {
+    const angle = (i / cList.length) * Math.PI * 2;
+    const r = 0.38 + (i % 3) * 0.06;
+    return {
+      x: r * Math.cos(angle),
+      y: -0.1 + (i % 5) * 0.07 - 0.14,
+      z: r * Math.sin(angle)
+    };
+  });
+}
+
+// ── Build A-Frame scene dynamically ──────────────────
+function buildScene() {
+  const scene = document.querySelector('a-scene');
+  const target = document.querySelector('#ar-target');
+
+  const spiralPos = getSpiralPositions();
+  const conceptPos = getConceptPositions();
+
+  // Ghost nodes (dashed outline boxes ahead of spiral)
+  ['2603','2604'].forEach((y, i) => {
+    const t = (eps.length + i) / (eps.length - 1);
+    const turns = 2.3, rMin=0.04, rMax=0.28;
+    const angle = -Math.PI/2 + t * turns * Math.PI * 2;
+    const r = Math.min(rMin + (rMax-rMin)*t, 0.35);
+    const yPos = -0.35 + t * 0.70;
+    const ghost = document.createElement('a-box');
+    ghost.setAttribute('position', `${r*Math.cos(angle)} ${yPos} ${r*Math.sin(angle)}`);
+    ghost.setAttribute('width','0.035'); ghost.setAttribute('height','0.035'); ghost.setAttribute('depth','0.035');
+    ghost.setAttribute('color','#AFA9EC'); ghost.setAttribute('opacity','0.2');
+    ghost.setAttribute('wireframe','true');
+    target.appendChild(ghost);
+  });
+
+  // Episode nodes (boxes on spiral)
+  eps.forEach((ep, i) => {
+    const p = spiralPos[i];
+    const box = document.createElement('a-box');
+    box.setAttribute('id', `box-${ep.id}`);
+    box.setAttribute('position', `${p.x} ${p.y} ${p.z}`);
+    box.setAttribute('width','0.032'); box.setAttribute('height','0.032'); box.setAttribute('depth','0.032');
+    box.setAttribute('color','#7F77DD'); box.setAttribute('opacity','0.9');
+    box.setAttribute('class','episode-box');
+    box.setAttribute('data-id', ep.id);
+    box.setAttribute('data-concepts', ep.concepts.join(','));
+    box.setAttribute('data-label', `${ep.yymm} ${ep.label}`);
+
+    // yymm text label
+    const txt = document.createElement('a-text');
+    txt.setAttribute('value', ep.yymm);
+    txt.setAttribute('position', `0 0.025 0`);
+    txt.setAttribute('align','center'); txt.setAttribute('color','#ffffff');
+    txt.setAttribute('width','0.18'); txt.setAttribute('font','roboto');
+    box.appendChild(txt);
+
+    box.addEventListener('click', () => onSelectEpisode(ep.id));
+    target.appendChild(box);
+  });
+
+  // Concept nodes (spheres, animated)
+  cList.forEach((c, i) => {
+    const p = conceptPos[i];
+    const cnt = countC(c);
+    const r = 0.018 + cnt * 0.005;
+    const col = cCol[c] || '#888888';
+
+    const sphere = document.createElement('a-sphere');
+    sphere.setAttribute('id', `sphere-c_${c}`);
+    sphere.setAttribute('position', `${p.x} ${p.y} ${p.z}`);
+    sphere.setAttribute('radius', r.toString());
+    sphere.setAttribute('color', col); sphere.setAttribute('opacity','0.85');
+    sphere.setAttribute('class','concept-sphere');
+    sphere.setAttribute('data-concept', c);
+    sphere.setAttribute('data-label', `${c} (${cnt}개 경험노드)`);
+
+    // gentle float animation — each sphere unique
+    const dur = 4000 + i * 400;
+    const amp = 0.025 + (i%4)*0.008;
+    sphere.setAttribute('animation', `property: position; to: ${p.x + amp*Math.cos(i)} ${p.y + amp} ${p.z + amp*Math.sin(i)}; dur: ${dur}; dir: alternate; loop: true; easing: easeInOutSine`);
+
+    // concept label
+    const txt = document.createElement('a-text');
+    txt.setAttribute('value', c);
+    txt.setAttribute('position', `0 ${r + 0.018} 0`);
+    txt.setAttribute('align','center'); txt.setAttribute('color','#ffffff');
+    txt.setAttribute('width','0.14');
+    sphere.appendChild(txt);
+
+    sphere.addEventListener('click', () => onSelectConcept(c));
+    target.appendChild(sphere);
+  });
+
+  // Spiral guide line using thin cylinders
+  const sPos = getSpiralPositions();
+  for (let i = 0; i < sPos.length - 1; i++) {
+    const a = sPos[i], b = sPos[i+1];
+    const mx = (a.x+b.x)/2, my = (a.y+b.y)/2, mz = (a.z+b.z)/2;
+    const dx = b.x-a.x, dy = b.y-a.y, dz = b.z-a.z;
+    const len = Math.sqrt(dx*dx+dy*dy+dz*dz);
+    const seg = document.createElement('a-cylinder');
+    seg.setAttribute('position',`${mx} ${my} ${mz}`);
+    seg.setAttribute('radius','0.001'); seg.setAttribute('height', len.toFixed(4));
+    seg.setAttribute('color','#534AB7'); seg.setAttribute('opacity','0.15');
+    // orient along segment direction
+    const phi = Math.atan2(Math.sqrt(dx*dx+dz*dz), dy) * 180/Math.PI;
+    const theta = Math.atan2(dz, dx) * 180/Math.PI;
+    seg.setAttribute('rotation', `0 ${-theta} ${phi-90}`);
+    target.appendChild(seg);
+  }
+}
+
+// ── Selection state ───────────────────────────────────
+let selectedType = null, selectedId = null;
+let activeLines = [];
+
+function clearLines() {
+  activeLines.forEach(l => l.parentNode && l.parentNode.removeChild(l));
+  activeLines = [];
+}
+
+function resetAll() {
+  document.querySelectorAll('.episode-box').forEach(b => {
+    b.setAttribute('color','#7F77DD'); b.setAttribute('opacity','0.9');
+  });
+  document.querySelectorAll('.concept-sphere').forEach(s => {
+    s.setAttribute('opacity','0.85');
+  });
+  clearLines();
+}
+
+function drawLine(fromEl, toEl, color) {
+  const fp = fromEl.getAttribute('position');
+  const tp = toEl.getAttribute('position');
+  if (!fp || !tp) return;
+  const line = document.createElement('a-entity');
+  line.setAttribute('line', `start: ${fp.x} ${fp.y} ${fp.z}; end: ${tp.x} ${tp.y} ${tp.z}; color: ${color}; opacity: 0.7`);
+  document.querySelector('#ar-target').appendChild(line);
+  activeLines.push(line);
+}
+
+function showLabel(text) {
+  const el = document.getElementById('selected-label');
+  el.textContent = text;
+  el.style.opacity = '1';
+  setTimeout(() => { el.style.opacity = '0'; }, 2500);
+}
+
+function onSelectEpisode(eid) {
+  if (selectedType === 'episode' && selectedId === eid) {
+    resetAll(); selectedType = null; selectedId = null;
+    document.getElementById('info').textContent = 'Hiro 마커를 카메라로 비춰주세요';
+    return;
+  }
+  resetAll();
+  selectedType = 'episode'; selectedId = eid;
+  const ep = eps.find(e => e.id === eid);
+  if (!ep) return;
+
+  document.querySelectorAll('.episode-box').forEach(b => {
+    b.setAttribute('opacity', b.dataset.id === eid ? '1' : '0.25');
+    b.setAttribute('color', b.dataset.id === eid ? '#ffffff' : '#7F77DD');
+  });
+
+  document.querySelectorAll('.concept-sphere').forEach(s => {
+    const inEp = ep.concepts.includes(s.dataset.concept);
+    s.setAttribute('opacity', inEp ? '1' : '0.15');
+  });
+
+  ep.concepts.forEach(c => {
+    const boxEl = document.getElementById(`box-${eid}`);
+    const sphEl = document.getElementById(`sphere-c_${c}`);
+    if (boxEl && sphEl) drawLine(boxEl, sphEl, cCol[c] || '#ffffff');
+  });
+
+  showLabel(`${ep.yymm} ${ep.label}`);
+  document.getElementById('info').textContent = ep.concepts.join(' · ');
+}
+
+function onSelectConcept(c) {
+  const cid = `c_${c}`;
+  if (selectedType === 'concept' && selectedId === cid) {
+    resetAll(); selectedType = null; selectedId = null;
+    document.getElementById('info').textContent = 'Hiro 마커를 카메라로 비춰주세요';
+    return;
+  }
+  resetAll();
+  selectedType = 'concept'; selectedId = cid;
+  const connEps = eps.filter(e => e.concepts.includes(c));
+
+  document.querySelectorAll('.episode-box').forEach(b => {
+    const active = connEps.some(e => e.id === b.dataset.id);
+    b.setAttribute('opacity', active ? '1' : '0.2');
+    b.setAttribute('color', active ? '#ffffff' : '#7F77DD');
+  });
+
+  document.querySelectorAll('.concept-sphere').forEach(s => {
+    s.setAttribute('opacity', s.dataset.concept === c ? '1' : '0.15');
+  });
+
+  const sphEl = document.getElementById(`sphere-c_${c}`);
+  connEps.forEach(ep => {
+    const boxEl = document.getElementById(`box-${ep.id}`);
+    if (boxEl && sphEl) drawLine(sphEl, boxEl, cCol[c] || '#ffffff');
+  });
+
+  showLabel(`${c} — ${connEps.length}개 경험노드`);
+  document.getElementById('info').textContent = connEps.map(e=>e.yymm).join(' · ');
+}
+
+// ── Init ──────────────────────────────────────────────
+window.addEventListener('load', () => {
+  buildScene();
+});
+</script>
+
+<a-scene
+  mindar-image="imageTargetSrc: https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/examples/image-tracking/assets/card-example/targets.mind; autoStart: true; uiLoading: yes; uiScanning: yes; uiError: yes;"
+  color-space="sRGB"
+  renderer="colorManagement: true; physicallyCorrectLights: true"
+  vr-mode-ui="enabled: false"
+  device-orientation-permission-ui="enabled: false"
+>
+  <a-assets></a-assets>
+
+  <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+  <a-entity mindar-image-target="targetIndex: 0" id="ar-target">
+    <!-- nodes injected by JS -->
+  </a-entity>
+
+</a-scene>
+
+</body>
+</html>
