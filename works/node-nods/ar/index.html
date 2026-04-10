@@ -112,9 +112,14 @@
 </head>
 <body>
 
-<div id="ui">
-  <span id="title">Node Nods 경험노드</span>
-</div>
+  <div id="ui">
+    <span id="title">Node Nods 경험노드</span>
+    <!-- update (10) - WebXR AR 세션 시작 버튼 -->
+    <button id="ar-button" onclick="document.querySelector('a-scene').enterAR()"
+      style="background:#7F77DD; color:#fff; border:none; padding:8px 16px; border-radius:20px; font-size:13px; pointer-events:all; cursor:pointer;">
+      시작 get started
+    </button>
+  </div>
 <div id="info">바닥을 비추고 탭해서 조각을 세우세요</div>
 <div id="selected-label"></div>
 <!-- update (3) - 바닥 탭 유도 안내 -->
@@ -394,7 +399,7 @@ window.addEventListener('load', () => { buildScene(); });
 
 <!-- update (7) - a-scene: MindAR 제거, WebXR hit-test 방식으로 전환 -->
 <a-scene
-  webxr="requiredFeatures: hit-test, local-floor;"
+  webxr="requiredFeatures: hit-test, local-floor; overlayElement: #ui;"
   renderer="colorManagement: true; physicallyCorrectLights: true"
   vr-mode-ui="enabled: false"
   device-orientation-permission-ui="enabled: false"
