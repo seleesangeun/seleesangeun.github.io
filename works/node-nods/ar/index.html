@@ -27,9 +27,9 @@
       pointer-events: none; opacity: 0; transition: opacity 0.3s;
     }
   </style>
-
-  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/aframe@1.4.2/dist/aframe.min.js"></script>
+<!-- change position for camera pop-up -->
+<script src="https://cdn.jsdelivr.net/npm/aframe@1.4.2/dist/aframe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 </head>
 <body>
 
@@ -330,6 +330,7 @@ window.addEventListener('load', () => {
   vr-mode-ui="enabled: false"
   device-orientation-permission-ui="enabled: false"
 >
+
   <a-assets></a-assets>
 
   <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
