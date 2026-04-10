@@ -27,16 +27,16 @@
       pointer-events: none; opacity: 0; transition: opacity 0.3s;
     }
   </style>
-<!-- change position for camera pop-up -->
+<!-- change position for camera pop-up | mind-ar ver. 1.2.5 -> 2 -->
 <script src="https://cdn.jsdelivr.net/npm/aframe@1.4.2/dist/aframe.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
 </head>
 <body>
 
 <div id="ui">
   <span id="title">Node Nods 경험노드</span>
 </div>
-<div id="info">Hiro 마커를 카메라로 비춰주세요</div>
+<div id="info">카메라로 (    ) 비춰주세요</div>
 <div id="selected-label" id="sel-label"></div>
 
 <script>
@@ -324,7 +324,7 @@ window.addEventListener('load', () => {
 </script>
 
 <a-scene
-  mindar-image="imageTargetSrc: https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/examples/image-tracking/assets/card-example/targets.mind; autoStart: true; uiLoading: yes; uiScanning: yes; uiError: yes;"
+  mindar-image="imageTargetSrc: /assets/targets.mind;"
   color-space="sRGB"
   renderer="colorManagement: true; physicallyCorrectLights: true"
   vr-mode-ui="enabled: false"
