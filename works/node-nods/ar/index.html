@@ -92,9 +92,8 @@ function countC(c){ return eps.filter(e=>e.concepts.includes(c)).length; }
 function getSpiralPositions() {
   const N = eps.length;
   const turns = 2.3;
-// explore 
-  const rMin = 0.12, rMax = 0.85;
-  const yBot = -1.0, yTop = 1.0;
+  const rMin = 0.12, rMax = 0.85; // explore 
+  const yBot = -1.0, yTop = 1.0; // explore 
 
   return eps.map((ep, i) => {
     const t = i / (N - 1);
