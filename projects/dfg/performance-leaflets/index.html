@@ -1,91 +1,512 @@
 <!DOCTYPE html>
-<html lang="ko" data-theme="light" data-lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Performance Leaflets · DFG! — Sangeun Lee</title>
-    <link rel="stylesheet" href="../../../assets/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DFG! 퍼포먼스 프로그램 — 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg-top:#b8c8d6;--bg-bot:#d2dce5;--ink:#0e0e0e;--ink2:#2a2a2a;--muted:#5a6d7a;--rule:rgba(0,0,0,.10);--card-bg:rgba(255,255,255,.78);--card-hi:rgba(255,255,255,.94);--dark-bg:#111;--dark-text:#ede8e2;--dark-muted:rgba(237,232,226,.42)}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    body{background:linear-gradient(170deg,var(--bg-top) 0%,var(--bg-bot) 100%);background-attachment:fixed;min-height:100vh;color:var(--ink);font-family:'Noto Sans KR',sans-serif;font-weight:300;line-height:1.7;-webkit-font-smoothing:antialiased}
+    canvas.dot-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+    .wrap{position:relative;z-index:1;max-width:660px;margin:0 auto;padding:0 22px 110px}
+    .header{padding:56px 0 40px;text-align:center}
+    .tag{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.26em;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:28px}
+    .title-dont,.title-forget{font-family:'DM Serif Display',serif;font-size:clamp(76px,21vw,130px);line-height:.83;letter-spacing:-.02em;color:var(--ink);display:block}
+    .title-dont{font-style:italic}
+    .title-parens{font-family:'DM Serif Display',serif;font-size:clamp(22px,6vw,40px);font-style:italic;color:var(--muted);display:block;margin-top:12px;letter-spacing:.12em}
+    .title-kr{font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:400;letter-spacing:.38em;color:var(--ink2);display:block;margin-top:14px}
+    .subtitle-stack{margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:3px}
+    .subtitle{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+    .tear-line-wrap{padding:32px 0;overflow:hidden}
+    .tear-line{width:100%;height:12px;display:block}
+    .card{background:var(--card-bg);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.68);padding:28px;margin-bottom:10px;transition:background .35s,box-shadow .35s,transform .35s}
+    .card.hl{background:var(--card-hi);box-shadow:0 6px 32px rgba(0,0,0,.09);transform:translateY(-2px)}
+    .dark-card{background:var(--dark-bg);padding:28px;margin-bottom:10px;position:relative;overflow:hidden;transition:box-shadow .35s,transform .35s}
+    .dark-card.hl{box-shadow:0 6px 32px rgba(0,0,0,.26);transform:translateY(-2px)}
+    .dark-card::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.032) 1px,transparent 1px);background-size:16px 16px;pointer-events:none}
+    .cd-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.24em;color:var(--dark-muted);text-transform:uppercase;display:block;margin-bottom:18px;position:relative}
+    .cd-row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;position:relative}
+    .cd-unit{display:flex;flex-direction:column;align-items:center}
+    .cd-num{font-family:'DM Serif Display',serif;font-size:clamp(42px,11.5vw,70px);line-height:1;color:var(--dark-text);min-width:2ch;text-align:center;font-variant-numeric:tabular-nums}
+    .cd-sep{font-family:'DM Serif Display',serif;font-size:clamp(34px,9vw,56px);color:rgba(237,232,226,.18);margin-bottom:20px;padding:0 2px}
+    .cd-unit-lbl{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.12em;color:var(--dark-muted);text-transform:uppercase;margin-top:5px}
+    .cd-foot{font-family:'Space Mono',monospace;font-size:9px;color:var(--dark-muted);margin-top:18px;letter-spacing:.06em;position:relative}
+    .open-banner{background:var(--dark-bg);color:var(--dark-text);padding:22px 26px;margin-bottom:10px;text-align:center}
+    .open-banner-title{font-family:'DM Serif Display',serif;font-size:clamp(22px,6.5vw,36px);font-style:italic;display:block;margin-bottom:5px}
+    .open-banner-sub{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--dark-muted);text-transform:uppercase}
+    .sec-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.26em;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:2px}
+    .sec-label-sub{font-family:'Noto Sans KR',sans-serif;font-size:10px;font-weight:400;letter-spacing:.14em;color:var(--muted);display:block;margin-bottom:14px}
+    .info-row{display:flex;gap:16px;margin-bottom:13px;align-items:flex-start}
+    .info-key{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;min-width:48px;padding-top:4px;flex-shrink:0}
+    .info-val{font-size:15px;font-weight:400;color:var(--ink2);line-height:1.8}
+    .link-btn{display:inline-block;margin-top:6px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--ink);text-decoration:none;padding:5px 14px;border:1px solid var(--ink);transition:background .2s,color .2s}
+    .link-btn:hover{background:var(--ink);color:#fff}
+    .perf-header{display:flex;align-items:baseline;gap:10px;margin:24px 0 8px}
+    .perf-header-kr{font-family:'Noto Sans KR',sans-serif;font-size:10px;font-weight:400;letter-spacing:.14em;color:var(--muted)}
+    .perf-name-en{font-family:'DM Serif Display',serif;font-size:clamp(30px,8vw,48px);line-height:1;letter-spacing:-.01em;margin-bottom:2px}
+    .perf-name-kr{font-family:'Noto Sans KR',sans-serif;font-size:12px;font-weight:300;color:var(--muted);letter-spacing:.18em;margin-bottom:12px}
+    .perf-bio-light{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);line-height:1.85;letter-spacing:.04em}
+    .perf-bio-light.time-tbd{color:#8b6a1a;font-style:italic}
+    .perf-work-title-wrap{display:flex;align-items:center;gap:0;margin-bottom:4px}
+    .perf-work-title{font-family:'DM Serif Display',serif;font-size:clamp(20px,5.5vw,28px);line-height:1.2;color:var(--ink);background:rgba(0,0,0,.06);padding:4px 10px;display:inline-block}
+    .paren-left,.paren-right{font-family:'DM Serif Display',serif;font-size:clamp(26px,7vw,36px);line-height:1;font-style:italic;background:linear-gradient(160deg,#c4a0e8 0%,#7eb8d8 40%,#5dd89a 70%,#e8d06a 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;flex-shrink:0}
+    .paren-left{margin-right:-2px}
+    .paren-right{margin-left:-2px}
+    .perf-work-title-en{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);font-style:italic;margin-bottom:6px;letter-spacing:.04em}
+    .perf-work-artist{font-size:13px;color:var(--muted);font-weight:400;margin-bottom:14px;letter-spacing:.04em}
+    .chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px}
+    .chip{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.09em;padding:3px 9px;text-transform:uppercase}
+    .chip-f{background:var(--ink);color:#fff}
+    .chip-o{border:1px solid var(--ink);color:var(--ink)}
+    .dg{margin-bottom:12px}
+    .dg-lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:3px}
+    .dg-time{font-family:'Space Mono',monospace;font-size:14px;color:var(--ink2);line-height:1.9;letter-spacing:.04em}
+    .session-tag{display:inline-block;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.06em;padding:1px 7px;margin-left:8px;background:rgba(0,0,0,.07);color:var(--muted);vertical-align:middle}
+    .tickets{margin-top:18px;padding-top:18px;border-top:1px solid var(--rule);display:flex;flex-direction:column;gap:10px}
+    .tkt-row{display:flex;align-items:center;gap:10px}
+    .tkt-lbl{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.07em;color:var(--muted);min-width:100px;flex-shrink:0}
+    .tkt-num{font-family:'DM Serif Display',serif;font-size:24px;line-height:1;color:var(--ink);min-width:2ch;text-align:right}
+    .tkt-unit{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.06em;margin-right:6px}
+    .tkt-track{flex:1;height:2px;background:rgba(0,0,0,.09);overflow:hidden}
+    .tkt-fill{height:100%;background:var(--ink);transition:width .7s cubic-bezier(.4,0,.2,1)}
+    .tkt-refresh{font-family:'Space Mono',monospace;font-size:8px;color:rgba(90,109,122,.5);letter-spacing:.06em;margin-top:2px}
+    .reserve-btn{display:inline-block;margin-top:18px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;padding:12px 24px;text-decoration:none;outline:none;border:none;transition:opacity .2s}
+    .reserve-btn.active{background:var(--ink);color:#fff;cursor:pointer}
+    .reserve-btn.active:hover{opacity:.72}
+    .reserve-btn.locked{border:1px solid rgba(0,0,0,.16);color:var(--muted);background:transparent;cursor:not-allowed;pointer-events:none}
+    .reserve-notice{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);margin-top:8px;letter-spacing:.06em;display:block}
+    .guide{list-style:none}
+    .guide li{font-size:15px;color:var(--ink2);padding:13px 0 13px 22px;border-bottom:1px solid var(--rule);position:relative;line-height:1.75;font-weight:300}
+    .guide li:last-child{border-bottom:none}
+    .guide li::before{content:'—';position:absolute;left:0;font-family:'Space Mono',monospace;font-size:10px;color:var(--muted)}
+    .guide li strong{font-weight:500;color:var(--ink)}
+    .archive-notice{background:rgba(0,0,0,.04)!important;padding-right:14px!important;border-left:2px solid var(--ink)!important;margin-top:4px}
+    .archive-notice em{font-style:normal;font-weight:500;text-decoration:underline;text-underline-offset:3px}
+    .warn{display:inline-block;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.1em;padding:2px 5px;border:1px solid #8b3a1a;color:#8b3a1a;margin-left:2px;vertical-align:middle;text-transform:uppercase}
+    .note-link{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;margin-bottom:10px;border:1px solid rgba(0,0,0,.13);background:transparent;text-decoration:none;color:var(--ink);transition:background .2s}
+    .note-link:hover{background:rgba(255,255,255,.45)}
+    .note-link-lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:3px}
+    .note-link-title{font-family:'DM Serif Display',serif;font-size:17px;font-style:italic}
+    .note-arrow{font-family:'Space Mono',monospace;font-size:18px;color:var(--muted)}
+    hr{border:none;border-top:1px solid var(--rule);margin:20px 0}
+    .cr-row{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid var(--rule);align-items:baseline}
+    .cr-row:last-child{border-bottom:none}
+    .cr-role{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;min-width:92px;flex-shrink:0}
+    .cr-name{font-size:14px;color:var(--ink2);font-weight:400}
+    .contact{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);line-height:2.4;letter-spacing:.05em}
+    .contact a{color:var(--ink)}
+    .contact-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;flex-shrink:0}
+    .footer-wrap{margin-top:60px;padding-top:22px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+    .footer-brand{font-family:'DM Serif Display',serif;font-size:22px;font-style:italic;color:var(--ink)}
+    .footer-r{text-align:right;display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+    .footer-ig{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--muted);display:block}
+    .footer-credit{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.09em;color:rgba(110,127,141,.52);display:block}
+    /* scroll fade-in */
+    .card,.dark-card{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease,background .35s,box-shadow .35s}
+    .card.visible,.dark-card.visible{opacity:1;transform:translateY(0)}
+    .card.hl{background:var(--card-hi);box-shadow:0 6px 32px rgba(0,0,0,.09)}
+    .dark-card.hl{box-shadow:0 6px 32px rgba(0,0,0,.26)}
+    #countdown-block{display:block}
+    #open-banner{display:none}
+    @media(max-width:480px){.wrap{padding:0 15px 95px}.card,.dark-card{padding:20px 16px}.note-link{padding:16px 18px}.info-key{min-width:40px}.cr-role{min-width:78px}.tkt-lbl{min-width:76px}}
+  </style>
 </head>
 <body>
 
-    <!-- NAV -->
-    <div class="nav-wrapper">
-        <div class="nav-inner">
-            <a class="logo" href="../../../">SANGEUN<br>LEE</a>
-            <div class="nav-links">
-                <a href="../../../"              data-nav="current"  data-key="nav_current">Current</a>
-                <a href="../../../works/"        data-nav="works"    data-key="nav_works">Works</a>
-                <a href="../../../projects/"     data-nav="projects" data-key="nav_projects">Projects</a>
-                <a href="../../../research/"     data-nav="research" data-key="nav_research">Research</a>
-                <a href="../../../archive/"      data-nav="archive"  data-key="nav_archive">Archive</a>
-                <a href="../../../about/"        data-nav="about"    data-key="nav_about">About</a>
-            </div>
-            <div class="nav-controls">
-                <button class="ctrl-btn" id="langBtn">EN</button>
-                <button class="ctrl-btn" id="themeBtn">●</button>
-            </div>
-            <button class="menu-toggle" id="menuToggle">
-                <span></span><span></span><span></span>
-            </button>
-        </div>
+<canvas id="dot-bg" class="dot-bg"></canvas>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header class="header">
+    <span class="tag">DFG 프로젝트 — 2026</span>
+    <span class="title-dont">DON'T</span>
+    <span class="title-forget">FORGET</span>
+    <span class="title-parens">( &nbsp; )!</span>
+    <span class="title-kr">잊지마</span>
+    <div class="subtitle-stack">
+      <span class="subtitle">Performance Program</span>
+      <span class="subtitle" style="letter-spacing:.1em">전시 연계 퍼포먼스</span>
     </div>
-    <div class="mobile-menu" id="mobileMenu">
-        <a href="../../../"              onclick="closeMenu()" data-key="nav_current">Current</a>
-        <a href="../../../works/"        onclick="closeMenu()" data-key="nav_works">Works</a>
-        <a href="../../../projects/"     onclick="closeMenu()" data-key="nav_projects">Projects</a>
-        <a href="../../../research/"     onclick="closeMenu()" data-key="nav_research">Research</a>
-        <a href="../../../archive/"      onclick="closeMenu()" data-key="nav_archive">Archive</a>
-        <a href="../../../about/"        onclick="closeMenu()" data-key="nav_about">About</a>
+  </header>
+
+  <!-- OPEN BANNER (shown after open date) -->
+  <div id="open-banner" class="open-banner">
+    <span class="open-banner-title">예약이 오픈되었습니다</span>
+    <span class="open-banner-sub">Reservation now open</span>
+  </div>
+
+  <!-- COUNTDOWN (hidden after open date) -->
+  <div id="countdown-block" class="dark-card visible">
+    <span class="cd-label">예약 오픈까지 — Reservation opens in</span>
+    <div class="cd-row">
+      <div class="cd-unit"><span class="cd-num" id="cd-d">--</span><span class="cd-unit-lbl">days</span></div>
+      <span class="cd-sep">:</span>
+      <div class="cd-unit"><span class="cd-num" id="cd-h">--</span><span class="cd-unit-lbl">hrs</span></div>
+      <span class="cd-sep">:</span>
+      <div class="cd-unit"><span class="cd-num" id="cd-m">--</span><span class="cd-unit-lbl">min</span></div>
+      <span class="cd-sep">:</span>
+      <div class="cd-unit"><span class="cd-num" id="cd-s">--</span><span class="cd-unit-lbl">sec</span></div>
     </div>
+    <div class="cd-foot">예약 오픈 — 2026. 4. 18 (토) 16:00 KST</div>
+  </div>
 
-    <main>
-        <div class="fade-in">
-            <h1 class="page-title" data-key="page_title">Performance Leaflets</h1>
-            <div class="breadcrumb">
-                <a href="../../../projects/" data-key="nav_projects">Projects</a>
-                <span>›</span>
-                <a href="../">Don't Forget (  )!</a>
-                <span>›</span>
-                <span data-key="page_title">Performance Leaflets</span>
-            </div>
-            <div class="leaflets-grid">
-                <!--
-                <a class="leaflet-card" href="leaflet-01/">
-                    <div class="leaflet-thumb"><img src="" alt="Leaflet 01"></div>
-                    <div class="leaflet-info">
-                        <div class="leaflet-date">2026.04</div>
-                        <div class="leaflet-name">Leaflet 01</div>
-                    </div>
-                </a>
-                -->
-                <div style="grid-column:1/-1;text-align:center;padding:80px 0;color:var(--text-secondary);">
-                    <p data-key="empty">Leaflets will be added soon.</p>
-                </div>
-            </div>
-        </div>
-    </main>
+  <!-- 일시 및 장소 -->
+  <div class="card">
+    <span class="sec-label">일시 및 장소</span>
+    <span class="sec-label-sub">Date &amp; Venue</span>
+    <div class="info-row" style="margin-top:16px">
+      <span class="info-key">일시</span>
+      <span class="info-val">2026년 4월 25일 (토) — 4월 30일 (목)<br>토·일 11:00–20:00 / 월–목 12:00–20:00</span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">장소</span>
+      <span class="info-val">공간 루트<br>서울 은평구 연서로 26길 19, 1층<br>
+        <a href="https://naver.me/G3vJBWya" target="_blank" rel="noopener" class="link-btn">네이버 지도</a>
+      </span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">교통</span>
+      <span class="info-val">연신내역 4번 출구 도보 10분<br>주차 공간 없음 · 대중교통 이용 권장</span>
+    </div>
+  </div>
 
-    <footer>
-        <div class="footer-inner">
-            <div>SANGEUN LEE</div>
-            <div class="footer-copy">© 2025 Sangeun Lee. ALL RIGHTS RESERVED.</div>
-            <div class="footer-social">
-                <a href="#" aria-label="Instagram">@</a>
-            </div>
-        </div>
-    </footer>
+  <!-- TEAR LINE -->
+  <div class="tear-line-wrap">
+    <svg class="tear-line" id="tear-svg" viewBox="0 0 660 12" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
 
-    <script src="../../../assets/nav.js"></script>
-    <script>
-        Object.assign(T.en, {
-            page_title: "Performance Leaflets",
-            empty:      "Leaflets will be added soon.",
-        });
-        Object.assign(T.ko, {
-            page_title: "퍼포먼스 리플렛",
-            empty:      "리플렛이 곧 추가될 예정입니다.",
-        });
-        document.addEventListener('DOMContentLoaded', () => setActive('projects'));
-    </script>
+  <!-- PERFORMER -->
+  <div class="perf-header">
+    <span class="sec-label" style="margin-bottom:0">Performer</span>
+    <span class="perf-header-kr">퍼포머</span>
+  </div>
+
+  <div class="card">
+    <div class="perf-name-en">Sang-eun Lee</div>
+    <div class="perf-name-kr">이상은</div>
+    <p class="perf-bio-light">대표 퍼포먼스 · [A]나는 당신에 감응하는가?<br>주말 2회 · 평일 4회 공연</p>
+  </div>
+
+  <div class="card">
+    <div class="perf-name-en">BOOY</div>
+    <div class="perf-name-kr">이부영</div>
+    <p class="perf-bio-light">Farewell · 주말 4회 공연<br><span class="warn">Graphic</span> 고어한 시각자료 포함</p>
+  </div>
+
+  <!-- MAIN PERFORMANCE -->
+  <div class="perf-header">
+    <span class="sec-label" style="margin-bottom:0">Main Performance</span>
+    <span class="perf-header-kr">대표 퍼포먼스</span>
+  </div>
+
+  <div class="card">
+    <div class="perf-work-title-wrap">
+      <span class="paren-left">(</span>
+      <span class="perf-work-title">[A]나는 당신에 감응하는가?</span>
+      <span class="paren-right">)!</span>
+    </div>
+    <div class="perf-work-title-en">Do [A]I Know You?</div>
+    <div class="perf-work-artist">Sang-eun Lee · 이상은</div>
+    <div class="chips">
+      <span class="chip chip-f">40 min</span>
+      <span class="chip chip-f">예약 필수</span>
+    </div>
+    <div class="dg"><div class="dg-lbl">Apr 25 (Sat) · 오프닝</div><div class="dg-time">16:00 – 16:40 <span class="session-tag">1회</span></div></div>
+    <div class="dg"><div class="dg-lbl">Apr 26 (Sun)</div><div class="dg-time">16:00 – 16:40 <span class="session-tag">2회</span></div></div>
+    <!-- reservation block -->
+    <div class="tickets">
+      <div class="tkt-row">
+        <span class="tkt-lbl">4월 25일 (토)</span>
+        <span class="tkt-num" id="av-r25">--</span>
+        <span class="tkt-unit">매 남음</span>
+        <div class="tkt-track"><div class="tkt-fill" id="fill-r25" style="width:0%"></div></div>
+      </div>
+      <div class="tkt-row">
+        <span class="tkt-lbl">4월 26일 (일)</span>
+        <span class="tkt-num" id="av-r26">--</span>
+        <span class="tkt-unit">매 남음</span>
+        <div class="tkt-track"><div class="tkt-fill" id="fill-r26" style="width:0%"></div></div>
+      </div>
+      <span class="tkt-refresh">약 5분 간격 갱신</span>
+    </div>
+    <a id="reserve-btn-main" class="reserve-btn locked" href="https://forms.gle/REPLACE_WITH_ACTUAL_FORM" target="_blank" rel="noopener">예약하기 — Reserve</a>
+    <span class="reserve-notice" id="reserve-notice-main">예약은 2026. 4. 18 (토) 16:00에 오픈됩니다.</span>
+  </div>
+
+  <div class="card">
+    <div class="perf-work-title-wrap">
+      <span class="paren-left">(</span>
+      <span class="perf-work-title">Farewell</span>
+      <span class="paren-right">)!</span>
+    </div>
+    <div class="perf-work-artist">BOOY · 이부영</div>
+    <div class="chips">
+      <span class="chip chip-f">7 min</span>
+      <span class="chip chip-o">예약 없이 입장</span>
+    </div>
+    <div class="dg"><div class="dg-lbl">Apr 25 (Sat) · 오프닝</div><div class="dg-time">17:00 – 17:07 <span class="session-tag">1회</span></div><div class="dg-time">19:00 – 19:07 <span class="session-tag">2회</span></div></div>
+    <div class="dg"><div class="dg-lbl">Apr 26 (Sun)</div><div class="dg-time">17:00 – 17:07 <span class="session-tag">3회</span></div><div class="dg-time">19:00 – 19:07 <span class="session-tag">4회</span></div></div>
+    <p class="perf-bio-light">현장 자유 입장 · 별도 예약 불필요<br><span class="warn">Graphic</span> 고어한 시각자료 포함</p>
+  </div>
+
+  <!-- WEEKEND ADDITIONAL -->
+  <div class="perf-header">
+    <span class="sec-label" style="margin-bottom:0">Weekend Additional</span>
+    <span class="perf-header-kr">주말 추가 퍼포먼스</span>
+  </div>
+
+  <div class="card">
+    <div class="perf-work-title-wrap">
+      <span class="paren-left">(</span>
+      <span class="perf-work-title">(가제) ?</span>
+      <span class="paren-right">)!</span>
+    </div>
+    <div class="perf-work-artist">Sang-eun Lee + BOOY · 이상은, 이부영</div>
+    <div class="chips">
+      <span class="chip chip-f">10 min</span>
+      <span class="chip chip-o">예약 없이 입장</span>
+    </div>
+    <div class="dg"><div class="dg-lbl">Apr 25 (Sat) · 오프닝</div><div class="dg-time">15:00 – 15:10 <span class="session-tag">1회</span></div></div>
+    <div class="dg"><div class="dg-lbl">Apr 26 (Sun)</div><div class="dg-time">15:00 – 15:10 <span class="session-tag">2회</span></div></div>
+  </div>
+
+  <div class="card">
+    <div class="perf-work-title-wrap">
+      <span class="paren-left">(</span>
+      <span class="perf-work-title">작(가 생)업</span>
+      <span class="paren-right">)!</span>
+    </div>
+    <div class="perf-work-artist">전원 All Artists</div>
+    <div class="chips">
+      <span class="chip chip-f">10 min</span>
+      <span class="chip chip-o">예약 없이 입장</span>
+    </div>
+    <div class="dg"><div class="dg-lbl">Apr 26 (Sun)</div><div class="dg-time">14:00 – 14:10 <span class="session-tag">1회</span></div></div>
+  </div>
+
+  <!-- WEEKDAY PERFORMANCES -->
+  <div class="perf-header">
+    <span class="sec-label" style="margin-bottom:0">Weekday Performances</span>
+    <span class="perf-header-kr">평일 퍼포먼스</span>
+  </div>
+
+  <div class="card">
+    <div class="perf-work-title-wrap">
+      <span class="paren-left">(</span>
+      <span class="perf-work-title">TOMO</span>
+      <span class="paren-right">)!</span>
+    </div>
+    <div class="perf-work-title-en">Tears Of Missing Out</div>
+    <div class="perf-work-artist">Sang-eun Lee · 이상은</div>
+    <div class="chips">
+      <span class="chip chip-f">30 min</span>
+      <span class="chip chip-f">예약 필수</span>
+    </div>
+    <div class="dg"><div class="dg-lbl">Apr 27 (Mon)</div><div class="dg-time">19:00 – 19:30 <span class="session-tag">1회</span></div></div>
+    <div class="dg"><div class="dg-lbl">Apr 28 (Tue)</div><div class="dg-time">19:00 – 19:30 <span class="session-tag">2회</span></div></div>
+    <p class="perf-bio-light time-tbd">※ 시간 미확정 · 변동될 수 있습니다</p>
+    <div class="tickets">
+      <div class="tkt-row"><span class="tkt-lbl">4월 27일 (월)</span><span class="tkt-num">--</span><span class="tkt-unit">매 남음</span><div class="tkt-track"><div class="tkt-fill" style="width:0%"></div></div></div>
+      <div class="tkt-row"><span class="tkt-lbl">4월 28일 (화)</span><span class="tkt-num">--</span><span class="tkt-unit">매 남음</span><div class="tkt-track"><div class="tkt-fill" style="width:0%"></div></div></div>
+      <span class="tkt-refresh">약 5분 간격 갱신</span>
+    </div>
+    <a class="reserve-btn locked" id="reserve-btn-tomo" href="https://forms.gle/REPLACE_WITH_ACTUAL_FORM" target="_blank" rel="noopener">예약하기 — Reserve</a>
+    <span class="reserve-notice" id="reserve-notice-tomo">예약은 2026. 4. 18 (토) 16:00에 오픈됩니다.</span>
+  </div>
+
+  <div class="card">
+    <div class="perf-work-title-wrap">
+      <span class="paren-left">(</span>
+      <span class="perf-work-title">몸 팝니다</span>
+      <span class="paren-right">)!</span>
+    </div>
+    <div class="perf-work-title-en">Audition</div>
+    <div class="perf-work-artist">Sang-eun Lee · 이상은</div>
+    <div class="chips">
+      <span class="chip chip-f">30 min</span>
+      <span class="chip chip-f">예약 필수</span>
+    </div>
+    <div class="dg"><div class="dg-lbl">Apr 29 (Wed)</div><div class="dg-time">19:00 – 19:30 <span class="session-tag">1회</span></div></div>
+    <div class="dg"><div class="dg-lbl">Apr 30 (Thu)</div><div class="dg-time">19:00 – 19:30 <span class="session-tag">2회</span></div></div>
+    <p class="perf-bio-light time-tbd">※ 시간 미확정 · 변동될 수 있습니다</p>
+    <div class="tickets">
+      <div class="tkt-row"><span class="tkt-lbl">4월 29일 (수)</span><span class="tkt-num">--</span><span class="tkt-unit">매 남음</span><div class="tkt-track"><div class="tkt-fill" style="width:0%"></div></div></div>
+      <div class="tkt-row"><span class="tkt-lbl">4월 30일 (목)</span><span class="tkt-num">--</span><span class="tkt-unit">매 남음</span><div class="tkt-track"><div class="tkt-fill" style="width:0%"></div></div></div>
+      <span class="tkt-refresh">약 5분 간격 갱신</span>
+    </div>
+    <a class="reserve-btn locked" id="reserve-btn-audition" href="https://forms.gle/REPLACE_WITH_ACTUAL_FORM" target="_blank" rel="noopener">예약하기 — Reserve</a>
+    <span class="reserve-notice" id="reserve-notice-audition">예약은 2026. 4. 18 (토) 16:00에 오픈됩니다.</span>
+  </div>
+
+  <!-- TEAR LINE -->
+  <div class="tear-line-wrap">
+    <svg class="tear-line" id="tear-svg-2" viewBox="0 0 660 12" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+
+  <!-- 입장 안내 -->
+  <div class="card">
+    <span class="sec-label">입장 안내</span>
+    <span class="sec-label-sub">Guide</span>
+    <ul class="guide" style="margin-top:16px">
+      <li><strong>예약 확인</strong> — 퍼포먼스 <strong>시작 2시간 전</strong>부터 예약 확인이 가능합니다.</li>
+      <li><strong>입장 시간</strong> — <strong>시작 15분 전</strong>부터 입장이 시작됩니다.</li>
+      <li><strong>지연 입장</strong> — <strong>정시 시작</strong> 후에는 지정된 시간에만 중간 입장이 가능합니다. 현장 스탭의 안내에 따라 주세요. 주변 카페에서 여유롭게 대기하실 수 있습니다.</li>
+      <li><strong>좌석</strong> — <strong>선착순 자유석</strong> 및 스탠딩으로 운영됩니다.</li>
+      <li><strong>촬영</strong> — 사진 촬영은 퍼포먼스 이후에 가능합니다. 플래시·상업적 촬영은 금지됩니다.</li>
+      <li class="archive-notice"><strong>아카이브 기록 안내</strong> — 현장에서는 사진 및 영상 기록이 진행됩니다. 촬영된 결과물은 추후 아카이브 및 홍보 자료로 활용될 수 있으며, <em>감상하시는 모습이 일부 포함될 수 있습니다.</em> 이에 동의하신 후 참여해 주시기 바랍니다.</li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <a class="note-link" href="#" target="_blank" rel="noopener">
+    <div><span class="note-link-lbl">Artist Note · 작가 노트</span><span class="note-link-title">작품에 대하여</span></div>
+    <span class="note-arrow">↗</span>
+  </a>
+
+  <!-- 크레딧 -->
+  <div class="card">
+    <span class="sec-label">크레딧</span>
+    <span class="sec-label-sub">Credits</span>
+    <div style="margin-top:12px">
+      <div class="cr-row"><span class="cr-role">Performance</span><span class="cr-name">이상은 Sang-eun Lee</span></div>
+      <div class="cr-row"><span class="cr-role">Performance</span><span class="cr-name">이부영 BOOY</span></div>
+      <div class="cr-row"><span class="cr-role">Exhibition</span><span class="cr-name">DON'T FORGET — DFG 프로젝트</span></div>
+      <div class="cr-row"><span class="cr-role">Venue</span><span class="cr-name">공간 루트, 서울</span></div>
+      <div class="cr-row"><span class="cr-role">Date</span><span class="cr-name">2026. 4. 25 – 4. 30</span></div>
+    </div>
+  </div>
+
+  <!-- 문의 -->
+  <div class="card">
+    <span class="sec-label">문의</span>
+    <span class="sec-label-sub">Contact</span>
+    <div class="contact" style="margin-top:14px">
+      <div>예약 확정 및 문의 — 이상은 (퍼포먼스 총괄)</div>
+      <div style="margin-top:8px;display:flex;align-items:center;gap:10px">
+        <span class="contact-label">Instagram DM</span>
+        <a href="https://instagram.com/dfg_bulmangdan" target="_blank" rel="noopener" class="link-btn">@dfg_bulmangdan</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer-wrap">
+    <span class="footer-brand">DFG</span>
+    <div class="footer-r">
+      <span class="footer-ig">@dfg_bulmangdan</span>
+      <span class="footer-credit">Site by 이상은 Sang-eun Lee</span>
+    </div>
+  </footer>
+
+</div><!-- /wrap -->
+
+<script>
+  // ── Config ───────────────────────────────────
+  const OPEN_DATE      = new Date("2026-04-18T16:00:00+09:00").getTime();
+  const TOTAL_SEATS    = 20;
+  const RESERVATION_URL = "https://forms.gle/REPLACE_WITH_ACTUAL_FORM";
+  const SHEETS_CSV_URL  = ""; // fill in when ready
+
+  // ── Dot background ───────────────────────────
+  (function() {
+    const canvas = document.getElementById("dot-bg");
+    const ctx = canvas.getContext("2d");
+    const dpr = window.devicePixelRatio || 1;
+    const w = window.innerWidth;
+    const h = Math.max(window.innerHeight * 3, 6000);
+    canvas.width  = w * dpr; canvas.height = h * dpr;
+    canvas.style.width  = w + "px"; canvas.style.height = h + "px";
+    ctx.scale(dpr, dpr);
+    const spacing = 12, cols = Math.ceil(w / spacing), rows = Math.ceil(h / spacing);
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const seed = Math.sin(r * 127.1 + c * 311.7) * 43758.5453;
+        const rand = seed - Math.floor(seed);
+        const dist = Math.sqrt(((c/cols)-.6)**2 + ((r/rows)-.35)**2);
+        if (rand > 0.12 + dist * 0.55) continue;
+        const x = c*spacing + (rand*6-3), y = r*spacing + (Math.sin(seed*3.1)*4);
+        ctx.fillStyle = `rgba(60,60,80,${(0.08+rand*0.14).toFixed(3)})`;
+        ctx.fillRect(x, y, 1.2+rand*1.4, 1.2+rand*1.4);
+      }
+    }
+  })();
+
+  // ── Tear line SVG ────────────────────────────
+  function buildTearLine(svgEl) {
+    const segs = [];
+    for (let x = 0; x <= 660; x += 2) {
+      const y = 6 + Math.sin(x*.85)*2.5 + Math.sin(x*2.1)*1.2 + Math.sin(x*4.7)*.5;
+      segs.push(`${x===0?"M":"L"}${x},${y.toFixed(2)}`);
+    }
+    const path = document.createElementNS("http://www.w3.org/2000/svg","path");
+    path.setAttribute("d", segs.join(" "));
+    path.setAttribute("fill","none");
+    path.setAttribute("stroke","rgba(0,0,0,0.42)");
+    path.setAttribute("stroke-width","1.4");
+    path.setAttribute("stroke-dasharray","2,3.5");
+    svgEl.appendChild(path);
+  }
+  buildTearLine(document.getElementById("tear-svg"));
+  buildTearLine(document.getElementById("tear-svg-2"));
+
+  // ── Scroll fade-in ───────────────────────────
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll(".card, .dark-card").forEach(el => io.observe(el));
+
+  // ── Countdown ────────────────────────────────
+  function pad(n) { return String(n).padStart(2,"0"); }
+
+  function tick() {
+    const diff = OPEN_DATE - Date.now();
+    if (diff <= 0) {
+      // open
+      document.getElementById("countdown-block").style.display = "none";
+      document.getElementById("open-banner").style.display     = "block";
+      document.querySelectorAll(".reserve-btn").forEach(btn => {
+        btn.classList.remove("locked"); btn.classList.add("active");
+      });
+      document.querySelectorAll("[id^='reserve-notice-']").forEach(el => {
+        el.textContent = "현재 예약 가능합니다.";
+      });
+      clearInterval(timer);
+      return;
+    }
+    document.getElementById("cd-d").textContent = pad(Math.floor(diff/86400000));
+    document.getElementById("cd-h").textContent = pad(Math.floor((diff%86400000)/3600000));
+    document.getElementById("cd-m").textContent = pad(Math.floor((diff%3600000)/60000));
+    document.getElementById("cd-s").textContent = pad(Math.floor((diff%60000)/1000));
+  }
+  const timer = setInterval(tick, 1000);
+  tick();
+
+  // ── Seats from Google Sheets CSV ─────────────
+  async function fetchSeats() {
+    if (!SHEETS_CSV_URL) return;
+    try {
+      const text = await (await fetch(SHEETS_CSV_URL)).text();
+      let r25 = 0, r26 = 0;
+      text.trim().split("\n").forEach(row => {
+        const [d, n] = row.replace(/"/g,"").split(",");
+        if (d?.trim().endsWith("25")) r25 = parseInt(n)||0;
+        if (d?.trim().endsWith("26")) r26 = parseInt(n)||0;
+      });
+      const av25 = Math.max(0, TOTAL_SEATS - r25);
+      const av26 = Math.max(0, TOTAL_SEATS - r26);
+      document.getElementById("av-r25").textContent   = av25;
+      document.getElementById("av-r26").textContent   = av26;
+      document.getElementById("fill-r25").style.width = Math.round((r25/TOTAL_SEATS)*100)+"%";
+      document.getElementById("fill-r26").style.width = Math.round((r26/TOTAL_SEATS)*100)+"%";
+    } catch(e) {}
+  }
+  fetchSeats();
+  setInterval(fetchSeats, 60000);
+</script>
 </body>
 </html>
