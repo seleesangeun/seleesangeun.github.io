@@ -521,13 +521,13 @@ footer {
 
 /* ── About ── */
 .about-wrap {
-    max-width: 800px;
+    max-width: 600px;
     margin: 60px auto;
     width: var(--con-width-pc);
 }
 
 .about-wrap p {
-    font-size: 1.1rem;
+    font-size: 1.0rem;
     line-height: 1.9;
     margin-bottom: 20px;
 }
