@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Don't Forget (  )! — Sangeun Lee</title>
+    <title>Don't Forget (　)! — Sangeun Lee</title>
     <link rel="stylesheet" href="../../assets/style.css">
 </head>
 <body>
@@ -42,14 +42,14 @@
         <div class="fade-in">
             <div class="case-study">
                 <a class="back-btn" href="../">← <span data-key="nav_projects">Projects</span></a>
-                <h1>Don't Forget (  )!<br>(DFG!)</h1>
+                <h1>Don't Forget (　)!<br>(DFG!)</h1>
                 <div class="case-meta">
                     <div><h4>VENUE</h4><p>Space Route</p></div>
                     <div><h4>ROLE</h4><p> </p></div>
                     <div><h4>YEAR</h4><p>2026</p></div>
                     <div><h4>LOCATION</h4><p>Seoul, KR</p></div>
                 </div>
-                <img src="" alt="DFG!" class="case-img">
+                <img src="/projects/dfg/img/poster-2026-1.JPG" alt="DFG!" class="case-img">
                 <div class="case-body">
                     <div>
                         <h3 data-key="case_q1">The Challenge</h3>
@@ -62,11 +62,18 @@
                 </div>
                 <div style="margin-top:60px;padding-top:40px;border-top:1px solid var(--border);">
                     <p style="font-size:0.8rem;text-transform:uppercase;color:var(--text-secondary);margin-bottom:16px;" data-key="related">Related Materials</p>
+                    <a class="proj-item" href="leaflet/Don't-Forget-(__)!_leaflet.pdf" style="border-bottom:1px solid var(--border);">
+                        <div class="proj-info">
+                            <span class="proj-role" data-key="leaf_role">Exhibition Document</span>
+                            <h3 class="proj-title" data-key="leaf_title">Exhibition Leaflet</h3>
+                            <p class="proj-desc"  data-key="leaf_desc">The leaflets distributed at the exhibition site.</p>
+                        </div>
+                    </a>
                     <a class="proj-item" href="performance-leaflets/" style="border-bottom:1px solid var(--border);">
                         <div class="proj-info">
-                            <span class="proj-role" data-key="leaf_role">Performance Document</span>
-                            <h3 class="proj-title" data-key="leaf_title">Performance Leaflets</h3>
-                            <p class="proj-desc"  data-key="leaf_desc">Leaflets distributed at the performance site.</p>
+                            <span class="proj-role" data-key="leaf_role_p">Performance Document</span>
+                            <h3 class="proj-title" data-key="leaf_title_p">Performance Leaflets</h3>
+                            <p class="proj-desc"  data-key="leaf_desc_p">Leaflets distributed before the performance field.</p>
                         </div>
                     </a>
                 </div>
@@ -92,9 +99,12 @@
             case_q2:    "The Solution",
             case_a2:    " ",
             related:    "Related Materials",
-            leaf_role:  "Performance Document",
-            leaf_title: "Performance Leaflets",
-            leaf_desc:  "Leaflets distributed at the performance site.",
+            leaf_role:  "Exhibition Document",
+            leaf_title: "Exhibition Leaflet",
+            leaf_desc:  "The leaflets distributed at the exhibition site.",
+            leaf_role_p:  "Performance Document",
+            leaf_title_p: "Performance Leaflets",
+            leaf_desc_p:  "Leaflets distributed before the performance field.",
         });
         Object.assign(T.ko, {
             case_q1:    "배경",
@@ -102,9 +112,12 @@
             case_q2:    "작업",
             case_a2:    " ",
             related:    "관련 자료",
-            leaf_role:  "퍼포먼스 문서",
-            leaf_title: "퍼포먼스 리플렛",
-            leaf_desc:  "공연 현장에서 배포한 리플렛입니다.",
+            leaf_role:  "전시 문서",
+            leaf_title: "전시 리플렛",
+            leaf_desc:  "전시 현장에서 배포한 리플렛입니다.",
+            leaf_role_p:  "퍼포먼스 정보",
+            leaf_title_p: "퍼포먼스 리플렛",
+            leaf_desc_p:  "퍼포먼스 현장 전에 배포한 리플렛입니다.",
         });
         document.addEventListener('DOMContentLoaded', () => setActive('projects'));
     </script>
