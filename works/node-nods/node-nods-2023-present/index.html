@@ -979,6 +979,7 @@ function hitTest(wx,wy){
 }
 
 function onDown(e){
+  if(e.touches&&e.touches.length>1)return;
   const cx=e.touches?e.touches[0].clientX:e.clientX;
   const cy=e.touches?e.touches[0].clientY:e.clientY;
   const{wx,wy}=w2c(cx,cy);const h=hitTest(wx,wy);
@@ -990,6 +991,7 @@ function onDown(e){
 }
 
 function onMove(e){
+  if(e.touches&&e.touches.length>1)return;
   const cx=e.touches?e.touches[0].clientX:e.clientX;
   const cy=e.touches?e.touches[0].clientY:e.clientY;
   if(drag.on&&dragConcept){
