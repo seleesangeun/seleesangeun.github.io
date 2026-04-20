@@ -962,23 +962,7 @@ function draw(){
   else ctx.fillText("경험노드·개념구 클릭  ·  드래그 이동  ·  스크롤 확대/축소",W/2,H-14);
   ctx.restore();
 
-  // document.getElementById('resetBtn').textContent=Math.round(cam.z*100)+'% · 초기화';
-  // 초기화 버튼을 마지막 박스 아래에 canvas에 직접 그리기 canvas 위에서 마지막 박스를 따라다니게
-  const lb=boxes[boxes.length-1];
-  if(lb){
-    const sx=(lb.x-cam.x)*cam.z+W/2;
-    const sy=(lb.y-cam.y)*cam.z+H/2+36*cam.z;
-    window._rbRect={x:sx-50,y:sy-13,w:100,h:26};
-    ctx.save();ctx.scale(2,2);
-    const bx=(sx-50)/2,by=(sy-13)/2,bw=50,bh=13;
-    ctx.fillStyle="rgba(20,20,50,0.8)";
-    ctx.strokeStyle="rgba(120,115,200,0.4)";ctx.lineWidth=0.5;
-    ctx.beginPath();ctx.roundRect(bx,by,bw,bh,3);ctx.fill();ctx.stroke();
-    ctx.font='10px "Noto Sans KR",sans-serif';
-    ctx.fillStyle="rgba(170,165,220,0.8)";ctx.textAlign="center";ctx.textBaseline="middle";
-    ctx.fillText(Math.round(cam.z*100)+'% · 초기화',bx+bw/2,by+bh/2);
-    ctx.restore();
-  }
+  document.getElementById('resetBtn').textContent=Math.round(cam.z*100)+'% · 초기화';
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1022,15 +1006,6 @@ function onMove(e){
 function onUp(e){
   if(dragConcept){document.getElementById('c').style.cursor="grab";dragConcept=null;drag.on=false;return;}
   if(!drag.moved){
-    // onUp 함수에서 클릭 감지 추가
-        const rb=window._rbRect;
-    if(rb){
-      const cx2=e.changedTouches?e.changedTouches[0].clientX:e.clientX;
-      const cy2=e.changedTouches?e.changedTouches[0].clientY:e.clientY;
-      if(cx2>=rb.x&&cx2<=rb.x+rb.w&&cy2>=rb.y&&cy2<=rb.y+rb.h){
-        resetView();drag.on=false;return;
-      }
-    }
     const cx=e.changedTouches?e.changedTouches[0].clientX:e.clientX;
     const cy=e.changedTouches?e.changedTouches[0].clientY:e.clientY;
     const{wx,wy}=w2c(cx,cy);const h=hitTest(wx,wy);
