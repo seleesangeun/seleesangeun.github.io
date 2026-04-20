@@ -661,6 +661,35 @@ const WORDS=[{"t": "인간의", "c": 13, "e": [1, 7, 10, 11, 12, 13, 17, 18, 19,
 // ═══════════════════════════════════════════════════════════════
 // CONFIG — extensible constants
 // ═══════════════════════════════════════════════════════════════
+const FIELD_FILES = {
+  1:  '01_Whatever AI versus Living Humans.html',
+  2:  '02_A Deeply Personal History of Fluids.html',
+  3:  '03_Tick-Tock Time Mediated by a Clock.html',
+  4:  '04_Horizontal Connectivity Among Living Beings.html',
+  5:  '05_Schrödinger Beyond the Boundary.html',
+  6:  '06_Humanity Emerging from an Epistemic Crisis.html',
+  7:  '07_The Bubble Present.html',
+  8:  '08_How Aborable.html',
+  9:  '09_Evolution From Noise to Inevitability.html',
+  10: '10_Desire as a Language of the Future.html',
+  11: '11_AI As Like Quantum.html',
+  12: '12_Into the Unknown.html',
+  13: '13_When Equations Become Art.html',
+  14: '14_Climate Crisis, Six-times Again.html',
+  15: '15_Each of Us, in Different Contexts.html',
+  16: '16_Surely You\'re the Lecturer, Mr Feynman.html',
+  17: '17_Intuition as Confirmatory Bias.html',
+  18: '18_Genetic-ness.html',
+  19: '19_Accidental Belief.html',
+  20: '20_Assemble, Ensemble.html',
+  21: '21_AI, So-Called.html',
+  22: '22_No Other Choice.html',
+  23: '23_Until Becoming the Main Species.html',
+  24: '24_Language Toward the Unknown.html',
+  25: '25_Mathematics as Media.html',
+};
+window._fieldFiles = FIELD_FILES;
+
 const CONCEPTS=["실재","몸","감각","언어","맥락","생명체","연결","충돌","경계","다양성","탐구","가능성","측정","시간","우연","리듬"];
 const CCOL={"실재":"#6B8CFF","몸":"#1FC48A","감각":"#3ED9A0","언어":"#E07040","맥락":"#8BA0FF","생명체":"#2ECC88","연결":"#3A90E0","충돌":"#F07848","경계":"#E0A830","다양성":"#5DA020","탐구":"#3A90E0","가능성":"#7B8FFF","측정":"#5AADE8","시간":"#F07848","우연":"#E0A830","리듬":"#1FC48A"};
 const PAL={
@@ -1059,8 +1088,8 @@ function openRead(ep){
         <h2 class="rb-title" style="color:${p.t}">${ep.title}</h2>
       </div>
       <div class="rb-btns">
-        <button class="rb-btn" style="border:1px solid ${p.s}33;color:${p.t}99" onclick="">🔊 듣기</button>
-        <button class="rb-btn" style="border:1px solid ${p.s}33;color:${p.t}99" onclick="">📄 구조</button>
+        <button class="rb-btn" style="border:1px solid ${p.s}33;color:${p.t}99" onclick="">▶️ 듣기 Listen</button>
+        <button class="rb-btn" style="border:1px solid ${p.s}33;color:${p.t}99" onclick="window.open('../field/'+FIELD_FILES[${ep.id}],'_blank')">💌 구조 Experience</button>
         <button class="rb-btn rb-close" style="border:1px solid ${p.s}44;color:${p.t}" onclick="closeRead()">닫기</button>
       </div>
     </div>
