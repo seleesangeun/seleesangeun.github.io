@@ -749,7 +749,10 @@ function init(){
   canvas_el.addEventListener('mouseup',onUp);
   canvas_el.addEventListener('wheel',onWheel,{passive:false});
   canvas_el.addEventListener('touchstart',onDown,{passive:true});
-  canvas_el.addEventListener('touchmove',e=>{e.preventDefault();onMove(e);},{passive:false});
+  canvas_el.addEventListener('touchmove',e=>{
+    if(e.touches.length===1){e.preventDefault();}
+    onMove(e);
+  },{passive:false});
   canvas_el.addEventListener('touchend',function(e){e.preventDefault();onUp(e);},{passive:false});
   document.getElementById('resetBtn').addEventListener('click',resetView);
   document.getElementById('overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeRead();});
