@@ -837,7 +837,7 @@ function draw(){
     const isRel=hasSel&&w.episodes.includes(sel.id);
     let a;
     if(clk>=2&&hasSel){a=isRel?(w.prominent?0.92:0.65):(w.prominent?0.07:0.035);}
-    else{a=w.prominent?0.45:0.16;}
+    else{a=w.prominent?0.72:0.58;}
     ctx.font=`${w.size}px "Noto Sans KR",sans-serif`;
     ctx.textAlign="center";ctx.textBaseline="middle";
     ctx.fillStyle=isRel&&clk>=2?`rgba(230,240,255,${a})`:`rgba(155,165,200,${a})`;
@@ -950,7 +950,7 @@ function draw(){
     ctx.fillText(b.ep.yymm,bx,by);
 
     if(isSel){
-      ctx.font='600 22px "Noto Sans KR",sans-serif';ctx.fillStyle=p.t;
+      ctx.font='600 28px "Noto Sans KR",sans-serif';ctx.fillStyle=p.t;
       ctx.textAlign="center";ctx.textBaseline="bottom";ctx.fillText(b.ep.title,bx,by-hh-14);
       for(let d=0;d<clk;d++){ctx.fillStyle="rgba(255,220,80,0.8)";ctx.beginPath();ctx.arc(bx-((clk-1)*6)+d*12,by+hh+14,3,0,Math.PI*2);ctx.fill();}
     }else if(isActive&&hasCSel){
