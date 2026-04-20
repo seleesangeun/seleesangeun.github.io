@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>09 — 요란한 변이의 우연에서 필연적 진화</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f3ef;--ink:#181610;--ink-mid:#787060;--ink-faint:#c0bbb0;--ab:#9a6010;--ab-dim:rgba(154,96,16,.07);--rule:#dedad0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'DM Mono',monospace;font-weight:300;min-height:100vh}
+nav{padding:22px 36px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule)}
+.nav-back{font-size:10px;letter-spacing:.12em;color:var(--ink-mid);text-decoration:none;text-transform:uppercase}.nav-back:hover{color:var(--ink)}
+.nav-num{font-size:10px;color:var(--ink-faint)}
+.hero{padding:60px 36px 52px;border-bottom:1px solid var(--rule)}
+.hero-meta{font-size:10px;letter-spacing:.14em;color:var(--ab);text-transform:uppercase;margin-bottom:14px}
+.hero-title{font-family:'DM Serif Display',serif;font-size:clamp(20px,3.8vw,42px);font-weight:400;line-height:1.12;letter-spacing:-.015em}
+.hero-book{margin-top:20px;font-size:11px;color:var(--ink-mid)}
+
+/* VARIATION CANVAS — the core visualization */
+.vis-wrap{max-width:700px;margin:0 auto;padding:48px 36px 0}
+.vis-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mid);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.vis-stages{display:grid;grid-template-columns:1fr 24px 1fr 24px 1fr;gap:0;border:1px solid var(--rule);background:var(--rule);margin-bottom:16px}
+.vis-stage{background:var(--bg);padding:0}
+.vs-head{padding:14px 16px;border-bottom:1px solid var(--rule)}
+.vs-num{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--ab);margin-bottom:4px;display:block}
+.vs-title{font-size:12px;color:var(--ink)}
+.vs-canvas{height:120px;position:relative;overflow:hidden}
+.vis-arrow{background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--ink-faint)}
+/* dots */
+.vdot{position:absolute;border-radius:50%;transition:all .8s ease}
+/* description */
+.vis-desc{font-size:12px;color:var(--ink-mid);line-height:1.6;padding:12px 16px;border-top:1px solid var(--rule)}
+
+/* STEP BUTTON */
+.vis-controls{display:flex;align-items:center;gap:12px;margin-top:0}
+.vis-btn{padding:10px 20px;border:1px solid var(--rule);background:white;font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-mid);cursor:pointer;letter-spacing:.04em;transition:all .2s}
+.vis-btn:hover{border-color:var(--ab);color:var(--ab)}
+.vis-btn:disabled{opacity:.3;cursor:default}
+.vis-step-label{font-size:11px;color:var(--ink-faint)}
+
+/* BODY */
+.body-wrap{max-width:680px;margin:0 auto;padding:48px 36px 0}
+.section{margin-bottom:48px;opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease}.section.visible{opacity:1;transform:none}
+.sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mid);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.section p{font-size:15px;line-height:1.92;color:var(--ink);opacity:.85}.section p+p{margin-top:1em}
+.meta-note{margin-top:20px;padding:14px 18px;background:var(--ab-dim);border-left:2px solid var(--ab);font-size:13px;color:var(--ink-mid);line-height:1.65}
+.quote-final{margin-top:16px;font-family:'DM Serif Display',serif;font-style:italic;font-size:14px;color:var(--ink-mid);padding:14px 0;border-top:1px solid var(--rule)}
+.quote-attr{font-family:'DM Mono',monospace;font-style:normal;font-size:10px;color:var(--ink-faint);margin-top:6px}
+
+.bottom-pad{padding-bottom:80px}
+footer{border-top:1px solid var(--rule);padding:26px 36px;display:flex;justify-content:space-between}
+.footer-label{font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase}
+.footer-next{font-size:11px;color:var(--ink-mid);text-decoration:none;transition:color .2s}.footer-next:hover{color:var(--ink)}
+@media(max-width:600px){nav,footer{padding:16px 20px}.hero,.vis-wrap,.body-wrap{padding-left:20px;padding-right:20px}.vis-stages{grid-template-columns:1fr 16px 1fr 16px 1fr}}
+</style>
+</head>
+<body>
+<nav><a class="nav-back" href="node-nods-demo.html">← Node Nods</a><span class="nav-num">No. 09 / 2408</span></nav>
+<header class="hero">
+  <div class="hero-meta">2024.08 — 필연</div>
+  <h1 class="hero-title">요란한 변이의 우연에서<br>선택압을 통한 필연적 진화</h1>
+  <div class="hero-book">자크 모노, 『우연과 필연』</div>
+</header>
+
+<div class="vis-wrap">
+  <div class="vis-label">우연에서 필연으로 — 직접 진행해보세요</div>
+  <div class="vis-stages">
+    <div class="vis-stage">
+      <div class="vs-head"><span class="vs-num">단계 1</span><div class="vs-title">요란한 변이</div></div>
+      <div class="vs-canvas" id="stage1"></div>
+      <div class="vis-desc">무작위적 변이. 방향 없이 흩어진다.</div>
+    </div>
+    <div class="vis-arrow">→</div>
+    <div class="vis-stage">
+      <div class="vs-head"><span class="vs-num">단계 2</span><div class="vs-title">선택압</div></div>
+      <div class="vs-canvas" id="stage2"></div>
+      <div class="vis-desc">환경의 여과장치. 일부만 통과한다.</div>
+    </div>
+    <div class="vis-arrow">→</div>
+    <div class="vis-stage">
+      <div class="vs-head"><span class="vs-num">단계 3</span><div class="vs-title">필연</div></div>
+      <div class="vs-canvas" id="stage3"></div>
+      <div class="vis-desc">거시적 관점에서 보면 필연이었다.</div>
+    </div>
+  </div>
+  <div class="vis-controls">
+    <button class="vis-btn" id="btnNext" onclick="nextStep()">다음 세대 진행 →</button>
+    <button class="vis-btn" id="btnReset" onclick="resetVis()">처음으로</button>
+    <span class="vis-step-label" id="stepLabel">세대 0 / 5</span>
+  </div>
+</div>
+
+<div class="body-wrap">
+  <div class="section">
+    <div class="sec-label">미시와 거시의 역설</div>
+    <p>미시적 수준에서는 우연처럼 보이지만, 거시적 관점에서는 필연으로 보인다. 현상은 일어날 뿐이고 의미는 인간이 짓는 것일 뿐이다.</p>
+    <p>자연에서 발생하는 변이는 무작위적이고 예측할 수 없는 '요란한 우연'에서 시작한다. 그 중 일부는 환경에 적응하는 데 유리한 특성을 지니게 되어 선택압에 의해 생존한다. 환경의 합목적성이라는 시스템의 여과장치를 통과하는 것처럼 보인다.</p>
+    <div class="meta-note">
+      '참신한 시선의 때 묻지 않은 솔직성'과 생각에 책임을 지겠다는 머리말 선언. 50여 년 전 생각이 지금 당연하다는 듯 읽히는 것 자체에 감탄.
+    </div>
+  </div>
+  <div class="section bottom-pad">
+    <div class="sec-label">철학과 무모함</div>
+    <div class="quote-final">
+      "분명히, 철학이 진정으로 나타날 때 무모하지 않다면, 그것은 아무 것도 아니다."
+      <div class="quote-attr">— 알랭 바디우 / 매번 상기시키는 태도를 마주합니다.</div>
+    </div>
+  </div>
+</div>
+
+<footer><span class="footer-label">Node Nods</span><a class="footer-next" href="entry-10.html">10 — 욕망이라는 언어에 담겨 있는 미래 →</a></footer>
+<script>
+const DOT_COUNT=24;
+const SURVIVE=8;
+let step=0;
+const MAX=5;
+
+// colors: varied = scattered amber tones, surviving = concentrated green
+function makeColor(type,i){
+  if(type==='vary') return `hsl(${30+Math.random()*60},${40+Math.random()*40}%,${50+Math.random()*20}%)`;
+  if(type==='select') return i<SURVIVE?'#3a6e28':'#c0bbb0';
+  return '#3a6e28';
+}
+
+function buildStage1(gen){
+  const c=document.getElementById('stage1');c.innerHTML='';
+  const count=DOT_COUNT-gen*2;
+  for(let i=0;i<count;i++){
+    const d=document.createElement('div');d.className='vdot';
+    const sz=4+Math.random()*8;
+    d.style.cssText=`width:${sz}px;height:${sz}px;left:${5+Math.random()*88}%;top:${5+Math.random()*80}%;background:${makeColor('vary',i)};opacity:${.4+Math.random()*.5}`;
+    c.appendChild(d);
+  }
+}
+
+function buildStage2(gen){
+  const c=document.getElementById('stage2');c.innerHTML='';
+  const total=DOT_COUNT-gen*2;
+  const surv=Math.max(SURVIVE-gen,3);
+  // show filter line
+  const line=document.createElement('div');
+  line.style.cssText=`position:absolute;left:0;right:0;height:1px;background:rgba(154,96,16,.4);top:55%;z-index:2`;
+  const lineLabel=document.createElement('div');
+  lineLabel.style.cssText=`position:absolute;right:6px;top:calc(55% - 10px);font-size:9px;color:rgba(154,96,16,.7);letter-spacing:.06em;z-index:3`;
+  lineLabel.textContent='선택압';
+  c.appendChild(line);c.appendChild(lineLabel);
+  for(let i=0;i<total;i++){
+    const d=document.createElement('div');d.className='vdot';
+    const sz=4+Math.random()*7;
+    const survived=i<surv;
+    const top=survived?(5+Math.random()*40):(55+Math.random()*38);
+    d.style.cssText=`width:${sz}px;height:${sz}px;left:${5+Math.random()*88}%;top:${top}%;background:${makeColor('select',i)};opacity:${survived?.9:.3}`;
+    c.appendChild(d);
+  }
+}
+
+function buildStage3(gen){
+  const c=document.getElementById('stage3');c.innerHTML='';
+  const surv=Math.max(SURVIVE-gen,3);
+  for(let i=0;i<surv;i++){
+    const d=document.createElement('div');d.className='vdot';
+    const sz=7+Math.random()*8;
+    d.style.cssText=`width:${sz}px;height:${sz}px;left:${10+Math.random()*80}%;top:${10+Math.random()*70}%;background:#3a6e28;opacity:${.7+Math.random()*.3}`;
+    c.appendChild(d);
+  }
+}
+
+function updateLabel(){
+  document.getElementById('stepLabel').textContent=`세대 ${step} / ${MAX}`;
+  document.getElementById('btnNext').disabled=step>=MAX;
+}
+
+function initVis(){buildStage1(0);buildStage2(0);buildStage3(0);updateLabel();}
+function nextStep(){if(step>=MAX)return;step++;buildStage1(step);buildStage2(step);buildStage3(step);updateLabel();}
+function resetVis(){step=0;initVis();}
+initVis();
+
+document.querySelectorAll('.section').forEach(s=>
+  new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add('visible')),{threshold:.15}).observe(s)
+);
+</script>
+</body>
+</html>

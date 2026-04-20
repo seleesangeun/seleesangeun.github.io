@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10 — 욕망이라는 언어에 담겨 있는 미래</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf7f0;--ink:#1a1610;--ink-mid:#7a7060;--ink-faint:#c8c0b0;--wm:#8b5020;--wm-dim:rgba(139,80,32,.07);--rule:#e0d8c8}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'DM Mono',monospace;font-weight:300;min-height:100vh}
+nav{padding:22px 36px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule)}
+.nav-back{font-size:10px;letter-spacing:.12em;color:var(--ink-mid);text-decoration:none;text-transform:uppercase}.nav-back:hover{color:var(--ink)}
+.nav-num{font-size:10px;color:var(--ink-faint)}
+
+/* HERO — the core sentence builds here */
+.hero{padding:60px 36px 0;border-bottom:none}
+.hero-meta{font-size:10px;letter-spacing:.14em;color:var(--wm);text-transform:uppercase;margin-bottom:20px}
+.hero-book{font-size:11px;color:var(--ink-mid);margin-bottom:48px}
+
+/* THE SENTENCE — grows in weight as you read */
+.core-sentence-wrap{padding:48px 36px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:white}
+.cs-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:20px}
+.core-sentence{font-family:'DM Serif Display',serif;font-size:clamp(18px,3.5vw,30px);line-height:1.6;letter-spacing:-.01em}
+.cs-part{transition:color .6s ease,opacity .6s ease}
+.cs-part.dim{color:var(--ink-faint);opacity:.4}
+.cs-part.mid{color:var(--ink-mid);opacity:.7}
+.cs-part.bright{color:var(--ink);opacity:1}
+.cs-part.core{color:var(--wm);opacity:1;font-style:italic}
+
+/* DESIRE TRANSLATOR */
+.translator-wrap{max-width:680px;margin:0 auto;padding:52px 36px}
+.tl-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mid);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.tl-prompt{font-size:14px;color:var(--ink-mid);line-height:1.7;margin-bottom:20px}
+.tl-input-row{display:flex;gap:10px;margin-bottom:16px}
+.tl-input{flex:1;padding:12px 16px;border:1px solid var(--rule);background:white;font-family:'DM Mono',monospace;font-size:13px;color:var(--ink);outline:none;transition:border-color .2s}
+.tl-input:focus{border-color:var(--wm)}
+.tl-btn{padding:12px 20px;border:1px solid var(--rule);background:white;font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-mid);cursor:pointer;white-space:nowrap;transition:all .2s}
+.tl-btn:hover{border-color:var(--wm);color:var(--wm)}
+.tl-result{min-height:80px;padding:20px 22px;border:1px solid var(--rule);background:var(--wm-dim);display:none}
+.tr-label{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--wm);margin-bottom:10px}
+.tr-text{font-family:'DM Serif Display',serif;font-style:italic;font-size:16px;color:var(--wm);line-height:1.65}
+
+/* BODY SECTIONS */
+.body-wrap{max-width:640px;margin:0 auto;padding:0 36px 80px}
+.section{margin-bottom:52px;opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease}.section.visible{opacity:1;transform:none}
+.sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mid);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.section p{font-size:15px;line-height:1.92;color:var(--ink);font-family:'DM Serif Display',serif;opacity:.85}.section p+p{margin-top:1.2em}
+.highlight-line{font-size:15px;color:var(--wm);font-style:italic;font-family:'DM Serif Display',serif;line-height:1.65;margin:20px 0;padding:16px 20px;background:var(--wm-dim);border-left:2px solid var(--wm)}
+.lang-pair{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);margin-top:20px}
+.lp-cell{background:var(--bg);padding:16px 18px}
+.lp-label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:8px}
+.lp-body{font-size:13px;color:var(--ink-mid);line-height:1.65}
+
+footer{border-top:1px solid var(--rule);padding:26px 36px;display:flex;justify-content:space-between}
+.footer-label{font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase}
+.footer-next{font-size:11px;color:var(--ink-mid);text-decoration:none;transition:color .2s}.footer-next:hover{color:var(--ink)}
+@media(max-width:600px){nav,footer{padding:16px 20px}.hero,.core-sentence-wrap,.translator-wrap,.body-wrap{padding-left:20px;padding-right:20px}.lang-pair{grid-template-columns:1fr}.tl-input-row{flex-direction:column}}
+</style>
+</head>
+<body>
+<nav><a class="nav-back" href="node-nods-demo.html">← Node Nods</a><span class="nav-num">No. 10 / 2409</span></nav>
+<header class="hero">
+  <div class="hero-meta">2024.09 — 욕망</div>
+  <div class="hero-book">박주용, 『미래는 생성되지 않는다』</div>
+</header>
+
+<div class="core-sentence-wrap">
+  <div class="cs-label">이 글의 핵심 문장 — 읽을수록 강해집니다</div>
+  <div class="core-sentence" id="coreSentence">
+    <span class="cs-part dim" id="p1">누군가 시키지 않아도 </span><span class="cs-part mid" id="p2">꾸준히 반복하는 행동은 </span><span class="cs-part bright" id="p3">욕망의 방향성을 드러낸다. </span><span class="cs-part core" id="p4">우연히 나타난 필연적 서사, 그것이 우리가 만들어가는 미래이다.</span>
+  </div>
+</div>
+
+<div class="translator-wrap">
+  <div class="tl-label">욕망 번역기 — 당신의 반복 행동을 욕망의 언어로</div>
+  <p class="tl-prompt">시키지 않아도 꾸준히 반복하는 것이 있나요? 입력하면 욕망의 방향으로 번역됩니다.</p>
+  <div class="tl-input-row">
+    <input class="tl-input" id="tlInput" type="text" placeholder="예: 매일 책을 읽는다 / 낯선 분야 사람을 만난다 / 수식을 필기한다...">
+    <button class="tl-btn" onclick="translate()">번역 →</button>
+  </div>
+  <div class="tl-result" id="tlResult">
+    <div class="tr-label">욕망의 언어로</div>
+    <div class="tr-text" id="trText"></div>
+  </div>
+</div>
+
+<div class="body-wrap">
+  <div class="section">
+    <div class="sec-label">욕망과 서사</div>
+    <p>우리는 각자 욕망이라는 언어 안에 담긴 고유한 세계를 품고 살아간다. 이를 탐험하고 발견하는 과정이야말로 삶의 본질일지 모른다.</p>
+    <p>누군가는 예술 작품에서, 또 다른 이는 책이나 영화, 자연 혹은 학문 속에서 우연히 마주치는 순간을 통해 자신의 세계를 확장해 나간다.</p>
+    <div class="highlight-line">'연결 가능성의 우주' 속에서 필연을 찾아내고, 그로부터 서사와 맥락을 만들어내는 게 인간다움의 본질 아닐까?</div>
+  </div>
+  <div class="section">
+    <div class="sec-label">욕망과 소통 — 언어놀이</div>
+    <p>언어는 규칙을 가진 소리의 조합이다. "언어의 한계는 세계의 한계"라는 것은, 언어를 통하여 우리는 우리의 세계를 더 명확하고 더 넓게 볼 수 있다는 뜻이다.</p>
+    <div class="lang-pair">
+      <div class="lp-cell"><div class="lp-label">개인적 차원</div><div class="lp-body">각자의 욕망과 관심을 언어로 엮어낸다. 서사와 맥락이 생긴다.</div></div>
+      <div class="lp-cell"><div class="lp-label">위대한 연결</div><div class="lp-body">'언어놀이 language game'의 장에 들어가 타자에 대한 이해를 새롭게 구성한다.</div></div>
+    </div>
+    <p style="margin-top:1.2em;font-size:14px">그 사이에 창발하는 새로운 세상은 대화 관계의 경계 공간에서 나타나는 또 다른 현실이다.</p>
+  </div>
+</div>
+
+<footer><span class="footer-label">Node Nods</span><a class="footer-next" href="entry-11.html">11 — Quantum AI →</a></footer>
+<script>
+// SENTENCE INTENSITY — brightens as user reads
+const parts=['p1','p2','p3','p4'];
+const levels=[['dim','mid','bright','core'],['mid','bright','core','core'],['bright','core','core','core']];
+let lvl=0;
+function brighten(){
+  if(lvl>=levels.length-1)return;
+  lvl++;
+  parts.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.className='cs-part '+levels[lvl][i];
+  });
+}
+// brighten on scroll progress past core sentence
+window.addEventListener('scroll',()=>{
+  const cs=document.getElementById('coreSentence');
+  const rect=cs.getBoundingClientRect();
+  const progress=1-Math.max(0,rect.bottom)/window.innerHeight;
+  if(progress>.3&&lvl<1)brighten();
+  if(progress>.7&&lvl<2)brighten();
+});
+
+// DESIRE TRANSLATOR
+const translations=[
+  {pattern:['읽','책'],result:'앎에 대한 갈증. 아직 열려있지 않은 세계가 있다는 것을 알고 있다. 그 세계로 계속 걸어들어가려 한다.'},
+  {pattern:['쓰','글','기록'],result:'생각을 고정하려는 욕망. 흘러가는 것들을 붙잡아 형태를 주려 한다. 존재의 흔적을 남기고 싶다.'},
+  {pattern:['만남','사람','대화','교류'],result:'타자로부터 자신을 발견하려는 욕망. 나와 다른 세계와 충돌할 때 새로운 노드가 생성된다.'},
+  {pattern:['수식','수학','물리','과학'],result:'세계의 심층 구조를 보려는 욕망. 언어로 표현되지 않는 것을 다른 언어로 포착하려 한다.'},
+  {pattern:['그리','그림','만들','작'],result:'내면을 외부 세계로 번역하려는 욕망. 보이지 않는 것을 보이게 만드는 실천.'},
+  {pattern:['걷','운동','몸','달리'],result:'몸으로 사유하려는 욕망. 생각이 발끝에서 올라온다는 것을 알고 있다.'},
+  {pattern:['음악','노래','악기'],result:'언어 이전의 것을 언어로 담으려는 욕망. 수학적이면서도 감각적인 것을 동시에 붙잡으려 한다.'},
+];
+function translate(){
+  const input=document.getElementById('tlInput').value.trim();
+  if(!input)return;
+  const result=document.getElementById('tlResult');
+  const text=document.getElementById('trText');
+  let found=null;
+  for(const t of translations){
+    if(t.pattern.some(p=>input.includes(p))){found=t;break}
+  }
+  const msg=found
+    ?found.result
+    :`'${input}'을 꾸준히 반복한다는 것 — 그것이 이미 욕망이다. 시키지 않아도 그곳으로 향하는 몸이 방향을 알고 있다.`;
+  text.textContent=msg;
+  result.style.display='block';
+  result.style.animation='none';
+  result.offsetHeight;
+  result.style.animation='panelIn .4s ease';
+}
+document.getElementById('tlInput').addEventListener('keydown',e=>{if(e.key==='Enter')translate()});
+
+document.querySelectorAll('.section').forEach(s=>
+  new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add('visible')),{threshold:.15}).observe(s)
+);
+</script>
+</body>
+</html>

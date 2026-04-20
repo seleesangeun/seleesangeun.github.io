@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paper 13 — 수식이 작품이 될 때</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f5f4f0;--wall:#eceae4;
+  --ink:#141210;--ink-mid:#706860;--ink-faint:#c0b8b0;
+  --gold:#8a6c20;--gold-dim:rgba(138,108,32,.08);--rule:#dedad4;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#c8c0b0;font-family:'EB Garamond',serif;min-height:100vh;padding:36px 16px 80px}
+
+.guide{max-width:820px;margin:0 auto;background:var(--paper);box-shadow:0 2px 40px rgba(0,0,0,.18)}
+
+/* GUIDE HEADER */
+.guide-header{padding:36px 48px 28px;border-bottom:2px solid var(--ink);background:var(--wall)}
+.gh-institution{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.gh-institution::before,.gh-institution::after{content:'';flex:1;max-width:40px;height:1px;background:var(--ink-faint)}
+.guide-title{font-size:clamp(22px,4vw,38px);font-weight:400;line-height:1.15;letter-spacing:-.01em;margin-bottom:6px}
+.guide-sub{font-style:italic;font-size:15px;color:var(--ink-mid);margin-bottom:14px}
+.guide-source{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-faint);letter-spacing:.04em}
+
+/* ARTWORK CARD — the central exhibit */
+.artwork-card{padding:40px 48px;border-bottom:1px solid var(--rule);text-align:center;background:white}
+.ac-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:20px;display:block}
+.ac-hint{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-faint);margin-bottom:24px;display:block}
+
+/* THE FORMULA AS INTERACTIVE EXHIBIT */
+.formula-display{display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:8px}
+.sym-btn{padding:12px 18px;border:1px solid var(--rule);background:var(--paper);cursor:pointer;font-family:'EB Garamond',serif;font-size:clamp(36px,7vw,64px);font-weight:400;line-height:1;color:var(--ink);transition:all .2s;position:relative}
+.sym-btn:hover{border-color:var(--gold);background:var(--gold-dim)}
+.sym-btn.active{border-color:var(--gold);background:var(--gold-dim);color:var(--gold)}
+.sym-btn .sym-label{display:block;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.08em;color:var(--ink-faint);margin-top:6px;font-weight:300}
+.sym-btn.active .sym-label{color:var(--gold)}
+
+/* SYMBOL DETAIL PANEL */
+.sym-detail{min-height:100px;border-top:1px solid var(--rule);margin-top:24px;padding-top:20px;display:none;animation:sdIn .3s ease;text-align:left}
+.sym-detail.open{display:block}
+@keyframes sdIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.sd-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.sd-field{}
+.sdf-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:6px;opacity:.8}
+.sdf-body{font-size:15px;color:var(--ink-mid);line-height:1.7}
+.sdf-name{font-size:clamp(18px,3vw,26px);color:var(--ink);font-weight:400;margin-bottom:8px}
+
+/* THREE ROOMS */
+.rooms{padding:0}
+.room{border-bottom:1px solid var(--rule);opacity:0;transform:translateY(10px);transition:opacity .55s ease,transform .55s ease}
+.room.visible{opacity:1;transform:none}
+
+.room-header{padding:22px 48px;border-bottom:1px solid var(--rule);background:var(--wall);display:flex;align-items:baseline;gap:16px}
+.room-num{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);flex-shrink:0}
+.room-title{font-size:clamp(17px,2.8vw,24px);font-weight:400}
+.room-period{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-faint);margin-left:auto;white-space:nowrap}
+
+.room-body{display:grid;grid-template-columns:var(--docent-w,200px) 1fr;gap:0}
+.room-card{padding:22px 24px;border-right:1px solid var(--rule);background:white}
+.rc-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:8px}
+.rc-body{font-size:13px;color:var(--ink-mid);line-height:1.65}
+.room-text{padding:22px 28px;font-size:16px;line-height:1.9;color:var(--ink)}
+
+/* CLOSING */
+.closing{padding:28px 48px 36px}
+.cl-head{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:14px}
+.cl-text{font-size:16px;line-height:1.9;color:var(--ink-mid);font-style:italic}
+
+/* NAV */
+.guide-nav{padding:16px 48px;border-top:1px solid var(--rule);display:flex;justify-content:space-between}
+.pn-back{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-decoration:none;text-transform:uppercase}.pn-back:hover{color:var(--ink)}
+.pn-next{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--ink-mid);text-decoration:none}.pn-next:hover{color:var(--ink)}
+
+@media(max-width:640px){body{padding:12px 8px 60px}.guide-header,.artwork-card,.closing,.guide-nav{padding-left:20px;padding-right:20px}.sd-grid{grid-template-columns:1fr}.room-header{padding-left:20px;padding-right:20px;flex-wrap:wrap}.room-body{grid-template-columns:1fr}.room-card{border-right:none;border-bottom:1px solid var(--rule)}.room-text{padding:16px 20px}}
+</style>
+</head>
+<body>
+<div class="guide">
+
+<header class="guide-header">
+  <div class="gh-institution">전시 해설지</div>
+  <h1 class="guide-title">수식이 작품이 될 때</h1>
+  <div class="guide-sub">E=mc²의 전기 — 탄생, 생존, 불멸</div>
+  <div class="guide-source">No. 13 / 2412 — 데이비드 보더니스, 『E=mc²』 — Node Nods 경험노드</div>
+</header>
+
+<div class="artwork-card">
+  <span class="ac-label">전시 작품</span>
+  <span class="ac-hint">기호를 누르면 해설이 열립니다</span>
+
+  <div class="formula-display" id="formulaDisplay"></div>
+
+  <div class="sym-detail" id="symDetail">
+    <div class="sd-grid">
+      <div class="sd-field">
+        <span class="sdf-label">기호 이름</span>
+        <div class="sdf-name" id="sdName"></div>
+        <div class="sdf-body" id="sdHist"></div>
+      </div>
+      <div class="sd-field">
+        <span class="sdf-label">이 기호가 담은 것</span>
+        <div class="sdf-body" id="sdMean"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="rooms">
+
+  <div class="room">
+    <div class="room-header">
+      <span class="room-num">Act I</span>
+      <div class="room-title">탄생 — 이전 개념을 조합한 후 번뜩이는 센스 한 방울</div>
+      <div class="room-period">1905</div>
+    </div>
+    <div class="room-body">
+      <div class="room-card">
+        <span class="rc-label">도슨트 노트</span>
+        <div class="rc-body">기존 개념들이 존재하였기에 가능했다. [E][=][m][c][²] 각각의 조상들이 있다. 아인슈타인은 새로 발명한 것이 아니라 — 이미 있던 것들 사이의 관계를 처음으로 본 것이다.</div>
+      </div>
+      <div class="room-text">1905년에 아인슈타인은 기존 개념을 새롭게 조합하고 통찰을 더하여 E=mc²를 발견해낸다. 에너지의 영역과 질량의 영역을 연결하였다. 수식에 쓰인 [E][=][m][c][²] 각각의 개념들이 존재하였기에 가능하였다.</div>
+    </div>
+  </div>
+
+  <div class="room">
+    <div class="room-header">
+      <span class="room-num">Act II</span>
+      <div class="room-title">생존 — 성장하여 시대적 역할을 수행</div>
+      <div class="room-period">1938–1945</div>
+    </div>
+    <div class="room-body">
+      <div class="room-card">
+        <span class="rc-label">도슨트 노트</span>
+        <div class="rc-body">에너지를 가지고 있다는 물질의 구조적 이해를 통하여 핵심에 접근하려는 시도가 일어났다. 전쟁 중인 시대 상황이 연구를 가속했다.</div>
+      </div>
+      <div class="room-text">강력을 끊어내기 위하여 느린 중성자를 사용해야 했다. 이를 찾아내고 구현하는 연구 과정은 전쟁 중인 시대 상황을 반영하며 가속화되었다. 수식이 시대적 역할을 부여받는 순간.</div>
+    </div>
+  </div>
+
+  <div class="room">
+    <div class="room-header">
+      <span class="room-num">Act III</span>
+      <div class="room-title">불멸 — 시공간 개념의 아인슈타인적 전환</div>
+      <div class="room-period">1915 → 현재</div>
+    </div>
+    <div class="room-body">
+      <div class="room-card">
+        <span class="rc-label">도슨트 노트</span>
+        <div class="rc-body">코페르니쿠스적 전환이 우주의 중심에 대한 사고를 새롭게 정립한 것처럼 — E=mc²는 시공간에 대한 인간의 관점을 새롭게 정의한다.</div>
+      </div>
+      <div class="room-text">1915년에 그 하나의 수식을 다시 시공간과 이어서 시간과 공간의 생각을 재구성한다. 여럿이면서 하나인 과학자에 의하여 탄생한 E=mc²는 현재에도 우리와 함께 살아가며 관점을 제시한다.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="closing">
+  <div class="cl-head">감상을 마치며</div>
+  <p class="cl-text">응축된 다층적인 맥락을 함축적으로 담고 있는 명료한 수식에 매료되는 경험을 한다. 저자의 도슨트를 통하여 E=mc²의 응축된 함축을 작품처럼 감상할 수 있다.</p>
+</div>
+
+<nav class="guide-nav">
+  <a class="pn-back" href="node-nods-demo.html">← Node Nods</a>
+  <a class="pn-next" href="paper-14.html">14 — 또다시 찾아온 기후변화의 위기 →</a>
+</nav>
+</div>
+
+<script>
+const symbols=[
+  {char:'E',label:'에너지',name:'E — 에너지',hist:'패러데이, 줄, 마이어가 평생에 걸쳐 정의해온 개념. 에너지는 변환된다 — 형태를 바꿀 뿐 사라지지 않는다.',mean:'물질에 숨어있는 에너지. 이 식에서 E는 결과가 아니라 — 숨어있던 것의 드러남이다.'},
+  {char:'=',label:'등호',name:'= — 등호',hist:'이 기호 하나가 두 개의 서로 다른 영역을 연결한다. 아인슈타인의 통찰은 이 등호에 있다.',mean:'에너지의 세계와 질량의 세계가 같다는 선언. 등호는 연결이 아니라 동일성이다.'},
+  {char:'m',label:'질량',name:'m — 질량',hist:'라부아지에와 돌턴이 평생 다루어온 물질의 양. 단순히 무게가 아니라 — 에너지를 담고 있는 그릇이다.',mean:'아주 작은 질량이라도 엄청난 에너지를 품고 있다. c²가 너무 크기 때문이다.'},
+  {char:'c',label:'광속',name:'c — 광속',hist:'뢰머에서 시작해 맥스웰이 전자기파의 속도로 확정하고 마이컬슨이 정밀하게 측정. 초속 약 30만 킬로미터.',mean:'이것이 변환 계수다. c가 이미 어마어마한데 그것을 제곱한다.'},
+  {char:'²',label:'제곱',name:'² — 제곱',hist:'단순해 보이는 이 기호가 모든 것을 결정한다. 에너지와 질량의 비율이 c²라는 것 — 이것이 핵에너지가 가능한 이유다.',mean:'1938년 핵분열 발견 이후, 이 제곱이 시대적 역할을 부여받는다. 전쟁이 수식의 생존을 가속했다.'},
+];
+const display=document.getElementById('formulaDisplay');
+const detail=document.getElementById('symDetail');
+const sdName=document.getElementById('sdName');
+const sdHist=document.getElementById('sdHist');
+const sdMean=document.getElementById('sdMean');
+let openSym=null;
+
+symbols.forEach((s,i)=>{
+  const btn=document.createElement('button');
+  btn.className='sym-btn';
+  btn.innerHTML=`${s.char}<span class="sym-label">${s.label}</span>`;
+  btn.addEventListener('click',()=>{
+    if(openSym===i){openSym=null;btn.classList.remove('active');detail.classList.remove('open');return}
+    display.querySelectorAll('.sym-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');openSym=i;
+    sdName.textContent=s.name;sdHist.textContent=s.hist;sdMean.textContent=s.mean;
+    detail.classList.add('open');
+  });
+  display.appendChild(btn);
+});
+
+document.querySelectorAll('.room').forEach(r=>
+  new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add('visible')),{threshold:.15}).observe(r)
+);
+</script>
+</body>
+</html>

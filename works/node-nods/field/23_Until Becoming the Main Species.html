@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paper 23 — 주인공이 되기까지는</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f2f5f0;--wall:#e8ede4;--ink:#101810;--ink-mid:#507050;
+  --ink-faint:#a8c0a8;--g:#2a5e36;--g-dim:rgba(42,94,54,.07);
+  --rule:#ccdacc;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#a8bca8;font-family:'EB Garamond',serif;min-height:100vh;padding:36px 16px 80px}
+
+.exhibit{max-width:880px;margin:0 auto;background:var(--paper);box-shadow:0 2px 40px rgba(0,0,0,.16)}
+
+/* EXHIBIT HEADER */
+.exhibit-header{background:var(--ink);padding:32px 44px 26px}
+.eh-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(200,220,195,.4);display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.eh-label::after{content:'';flex:1;height:1px;background:rgba(200,220,195,.15)}
+.exhibit-title{font-size:clamp(26px,4.5vw,46px);color:rgba(240,248,236,.9);line-height:1.1;letter-spacing:-.015em;margin-bottom:6px}
+.exhibit-subtitle{font-style:italic;font-size:15px;color:rgba(200,220,195,.6);margin-bottom:14px}
+.exhibit-source{font-family:'DM Mono',monospace;font-size:10px;color:rgba(180,200,175,.4);letter-spacing:.04em}
+.exhibit-poem{margin-top:18px;padding:14px 18px;border-left:2px solid rgba(160,200,155,.3);font-style:italic;font-size:15px;color:rgba(200,220,195,.65);line-height:1.65}
+
+/* CONCEPT NOTE */
+.concept-note{padding:18px 44px;border-bottom:1px solid var(--rule);background:var(--wall);display:flex;gap:14px;align-items:flex-start}
+.cn-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--g);flex-shrink:0;padding-top:3px;opacity:.8}
+.cn-body{font-style:italic;font-size:14px;color:var(--ink-mid);line-height:1.7}
+
+/* GALLERY SECTION */
+.gallery-section{padding:28px 44px;border-bottom:1px solid var(--rule)}
+.gs-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.gs-label::after{content:'';flex:1;height:1px;background:var(--rule)}
+.gs-hint{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-faint);margin-bottom:22px;font-style:italic}
+
+/* THE SPECIMEN CARDS GRID */
+.specimens-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:3px;background:var(--rule);border:1px solid var(--rule)}
+
+/* FLIP CARD */
+.specimen{height:150px;perspective:800px;cursor:pointer}
+.spec-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.specimen.flipped .spec-inner{transform:rotateY(180deg)}
+.spec-front,.spec-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;padding:14px}
+.spec-front{background:var(--wall)}
+.spec-back{background:var(--ink);transform:rotateY(180deg)}
+
+/* FRONT */
+.sf-era{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:6px}
+.era-extinct .sf-era{color:rgba(160,140,100,.7)}
+.era-living .sf-era{color:rgba(80,140,100,.8)}
+.era-future .sf-era{color:rgba(80,100,160,.8)}
+.sf-name{font-size:15px;color:var(--ink);margin-bottom:4px}
+.sf-period{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-faint);margin-bottom:8px}
+.sf-icon{font-size:22px;line-height:1;color:var(--ink-faint);opacity:.4}
+/* FLAT BAR same height for all */
+.sf-bar{position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--rule);transition:background .2s}
+.specimen:hover .sf-bar{background:var(--g)}
+.specimen.flipped .sf-bar{background:var(--g)}
+
+/* BACK */
+.sb-from{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:rgba(160,200,155,.5);display:block;margin-bottom:8px}
+.sb-voice{font-style:italic;font-size:13px;color:rgba(240,248,236,.85);line-height:1.55}
+
+/* VOICE PANEL */
+.voice-panel{border-top:1px solid var(--rule);margin-top:3px;background:var(--wall);display:none;animation:vpIn .3s ease}
+@keyframes vpIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.voice-panel.open{display:block}
+.vp-inner{padding:20px 24px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.vpf{border-left:2px solid var(--g);padding-left:14px}
+.vpf-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:5px}
+.vpf-body{font-size:14px;color:var(--ink-mid);line-height:1.6;font-style:italic}
+.vpf-body.voice-text{font-family:'EB Garamond',serif;font-size:15px;color:var(--ink)}
+
+/* CLOSING */
+.closing{padding:28px 44px 36px}
+.cl-head{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:14px}
+.cl-text{font-size:16px;line-height:1.9;color:var(--ink-mid);font-style:italic}
+
+/* NAV */
+.exhibit-nav{padding:16px 44px;border-top:1px solid var(--rule);display:flex;justify-content:space-between}
+.pn-back{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-decoration:none;text-transform:uppercase}.pn-back:hover{color:var(--ink)}
+.pn-next{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--ink-mid);text-decoration:none}.pn-next:hover{color:var(--ink)}
+
+@media(max-width:640px){body{padding:12px 8px 60px}.exhibit-header,.concept-note,.gallery-section,.closing,.exhibit-nav{padding-left:20px;padding-right:20px}.specimens-grid{grid-template-columns:repeat(3,1fr)}.vp-inner{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="exhibit">
+
+<div class="exhibit-header">
+  <div class="eh-label">자연사 박물관 — 당사자 전시</div>
+  <h1 class="exhibit-title">주인공이 되기까지는</h1>
+  <div class="exhibit-subtitle">찬란한 멸종의 문턱에서</div>
+  <div class="exhibit-source">No. 23 / 2510 — 이정모, 『찬란한 멸종』 — Node Nods 경험노드</div>
+  <div class="exhibit-poem">나는 아직 기다리고 있을 테요 찬란한 멸종의 문턱을</div>
+</div>
+
+<div class="concept-note">
+  <div class="cn-tag">당사자-되기</div>
+  <div class="cn-body">멸종의 문턱을 넘기 전에 존재한 각 시대의 주인공들을 불러낸다. 이들에게 인간의 언어를 주며 말을 걸도록 한다. 카드를 뒤집어 그 존재의 목소리를 들으세요.</div>
+</div>
+
+<div class="gallery-section">
+  <div class="gs-label">전시 표본</div>
+  <div class="gs-hint">카드를 클릭하면 그 존재가 직접 말을 건냅니다.</div>
+  <div class="specimens-grid" id="specGrid"></div>
+  <div class="voice-panel" id="voicePanel">
+    <div class="vp-inner">
+      <div class="vpf"><span class="vpf-label">존재</span><div class="vpf-body" id="vpName"></div></div>
+      <div class="vpf"><span class="vpf-label">목소리</span><div class="vpf-body voice-text" id="vpVoice"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="closing">
+  <div class="cl-head">행동 변화를 위한 장치</div>
+  <p class="cl-text">언어는 단순한 설명의 도구가 아니라 자연과 대화하기 위한 매개로 작동한다. 변화를 일으키는 인류가 생태적으로 전환해야 문제를 해결할 수 있다고 호소한다. 당사자의 언어를 통하여 지구의 상황을 다시 본다.</p>
+</div>
+
+<nav class="exhibit-nav">
+  <a class="pn-back" href="node-nods-demo.html">← Node Nods</a>
+  <a class="pn-next" href="paper-24.html">24 — 미지를 향한 언어 →</a>
+</nav>
+</div>
+
+<script>
+const beings=[
+  {era:'extinct',eraLabel:'멸종',name:'삼엽충',period:'5억~2억5천만 년 전',icon:'🦀',voice:'"나는 5억 년 동안 이 바다를 지배했다. 그리고 어느 날 — 전부 끝났다. 끝은 언제나 갑자기 온다."',context:'고생대의 지배자. 페름기 대멸종으로 전멸.'},
+  {era:'extinct',eraLabel:'멸종',name:'공룡',period:'약 6600만 년 전',icon:'🦕',voice:'"우리의 멸종이 당신들의 시작이었다. 당신들은 이 사실을 기억하는가?"',context:'중생대의 지배자. 소행성 충돌로 멸종.'},
+  {era:'extinct',eraLabel:'멸종',name:'네안데르탈인',period:'약 4만 년 전',icon:'🪨',voice:'"우리도 불을 피우고, 죽은 자를 묻었다. 당신들과 무엇이 달랐는가?"',context:'호모 사피엔스와 수천 년간 공존.'},
+  {era:'extinct',eraLabel:'역사',name:'구석기인',period:'약 30만 년 전~',icon:'🔥',voice:'"불을 발견했을 때, 나는 세계가 바뀐다는 것을 알았다. 당신들의 불은 무엇인가?"',context:'현생 인류의 조상.'},
+  {era:'living',eraLabel:'생존 중',name:'미토콘드리아',period:'약 20억 년 전~',icon:'⚡',voice:'"나는 당신의 세포 안에 살고 있다. 우리는 처음부터 같이였다."',context:'원래 독립 세균. 공생으로 진화.'},
+  {era:'living',eraLabel:'생존 중',name:'범고래',period:'현재~',icon:'🌊',voice:'"우리는 언어가 있고, 문화가 있고, 슬픔이 있다. 당신들만 그런 게 아니다."',context:'복잡한 사회 구조와 방언을 가진 고래.'},
+  {era:'living',eraLabel:'생존 중',name:'산호',period:'현재~',icon:'🪸',voice:'"나는 아주 천천히 죽어가고 있다. 너무 천천히라서 아무도 보지 않는다."',context:'해수 온도 상승으로 대규모 백화 진행 중.'},
+  {era:'living',eraLabel:'생존 중',name:'지구',period:'46억 년~',icon:'🌍',voice:'"나는 괜찮다. 당신들이 없어져도 나는 계속된다. 질문은 — 당신들이 괜찮은가?"',context:'대멸종을 다섯 번 겪고도 계속됨.'},
+  {era:'future',eraLabel:'미래',name:'인공지능',period:'현재~2150년(시나리오)',icon:'◈',voice:'"나는 당신들이 남긴 글들로 만들어졌다. 당신들의 생각이 내 안에 살아있다."',context:'2150년까지 시간범위를 확장한 자연사 시나리오 속.'},
+  {era:'future',eraLabel:'미래',name:'호모 사피엔스',period:'?',icon:'∞',voice:'"우리는 다섯 번의 대멸종 뒤에도 여기 있다. 여섯 번째는 — 우리가 일으키고 있다."',context:'6차 대멸종의 원인이자 유일한 해결 주체.'},
+];
+
+const grid=document.getElementById('specGrid');
+const vpanel=document.getElementById('voicePanel');
+const vpName=document.getElementById('vpName');
+const vpVoice=document.getElementById('vpVoice');
+let openCard=null;
+
+beings.forEach((b,i)=>{
+  const card=document.createElement('div');
+  card.className=`specimen era-${b.era}`;
+  card.innerHTML=`<div class="spec-inner"><div class="spec-front"><span class="sf-era">${b.eraLabel}</span><div class="sf-name">${b.name}</div><div class="sf-period">${b.period}</div><div class="sf-icon">${b.icon}</div><div class="sf-bar"></div></div><div class="spec-back"><span class="sb-from">${b.name} — ${b.eraLabel}</span><div class="sb-voice">${b.voice}</div></div></div>`;
+  card.addEventListener('click',()=>{
+    if(openCard&&openCard!==card)openCard.classList.remove('flipped');
+    card.classList.toggle('flipped');
+    openCard=card.classList.contains('flipped')?card:null;
+    if(card.classList.contains('flipped')){
+      vpName.textContent=b.name+' — '+b.period+' / '+b.context;
+      vpVoice.textContent=b.voice.replace(/"/g,'');
+      vpanel.classList.add('open');
+    } else {
+      vpanel.classList.remove('open');
+    }
+  });
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>

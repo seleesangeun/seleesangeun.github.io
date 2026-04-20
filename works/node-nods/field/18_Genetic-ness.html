@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>18 — 유전자스러움</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0f5f0;--ink:#101810;--ink-mid:#507050;--ink-faint:#a8c0a8;--g1:#286030;--g1-dim:rgba(40,96,48,0.08);--g2:#604820;--g2-dim:rgba(96,72,32,0.08);--rule:#ccdacc}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'DM Mono',monospace;font-weight:300;min-height:100vh}
+nav{padding:22px 36px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule)}
+.nav-back{font-size:10px;letter-spacing:.12em;color:var(--ink-mid);text-decoration:none;text-transform:uppercase}.nav-back:hover{color:var(--ink)}
+.nav-num{font-size:10px;color:var(--ink-faint)}
+.hero{padding:60px 36px 52px;border-bottom:1px solid var(--rule)}
+.hero-meta{font-size:10px;letter-spacing:.14em;color:var(--g1);text-transform:uppercase;margin-bottom:14px}
+.hero-title{font-family:'DM Serif Display',serif;font-size:clamp(28px,5vw,52px);font-weight:400;line-height:1.08;letter-spacing:-.015em}
+.hero-book{margin-top:20px;font-size:11px;color:var(--ink-mid)}
+.hero-question{margin-top:28px;font-family:'DM Serif Display',serif;font-style:italic;font-size:15px;color:var(--ink-mid);line-height:1.65}
+
+/* STRAND LEGEND */
+.strand-legend{max-width:700px;margin:0 auto;padding:32px 36px 0;display:flex;gap:20px;flex-wrap:wrap}
+.strand-tag{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink-mid)}
+.strand-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.s1-dot{background:var(--g1)}
+.s2-dot{background:var(--g2)}
+
+/* DOUBLE STRAND LAYOUT */
+.double-strand{max-width:700px;margin:0 auto;padding:24px 36px 0}
+.pair{display:grid;grid-template-columns:1fr 24px 1fr;gap:0;margin-bottom:2px;align-items:stretch}
+.strand-cell{padding:20px 22px;opacity:0;transform:translateX(0);transition:opacity .5s ease,transform .5s ease}
+.strand-cell.s1{background:var(--g1-dim);border:1px solid rgba(40,96,48,.15)}
+.strand-cell.s2{background:var(--g2-dim);border:1px solid rgba(96,72,32,.15)}
+.strand-cell.empty{background:transparent;border:none}
+.pair.visible .strand-cell{opacity:1}
+.pair.visible .strand-cell.s1{animation:slideL .45s ease forwards}
+.pair.visible .strand-cell.s2{animation:slideR .45s ease forwards}
+@keyframes slideL{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
+@keyframes slideR{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+.sc-label{font-size:9px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.s1 .sc-label{color:var(--g1)}
+.s2 .sc-label{color:var(--g2)}
+.sc-body{font-size:14px;color:var(--ink);line-height:1.65}
+.pair-connector{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:4px 0}
+.connector-line{width:1px;flex:1;background:var(--rule)}
+
+/* CROSSOVER */
+.crossover{max-width:700px;margin:8px auto;padding:0 36px}
+.cx-line{height:1px;background:var(--rule);position:relative;margin:16px 0}
+.cx-label{position:absolute;left:50%;transform:translateX(-50%) translateY(-50%);background:var(--bg);padding:0 10px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);white-space:nowrap}
+
+/* CLOSING */
+.closing-section{max-width:640px;margin:0 auto;padding:40px 36px 80px}
+.c-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mid);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.closing-section p{font-size:15px;line-height:1.92;color:var(--ink);opacity:.85}.closing-section p+p{margin-top:1em}
+.art-note{margin-top:24px;padding:18px 22px;background:var(--g2-dim);border-left:2px solid var(--g2);font-size:14px;color:var(--g2);line-height:1.7}
+
+footer{border-top:1px solid var(--rule);padding:26px 36px;display:flex;justify-content:space-between}
+.footer-label{font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase}
+.footer-next{font-size:11px;color:var(--ink-mid);text-decoration:none;transition:color .2s}.footer-next:hover{color:var(--ink)}
+@media(max-width:600px){nav,footer{padding:16px 20px}.hero,.strand-legend,.double-strand,.crossover,.closing-section{padding-left:20px;padding-right:20px}.pair{grid-template-columns:1fr 12px 1fr}}
+</style>
+</head>
+<body>
+<nav><a class="nav-back" href="node-nods-demo.html">← Node Nods</a><span class="nav-num">No. 18 / 2505</span></nav>
+<header class="hero">
+  <div class="hero-meta">2025.05 — 각본</div>
+  <h1 class="hero-title">유전자스러움</h1>
+  <div class="hero-book">최정균, 『유전자 지배 사회』</div>
+  <div class="hero-question">우리는 유전자의 각본을 인식한 후 묻는다.<br>"우리는 어떻게 살아갈 것인가?"</div>
+</header>
+
+<div class="strand-legend">
+  <div class="strand-tag"><div class="strand-dot s1-dot"></div>유전자의 논리</div>
+  <div class="strand-tag"><div class="strand-dot s2-dot"></div>각본 너머</div>
+</div>
+
+<div class="double-strand" id="doubleStrand">
+
+  <div class="pair">
+    <div class="strand-cell s1">
+      <div class="sc-label">유전자의 논리</div>
+      <div class="sc-body">생물학적 기제는 강력하다. 유전자는 각본을 쓴다 — 혐오, 공포, 회피 반응의 역치가 사람마다 다른 것도 편도체의 민감도 차이에서 비롯된다.</div>
+    </div>
+    <div class="pair-connector"><div class="connector-line"></div></div>
+    <div class="strand-cell s2">
+      <div class="sc-label">각본 너머</div>
+      <div class="sc-body">그것이 인간의 전부는 아니다. 환경 — 우리가 사는 시대, 우리가 만나는 관계, 문화와 제도, 밈(meme) — 이 인간을 구성하는 데 중요한 역할을 한다.</div>
+    </div>
+  </div>
+
+  <div class="pair">
+    <div class="strand-cell s1">
+      <div class="sc-label">유전자의 논리</div>
+      <div class="sc-body">모든 생명체는 가혹하고 불안정한 환경에서 살아왔다. 어마어마한 생물 다양성이 존재한다는 것은 역설적으로 자연이 얼마나 생명체에게 적대적인 환경인지를 말해주는 방증이다.</div>
+    </div>
+    <div class="pair-connector"><div class="connector-line"></div></div>
+    <div class="strand-cell s2">
+      <div class="sc-label">각본 너머</div>
+      <div class="sc-body">"어디에, 누구와, 어떤 시대에 사느냐"는 맥락적 사고는 유전자의 각본을 읽는 데 반드시 필요한 감각이다. 빠르게 변하는 시대에 놓치고 싶지 않은 가치 — 그것은 사랑이다.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="crossover">
+  <div class="cx-line"><span class="cx-label">교차 — 유전자 기제를 이해하는 순간</span></div>
+</div>
+
+<div class="double-strand">
+
+  <div class="pair">
+    <div class="strand-cell s1">
+      <div class="sc-label">유전자의 논리</div>
+      <div class="sc-body">어떤 이의 공격적인 태도를 볼 때 — "저 사람은 유전자가 지금 두려운 거구나"라고 사고할 수 있는가. 혐오 반응도 생존 전략이다.</div>
+    </div>
+    <div class="pair-connector"><div class="connector-line"></div></div>
+    <div class="strand-cell s2">
+      <div class="sc-label">각본 너머</div>
+      <div class="sc-body">유전자 기제를 이해할수록, 혐오가 또다른 혐오를 낳는 낙인보다는 어떤 생존 질서를 넘어서 함께 살기 위한 관계의 구조를 생각할 수 있겠다.</div>
+    </div>
+  </div>
+
+  <div class="pair">
+    <div class="strand-cell s1 empty"></div>
+    <div class="pair-connector"><div class="connector-line"></div></div>
+    <div class="strand-cell s2">
+      <div class="sc-label">각본 너머 — 무용(無用)한 것</div>
+      <div class="sc-body">예술은 유전자의 관점에서 무용할 수 있다. 그러나 그 무용성 자체가 새로운 질서의 가능성이다. 무용한 것을 실천하는 인간이야말로 유전자 바깥에서 의미를 구성해나가는 존재다.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="closing-section">
+  <div class="c-label">결론을 대신하여</div>
+  <p>과학적 설명을 받아들이는 것이, 성숙한 윤리와 공동체, 사랑과 가족의 형태를 다시 구성할 토대가 된다고 생각한다. 설명은 실천으로 — 과학은 새로운 의미로 승화될 수 있다.</p>
+  <div class="art-note">예술은 여유를 표하는 '값비싼 신호'가 아니라 존재를 증명하는 실천이다.</div>
+</div>
+
+<footer>
+  <span class="footer-label">Node Nods</span>
+  <a class="footer-next" href="entry-19.html">19 — 우연한 믿음 →</a>
+</footer>
+<script>
+document.querySelectorAll('.pair').forEach((pair, i) => {
+  pair.style.transitionDelay = (i * 0.1) + 's';
+  new IntersectionObserver(e => e.forEach(x => x.isIntersecting && x.target.classList.add('visible')), {threshold:.2}).observe(pair);
+});
+</script>
+</body>
+</html>

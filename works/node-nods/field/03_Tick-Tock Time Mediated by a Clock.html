@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>03 — 시간←[시계]→똑딱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f8f6;
+    --ink: #18180f;
+    --ink-mid: #888880;
+    --ink-faint: #d0d0c8;
+    --rule: #e0e0d8;
+    --tick: #18180f;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    padding: 24px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--rule);
+    z-index: 10;
+  }
+  .nav-back {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--ink-mid);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--ink); }
+
+  /* LIVE CLOCK */
+  .nav-clock {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    min-width: 80px;
+    text-align: right;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 120px 40px 80px;
+    border-bottom: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: end;
+  }
+
+  .hero-left {}
+
+  .hero-meta {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-mid);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hero-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .hero-title .bracket {
+    font-style: italic;
+    color: var(--ink-mid);
+  }
+
+  .hero-book {
+    margin-top: 24px;
+    font-size: 11px;
+    color: var(--ink-mid);
+    letter-spacing: 0.04em;
+  }
+
+  /* TICK VISUAL */
+  .tick-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    padding-bottom: 4px;
+  }
+  .tick-row {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+  .tick {
+    width: 2px;
+    background: var(--ink);
+    opacity: 0.15;
+    border-radius: 1px;
+    transition: opacity 0.15s, height 0.1s;
+  }
+  .tick.lit { opacity: 1; }
+
+  /* BODY — MEASURED SECTIONS */
+  .article-body {
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 80px 40px 120px;
+  }
+
+  .interval {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 0 32px;
+    margin-bottom: 56px;
+    padding-bottom: 56px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .interval:last-child { border-bottom: none; }
+
+  .interval-stamp {
+    padding-top: 3px;
+  }
+  .stamp-label {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 6px;
+  }
+  .stamp-value {
+    font-size: 13px;
+    color: var(--ink-mid);
+    line-height: 1.4;
+  }
+
+  .interval-body p {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--ink);
+  }
+  .interval-body p + p { margin-top: 1.2em; }
+
+  .quote-block {
+    margin-top: 24px;
+    padding: 20px 24px;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background: white;
+  }
+  .quote-block p {
+    font-family: 'Instrument Serif', serif;
+    font-size: 14px;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--ink-mid);
+  }
+  .quote-attr {
+    margin-top: 10px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+
+  /* TICKER TAPE — horizontal rule as time sequence */
+  .ticker {
+    overflow: hidden;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 14px 0;
+    margin: 0 0 56px;
+    white-space: nowrap;
+  }
+  .ticker-inner {
+    display: inline-block;
+    animation: ticker 18s linear infinite;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* FOOTER */
+  .article-footer {
+    border-top: 1px solid var(--rule);
+    padding: 28px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+  .footer-next {
+    font-size: 11px;
+    color: var(--ink-mid);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: color 0.2s;
+  }
+  .footer-next:hover { color: var(--ink); }
+
+  @media (max-width: 600px) {
+    nav { padding: 16px 20px; }
+    .hero { padding: 90px 20px 60px; grid-template-columns: 1fr; }
+    .tick-visual { display: none; }
+    .article-body { padding: 48px 20px 80px; }
+    .interval { grid-template-columns: 1fr; }
+    .interval-stamp { display: flex; gap: 12px; align-items: baseline; margin-bottom: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-back" href="../node-nods-demo.html">← Node Nods</a>
+  <div class="nav-clock" id="clock">--:--:--</div>
+</nav>
+
+<header class="hero">
+  <div class="hero-left">
+    <div class="hero-meta">2024.02 — 모호 / No. 03</div>
+    <h1 class="hero-title">
+      시간<span class="bracket">←[시계]→</span>똑딱<br>
+      <span style="font-size:0.65em; color:var(--ink-mid);">time is what clocks measure</span>
+    </h1>
+    <div class="hero-book">채드 오젤, 『1초의 탄생』</div>
+  </div>
+  <div class="tick-visual" id="tickVis">
+    <!-- generated by JS -->
+  </div>
+</header>
+
+<div class="ticker">
+  <span class="ticker-inner">
+    시간 — 시계 — 똑딱 — 자전 — 공전 — 오차 — 표준 — KST — UTC+9 — 리듬 — 주기 — 문화 — 합의 — 측정 — 변화 — 실재 — &nbsp;&nbsp;&nbsp;
+    시간 — 시계 — 똑딱 — 자전 — 공전 — 오차 — 표준 — KST — UTC+9 — 리듬 — 주기 — 문화 — 합의 — 측정 — 변화 — 실재 — &nbsp;&nbsp;&nbsp;
+  </span>
+</div>
+
+<main class="article-body">
+
+  <div class="interval">
+    <div class="interval-stamp">
+      <div class="stamp-label">단위</div>
+      <div class="stamp-value">하루<br>일 년</div>
+    </div>
+    <div class="interval-body">
+      <p>매 분 매 초, 그리고 하루라는 주기는 어떻게 합의된 것일까? 변화하는 무언가가 있고 그 변화로 시간을 인지한다. 태양이 움직인다. 생명체에게 중요한 그 빛이 보였다가 사라진다.</p>
+      <p>관찰해보니 규칙적이다. 그 리듬에 맞추어 태양의 주기를 정의내려 하루와 일 년을 약속한다. 연속적으로 원 운동을 하는 아날로그 시계에는 지구의 자전이 함축되어 있다. 불연속적으로 자연수들이 나열되어 있는 달력에는 지구의 공전이 구획되어 있다.</p>
+    </div>
+  </div>
+
+  <div class="interval">
+    <div class="interval-stamp">
+      <div class="stamp-label">문화</div>
+      <div class="stamp-value">역법<br>합의</div>
+    </div>
+    <div class="interval-body">
+      <p>이는 시대에 따라 달라졌다. 오차를 줄이려는 조정 과정이기도 했고 권력을 확고히 하기 위한 절차기도 했다. 그렇게 정착한 지금의 시계와 달력이 있다.</p>
+      <p>인류는 손에 하나씩 쥐고 있는 인터넷으로 시간을 확인한다. 우리는 디지털 화면 안에서 바뀌는 그 숫자를 정확한 시간이라고 믿으며 산다. 하지만 여기에도 오차는 있다.</p>
+    </div>
+  </div>
+
+  <div class="interval">
+    <div class="interval-stamp">
+      <div class="stamp-label">KST</div>
+      <div class="stamp-value">UTC<br>+09:00</div>
+    </div>
+    <div class="interval-body">
+      <p>동경 127.5도에 위치한 대한민국은 어디를 가나 시간이 같다. 오차를 허용하며 약속된 KST를 사용한다. 이는 옆 나라 일본과 같은 시간 JST(UTC+09:00)를 사용하기로 역사 속에서 결정한 시간이다.</p>
+      <p>그러니 시간이라기 보다는 약속된 시계 안에서 살고 있다고 이해하는 편이 좋겠다. 우리가 평소에 사용하는 시간이라는 용어는 시계다.</p>
+    </div>
+  </div>
+
+  <div class="interval">
+    <div class="interval-stamp">
+      <div class="stamp-label">질문</div>
+      <div class="stamp-value">시계<br>바깥</div>
+    </div>
+    <div class="interval-body">
+      <p>시간에 따른 변화율(dx/dt)도 약속된 시계 체계 안에서 나타나는 똑딱임(ticktock)으로 측정하고 계산된 결과물이다. 우리는 시계 안에서 살고 있기 때문에 시간이 흐른다는 세계 안에서 살고 있는 것이다.</p>
+      <p>그렇다면 시계를 벗어난 세계에서 시간은 어떻게 될까?</p>
+      <div class="quote-block">
+        <p>Time is relative. It stretches and shrinks. An hour for us may be a century on another planet, and vice-versa. There is no audible ticktock everywhere in the world. Past, present, and future is only an illusion.</p>
+        <div class="quote-attr">— Albert Einstein</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="article-footer">
+  <span class="footer-label">Node Nods</span>
+  <a class="footer-next" href="entry-04.html">04 — 생명체_사이의_평평한_연결감 →</a>
+</footer>
+
+<script>
+  // Live clock
+  function tick() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const s = String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('clock').textContent = h + ':' + m + ':' + s;
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  // Tick visualizer
+  const vis = document.getElementById('tickVis');
+  const rows = 6;
+  const cols = 8;
+  const heights = [8, 14, 10, 18, 8, 12, 16, 10];
+  for (let r = 0; r < rows; r++) {
+    const row = document.createElement('div');
+    row.className = 'tick-row';
+    for (let c = 0; c < cols; c++) {
+      const t = document.createElement('div');
+      t.className = 'tick';
+      t.style.height = heights[c] + 'px';
+      row.appendChild(t);
+    }
+    vis.appendChild(row);
+  }
+
+  // Animate ticks with clock
+  function animateTicks() {
+    const sec = new Date().getSeconds() % cols;
+    document.querySelectorAll('.tick').forEach((t, i) => {
+      t.classList.toggle('lit', i % cols === sec);
+    });
+  }
+  animateTicks();
+  setInterval(animateTicks, 1000);
+</script>
+</body>
+</html>

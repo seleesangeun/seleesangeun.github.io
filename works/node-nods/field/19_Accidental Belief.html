@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>19 — 우연한 믿음</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--ink:#181818;--ink-mid:#888880;--ink-faint:#d0d0c8;--acc:#404040;--rule:#e0e0d8}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'DM Mono',monospace;font-weight:300;min-height:100vh}
+nav{padding:22px 36px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule)}
+.nav-back{font-size:10px;letter-spacing:.12em;color:var(--ink-mid);text-decoration:none;text-transform:uppercase}.nav-back:hover{color:var(--ink)}
+.nav-num{font-size:10px;color:var(--ink-faint)}
+.hero{padding:60px 36px 52px;border-bottom:1px solid var(--rule)}
+.hero-meta{font-size:10px;letter-spacing:.14em;color:var(--ink-mid);text-transform:uppercase;margin-bottom:14px}
+.hero-title{font-family:'DM Serif Display',serif;font-size:clamp(28px,5vw,52px);font-weight:400;line-height:1.08;letter-spacing:-.015em}
+.hero-book{margin-top:20px;font-size:11px;color:var(--ink-mid)}
+.hero-question{margin-top:24px;font-size:14px;color:var(--ink-mid);line-height:1.7;max-width:480px}
+
+/* THRESHOLD NOTE */
+.threshold-note{max-width:640px;margin:0 auto;padding:36px 36px 0}
+.tn-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:10px}
+.tn-body{font-size:13px;color:var(--ink-mid);line-height:1.7}
+
+/* MEMORY STREAM — variable opacity text */
+.memory-stream{max-width:640px;margin:0 auto;padding:32px 36px}
+.stream-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.memory-para{margin-bottom:32px}
+.memory-sentence{display:inline;font-size:15px;line-height:2.0;color:var(--ink)}
+
+/* opacity classes map to "memory strength" */
+.mem-strong{opacity:1}
+.mem-med{opacity:.55}
+.mem-faint{opacity:.25}
+.mem-ghost{opacity:.1}
+
+/* FILTER NOTE */
+.filter-note{margin:16px 0 32px;padding:14px 18px;border:1px dashed var(--ink-faint);font-size:12px;color:var(--ink-mid);line-height:1.65}
+.fn-q{font-size:11px;color:var(--ink-mid);margin-bottom:5px;letter-spacing:.04em}
+
+/* BRAIN ACCIDENT */
+.accident-section{max-width:640px;margin:0 auto;padding:0 36px 80px}
+.acc-header{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mid);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.acc-body p{font-size:15px;line-height:1.92;color:var(--ink);opacity:.85}.acc-body p+p{margin-top:1em}
+.accident-word{font-family:'DM Serif Display',serif;font-style:italic;font-size:16px;color:var(--acc)}
+
+footer{border-top:1px solid var(--rule);padding:26px 36px;display:flex;justify-content:space-between}
+.footer-label{font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase}
+.footer-next{font-size:11px;color:var(--ink-mid);text-decoration:none;transition:color .2s}.footer-next:hover{color:var(--ink)}
+@media(max-width:600px){nav,footer{padding:16px 20px}.hero,.threshold-note,.memory-stream,.accident-section{padding-left:20px;padding-right:20px}}
+</style>
+</head>
+<body>
+<nav><a class="nav-back" href="node-nods-demo.html">← Node Nods</a><span class="nav-num">No. 19 / 2506</span></nav>
+<header class="hero">
+  <div class="hero-meta">2025.06 — 우연</div>
+  <h1 class="hero-title">우연한 믿음</h1>
+  <div class="hero-book">데이비드 J. 린든, 『우연한 마음』</div>
+  <div class="hero-question">"정보량이 너무 많다."<br>요즘 들어 자주 말하는 문장이다.</div>
+</header>
+
+<div class="threshold-note">
+  <div class="tn-label">읽는 법</div>
+  <div class="tn-body">아래 텍스트의 농도는 기억의 강도를 나타냅니다. 선명한 문장은 역치를 넘어 남은 것, 흐릿한 문장은 지워지는 중인 것. 어떤 문장이 당신에게는 선명하게 읽히나요?</div>
+</div>
+
+<div class="memory-stream">
+  <div class="stream-label">기억이 필터링되는 과정</div>
+
+  <div class="memory-para">
+    <span class="memory-sentence mem-strong">아카이브에 대한 집착은 모든 것을 기억할 수 없다는 경험에서 오는 불안일 수도 있다. </span><span class="memory-sentence mem-med">중요한 것만 걸러 남긴다. </span><span class="memory-sentence mem-faint">그런데 그 중요함은 어떻게 결정되는가?</span>
+  </div>
+
+  <div class="memory-para">
+    <span class="memory-sentence mem-ghost">어쩌면 그것은 </span><span class="memory-sentence mem-strong">어떤 감각이 나를 지나칠 때 역치 이상의 자극으로 남았느냐의 문제일 것이다. </span><span class="memory-sentence mem-med">시냅스가 연결을 강화하고, 그것이 다시 행동을 낳는다. </span><span class="memory-sentence mem-faint">하지만 우리가 기억하는 많은 것들은 실제로 있었던 그대로가 아니다.</span>
+  </div>
+
+  <div class="filter-note">
+    <div class="fn-q">이 글에서 내가 기억하고 싶은 문장은?</div>
+    선명도는 독자마다 다르게 분포한다. 같은 텍스트를 읽어도 무엇이 역치를 넘는지는 각자의 경험에 달려 있다.
+  </div>
+
+  <div class="memory-para">
+    <span class="memory-sentence mem-med">감각 정보에 감정이 붙고 그것이 지각을 구성하고 </span><span class="memory-sentence mem-strong">그렇게 우리는 세상을 느끼는 방식대로 이해하며 살아간다. </span><span class="memory-sentence mem-ghost">인간의 뇌는 덕지덕지 얹혀진 진화의 부산물이다. </span><span class="memory-sentence mem-faint">이 불완전한 시스템은 복잡하게 얽혀 있는 네트워크다.</span>
+  </div>
+
+  <div class="memory-para">
+    <span class="memory-sentence mem-strong">그렇기에 뇌는 속기 쉬운 존재다. </span><span class="memory-sentence mem-med">우리는 모든 감각을 똑같이 받아들이지 않는다. </span><span class="memory-sentence mem-strong">스스로에게 중요했던 것만 남기고 나머지는 지워버린다. </span><span class="memory-sentence mem-ghost">그가 취사선택한 현실이 결국 그의 믿음이 된다.</span>
+  </div>
+</div>
+
+<div class="accident-section">
+  <div class="acc-header">믿음도 그렇다</div>
+  <div class="acc-body">
+    <p>신념이나 사상 또는 종교 같은 거창한 말이 아니더라도 우리는 매일같이 무언가를 믿고 있다. 이 세계가 어떻게 이루어져 있는지를 나라고 불릴 수 있는 뇌라는 필터를 통과하여 그렇다고 믿는다.</p>
+    <p>그러나 이 모든 믿음은 어쩌면 뇌의 제한된 처리 능력 속에서 생성된 <span class="accident-word">사고(accident)</span> 같은 것이다. 진화는 효율을 따르지 않았다. 그저 지금까지 살아남았기 때문에 존재하는 것이다.</p>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-label">Node Nods</span>
+  <a class="footer-next" href="entry-20.html">20 — Assemble Ensemble →</a>
+</footer>
+</body>
+</html>

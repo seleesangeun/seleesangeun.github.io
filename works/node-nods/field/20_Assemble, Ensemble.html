@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paper 20 — Assemble Ensemble</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f4f0f8;--ink:#181028;--ink-mid:#706088;
+  --ink-faint:#c0b8d8;--acc:#6040b0;--acc-dim:rgba(96,64,176,.08);
+  --rule:#dcd8ec;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#a898c0;font-family:'EB Garamond',serif;min-height:100vh;padding:36px 16px 80px}
+
+.score{max-width:880px;margin:0 auto;background:var(--paper);box-shadow:0 2px 40px rgba(0,0,0,.18)}
+
+/* SCORE HEADER */
+.score-header{padding:36px 44px 28px;border-bottom:2px solid var(--ink)}
+.sh-meta{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:12px}
+.score-title{font-size:clamp(24px,4.5vw,44px);font-weight:400;line-height:1.1;letter-spacing:-.015em;margin-bottom:4px}
+.score-sub{font-style:italic;font-size:15px;color:var(--ink-mid);margin-bottom:14px}
+.score-source{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-faint);letter-spacing:.04em}
+.score-thesis{margin-top:18px;font-size:15px;color:var(--ink-mid);line-height:1.75;padding:14px 18px;border-left:2px solid var(--acc);background:var(--acc-dim);font-style:italic}
+
+/* CONDUCTOR NOTE */
+.conductor-note{padding:20px 44px;border-bottom:1px solid var(--rule);background:rgba(0,0,0,.02);display:flex;align-items:flex-start;gap:14px}
+.cn-icon{font-family:'DM Mono',monospace;font-size:11px;color:var(--acc);flex-shrink:0;padding-top:2px;letter-spacing:.04em}
+.cn-text{font-size:14px;color:var(--ink-mid);line-height:1.7}
+
+/* PART TOGGLES — instrument selection */
+.parts-bar{padding:20px 44px;border-bottom:1px solid var(--rule);background:white}
+.pb-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:12px;display:block}
+.parts-grid{display:flex;flex-wrap:wrap;gap:8px}
+.part-toggle{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--rule);cursor:pointer;transition:all .15s;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--ink-mid);background:var(--paper);user-select:none}
+.part-toggle:hover{border-color:var(--acc);color:var(--acc)}
+.part-toggle.active{background:var(--acc);border-color:var(--acc);color:white}
+.pt-dot{width:8px;height:8px;border-radius:50%;border:1.5px solid currentColor;flex-shrink:0}
+.part-toggle.active .pt-dot{background:white;border-color:white}
+
+/* THE SCORE GRID — each row is a "measure", each column is a "part" */
+.score-body{padding:28px 44px;border-bottom:1px solid var(--rule)}
+.sb-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.sb-label::after{content:'';flex:1;height:1px;background:var(--rule)}
+
+/* SCORE MEASURE — horizontal bar for each "event" */
+.measure{margin-bottom:2px}
+.measure-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--ink-faint);margin-bottom:8px;padding-left:2px}
+.parts-row{display:flex;flex-direction:column;gap:2px}
+.part-line{display:grid;grid-template-columns:120px 1fr;gap:0;border:1px solid var(--rule);overflow:hidden;transition:opacity .2s}
+.part-line.muted{opacity:.2}
+.pl-name{padding:12px 14px;background:rgba(96,64,176,.06);border-right:1px solid var(--rule);font-family:'DM Mono',monospace;font-size:10px;color:var(--acc);display:flex;align-items:center;letter-spacing:.04em}
+.pl-content{padding:12px 16px;font-size:15px;color:var(--ink);line-height:1.6}
+.pl-content em{font-style:italic;color:var(--acc)}
+.pl-content .answer{font-weight:500;color:var(--ink)}
+
+/* ENSEMBLE METER */
+.ensemble-meter{margin-top:16px;padding:16px 20px;background:white;border:1px solid var(--rule);display:flex;align-items:center;gap:16px}
+.em-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-mid);white-space:nowrap}
+.em-track{flex:1;height:4px;background:var(--rule);border-radius:2px;overflow:hidden}
+.em-fill{height:100%;background:var(--acc);border-radius:2px;transition:width .4s ease}
+.em-note{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-faint);white-space:nowrap}
+
+/* CLOSING PROSE */
+.closing-section{padding:28px 44px 36px}
+.cs-head{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:14px}
+.cs-text{font-size:16px;line-height:1.9;color:var(--ink-mid);font-style:italic}
+
+/* NAV */
+.score-nav{padding:16px 44px;border-top:1px solid var(--rule);display:flex;justify-content:space-between}
+.pn-back{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-decoration:none;text-transform:uppercase}.pn-back:hover{color:var(--ink)}
+.pn-next{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--ink-mid);text-decoration:none}.pn-next:hover{color:var(--ink)}
+
+@media(max-width:640px){body{padding:12px 8px 60px}.score-header,.conductor-note,.parts-bar,.score-body,.closing-section,.score-nav{padding-left:20px;padding-right:20px}.part-line{grid-template-columns:80px 1fr}}
+</style>
+</head>
+<body>
+<div class="score">
+
+<header class="score-header">
+  <div class="sh-meta">No. 20 / 2507 — 팀 파머, 『카오스, 카오스 에브리웨어』 — 앙상블 총보</div>
+  <h1 class="score-title">Assemble<br>Ensemble</h1>
+  <div class="score-sub">불확실성을 어떻게 다룰 것인가 하는 태도의 문제</div>
+  <div class="score-source">Node Nods 경험노드 — 오케스트라 스코어 형식</div>
+  <div class="score-thesis">각자의 관점(모델)에 따라 세상이 달리 보일 수밖에. 나와 파라미터가 다를 수밖에 없는 상대의 모델을 들여다보며 앙상블로 연결을 해보는 과정. 이게 관계맺음일테고.</div>
+</header>
+
+<div class="conductor-note">
+  <div class="cn-icon">지휘자 노트</div>
+  <div class="cn-text">하나의 질문을 네 개의 파트가 동시에 연주합니다. 어떤 파트를 켜고 끄면서 앙상블을 구성하세요. 어떤 파트를 선택하는가가 이미 당신의 세계관입니다.</div>
+</div>
+
+<div class="parts-bar">
+  <span class="pb-label">파트 선택 — 클릭하여 켜고 끄세요</span>
+  <div class="parts-grid" id="partsGrid"></div>
+</div>
+
+<div class="score-body">
+  <div class="sb-label">총보 — 같은 사건, 네 개의 파트</div>
+  <div id="scoreContent"></div>
+  <div class="ensemble-meter">
+    <div class="em-label">앙상블</div>
+    <div class="em-track"><div class="em-fill" id="emFill" style="width:100%"></div></div>
+    <div class="em-note" id="emNote">4 / 4 파트 활성</div>
+  </div>
+</div>
+
+<div class="closing-section">
+  <div class="cs-head">overfitting 방지책</div>
+  <p class="cs-text">세상이라는 복잡계가 비선형적이고 상호의존적이며 초기조건에 민감하다는 사실. 자신의 모델 하나에만 의존하는 것이 overfitting이다. 굳이 덧붙이자면 — 앙상블이 overfitting 방지책이다.</p>
+</div>
+
+<nav class="score-nav">
+  <a class="pn-back" href="node-nods-demo.html">← Node Nods</a>
+  <a class="pn-next" href="entry-21.html">21 — AI라는 →</a>
+</nav>
+</div>
+
+<script>
+const parts=[
+  {
+    id:'weather',name:'기상 모델',
+    measures:[
+      {event:'"내일 비 와?"',answer:'A 예보: 오후 3시, 70% 확률',note:'확률로 답한다. 0 또는 1이 아니다.'},
+      {event:'기후 위기',answer:'데이터가 변화를 말한다. 극단적 이벤트 예측이 핵심.',note:'과학은 보여줄 뿐이고, 판단은 인간이.'},
+    ]
+  },
+  {
+    id:'economy',name:'경제 모델',
+    measures:[
+      {event:'"내일 비 와?"',answer:'우산의 비용 vs 맞을 때의 손해. 기댓값 계산.',note:'날씨 질문이 아니라 의사결정 질문.'},
+      {event:'기후 위기',answer:'기후 난민, 분쟁, 자원 재배분. 자본의 방향.',note:'인간의 광기가 개입하면 왜곡이 생긴다.'},
+    ]
+  },
+  {
+    id:'relation',name:'관계 모델',
+    measures:[
+      {event:'"내일 비 와?"',answer:'"그래서 온다는 거야 안 온다는 거야?"',note:'상대는 0 또는 1을 원한다. 내 모델이 맞지 않는다.'},
+      {event:'기후 위기',answer:'당사자가 되어야 행동한다. 공감이 먼저.',note:'데이터가 아니라 이야기가 움직인다.'},
+    ]
+  },
+  {
+    id:'science',name:'과학 태도',
+    measures:[
+      {event:'"내일 비 와?"',answer:'모델의 한계를 인정한다. 앙상블 예측.',note:'The Primacy of Doubt.'},
+      {event:'기후 위기',answer:'데이터를 끊임없이 보여준다. 의심과 갱신.',note:'자연을 다루는 과학의 영역이니까.'},
+    ]
+  },
+];
+
+const partsGrid=document.getElementById('partsGrid');
+const scoreContent=document.getElementById('scoreContent');
+const emFill=document.getElementById('emFill');
+const emNote=document.getElementById('emNote');
+const active=new Set(['weather','economy','relation','science']);
+
+// Build toggles
+parts.forEach(p=>{
+  const btn=document.createElement('div');
+  btn.className='part-toggle active';
+  btn.dataset.id=p.id;
+  btn.innerHTML=`<div class="pt-dot"></div>${p.name}`;
+  btn.addEventListener('click',()=>{
+    if(active.has(p.id)){if(active.size>1)active.delete(p.id);else return}
+    else active.add(p.id);
+    btn.classList.toggle('active',active.has(p.id));
+    updateScore();
+  });
+  partsGrid.appendChild(btn);
+});
+
+function updateScore(){
+  // Update meter
+  const pct=Math.round(active.size/parts.length*100);
+  emFill.style.width=pct+'%';
+  emNote.textContent=`${active.size} / ${parts.length} 파트 활성`;
+  // Update muting
+  document.querySelectorAll('.part-line').forEach(line=>{
+    line.classList.toggle('muted',!active.has(line.dataset.part));
+  });
+}
+
+// Build score
+const events=['내일 비 와?','기후 위기'];
+events.forEach((ev,ei)=>{
+  const measure=document.createElement('div');
+  measure.className='measure';
+  measure.innerHTML=`<div class="measure-label">마디 ${ei+1} — "${ev}"</div><div class="parts-row" id="row-${ei}"></div>`;
+  scoreContent.appendChild(measure);
+  parts.forEach(p=>{
+    const m=p.measures[ei];
+    const line=document.createElement('div');
+    line.className='part-line';
+    line.dataset.part=p.id;
+    line.innerHTML=`<div class="pl-name">${p.name}</div><div class="pl-content"><span class="answer">${m.answer}</span> <em>— ${m.note}</em></div>`;
+    measure.querySelector('.parts-row').appendChild(line);
+  });
+  if(ei<events.length-1){
+    const spacer=document.createElement('div');spacer.style.height='12px';
+    scoreContent.appendChild(spacer);
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>24 — 미지를 향한 언어</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08080e;--ink:#d8d8f0;--ink-mid:#6868a0;--ink-faint:#181830;--acc:#9090e0;--acc-dim:rgba(144,144,224,0.08);--math-c:#a0c8ff;--poem-c:#e8b0d0;--rule:#181828}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'DM Mono',monospace;font-weight:300;min-height:100vh}
+nav{padding:22px 36px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule)}
+.nav-back{font-size:10px;letter-spacing:.12em;color:var(--ink-mid);text-decoration:none;text-transform:uppercase}.nav-back:hover{color:var(--ink)}
+.nav-num{font-size:10px;color:var(--ink-faint)}
+.hero{padding:60px 36px 52px;border-bottom:1px solid var(--rule)}
+.hero-meta{font-size:10px;letter-spacing:.14em;color:var(--acc);text-transform:uppercase;margin-bottom:14px}
+.hero-title{font-family:'DM Serif Display',serif;font-size:clamp(28px,5vw,54px);font-weight:400;line-height:1.08;letter-spacing:-.02em}
+.hero-book{margin-top:20px;font-size:11px;color:var(--ink-mid)}
+.hero-bridge{margin-top:28px;font-size:14px;color:var(--ink-mid);line-height:1.7;max-width:520px;font-style:italic}
+
+/* COLUMN HEADERS */
+.col-headers{display:grid;grid-template-columns:1fr 1px 1fr;max-width:720px;margin:0 auto}
+.ch{padding:18px 32px;border-bottom:1px solid var(--rule)}
+.ch-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px;display:block}
+.ch.math .ch-label{color:var(--math-c)}
+.ch.poem .ch-label{color:var(--poem-c)}
+.ch-desc{font-size:12px;color:var(--ink-mid)}
+.col-divider{background:var(--rule)}
+
+/* DUAL COLUMN PAIRS */
+.dual-wrap{max-width:720px;margin:0 auto}
+.concept-pair{display:grid;grid-template-columns:1fr 1px 1fr;border-bottom:1px solid var(--rule);opacity:0;transform:translateY(10px);transition:opacity .55s ease,transform .55s ease}
+.concept-pair.visible{opacity:1;transform:none}
+.cp-math,.cp-poem{padding:28px 32px}
+.cp-math{border-right:none}
+.pair-line{background:var(--rule)}
+.cp-concept{font-size:9px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.cp-math .cp-concept{color:var(--math-c)}
+.cp-poem .cp-concept{color:var(--poem-c)}
+.concept-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.math-dot{background:var(--math-c)}.poem-dot{background:var(--poem-c)}
+.math-content{font-size:13px;color:var(--math-c);line-height:1.75;font-variant-numeric:tabular-nums}
+.math-formula{font-size:16px;letter-spacing:.04em;margin-bottom:10px;color:var(--math-c)}
+.poem-content{font-family:'DM Serif Display',serif;font-style:italic;font-size:15px;color:var(--poem-c);line-height:1.8}
+
+/* TWO BIG QUESTIONS */
+.questions-wrap{max-width:720px;margin:0 auto;padding:48px 32px 0}
+.q-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.big-questions{display:flex;flex-direction:column;gap:12px;margin-bottom:40px}
+.big-q{padding:20px 24px;border:1px solid var(--rule);cursor:pointer;transition:background .2s,border-color .2s}
+.big-q:hover{background:var(--acc-dim);border-color:var(--acc)}
+.big-q.open{background:var(--acc-dim);border-color:var(--acc)}
+.bq-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.bq-title{font-family:'DM Serif Display',serif;font-style:italic;font-size:15px;color:var(--acc)}
+.bq-arrow{font-size:11px;color:var(--ink-mid);transition:transform .2s}.big-q.open .bq-arrow{transform:rotate(180deg)}
+.bq-body{display:none;margin-top:16px;font-size:14px;color:var(--ink-mid);line-height:1.75;padding-top:16px;border-top:1px solid var(--rule)}
+.big-q.open .bq-body{display:block}
+
+/* CLOSING */
+.closing{max-width:720px;margin:0 auto;padding:0 32px 80px}
+.closing p{font-size:15px;line-height:1.92;color:var(--ink);opacity:.75}.closing p+p{margin-top:1em}
+
+footer{border-top:1px solid var(--rule);padding:26px 36px;display:flex;justify-content:space-between}
+.footer-label{font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase}
+.footer-next{font-size:11px;color:var(--ink-mid);text-decoration:none;transition:color .2s}.footer-next:hover{color:var(--ink)}
+@media(max-width:600px){nav,footer{padding:16px 20px}.hero{padding-left:20px;padding-right:20px}.col-headers,.dual-wrap,.questions-wrap,.closing{max-width:100%}.concept-pair{grid-template-columns:1fr;border-bottom:1px solid var(--rule)}.cp-math{border-bottom:1px solid var(--rule)}.pair-line{display:none}.cp-math,.cp-poem{padding:20px}.ch{padding:14px 20px}.questions-wrap,.closing{padding-left:20px;padding-right:20px}}
+</style>
+</head>
+<body>
+<nav><a class="nav-back" href="node-nods-demo.html">← Node Nods</a><span class="nav-num">No. 24 / 2511</span></nav>
+<header class="hero">
+  <div class="hero-meta">2025.11 — 미지</div>
+  <h1 class="hero-title">미지를 향한 언어</h1>
+  <div class="hero-book">맥스 테그마크, 『맥스 테그마크의 유니버스』</div>
+  <div class="hero-bridge">수학적 언어로 구조를 이해하고, 시적 언어를 통하여 건너간다. 두 언어는 같은 미지를 다른 방식으로 가리킨다.</div>
+</header>
+
+<div class="col-headers">
+  <div class="ch math">
+    <span class="ch-label">수학적 언어</span>
+    <div class="ch-desc">구조를 이해한다. 방정식을 찾아낸다.</div>
+  </div>
+  <div class="col-divider"></div>
+  <div class="ch poem">
+    <span class="ch-label">시적 언어</span>
+    <div class="ch-desc">건너간다. 안다는 확신 너머로.</div>
+  </div>
+</div>
+
+<div class="dual-wrap">
+
+  <div class="concept-pair">
+    <div class="cp-math">
+      <div class="cp-concept"><div class="concept-dot math-dot"></div>실재 (Reality)</div>
+      <div class="math-formula">M = (S, φ)</div>
+      <div class="math-content">물리적 실체는 수학적 구조 그 자체다. S는 집합, φ는 그 집합의 관계들. 우주는 이 구조 안에 기술된다.</div>
+    </div>
+    <div class="pair-line"></div>
+    <div class="cp-poem">
+      <div class="cp-concept"><div class="concept-dot poem-dot"></div>실재 (Reality)</div>
+      <div class="poem-content">지도는 영토가 아니다. 그러나 어떤 지도들은 영토보다 더 실재처럼 느껴진다.</div>
+    </div>
+  </div>
+
+  <div class="concept-pair">
+    <div class="cp-math">
+      <div class="cp-concept"><div class="concept-dot math-dot"></div>자연 관찰</div>
+      <div class="math-formula">관찰 → 방정식 발견</div>
+      <div class="math-content">자연의 관찰 결과는 방정식을 유도하는 게 아니라 방정식을 찾아내는 태도로 전환 가능하다. 이미 거기 있던 것을 보는 것.</div>
+    </div>
+    <div class="pair-line"></div>
+    <div class="cp-poem">
+      <div class="cp-concept"><div class="concept-dot poem-dot"></div>자연 관찰</div>
+      <div class="poem-content">흡사 프로그래밍에서 브랜치를 뻗어보고 머지를 할지 말지 결정하는 모습처럼 보인다.</div>
+    </div>
+  </div>
+
+  <div class="concept-pair">
+    <div class="cp-math">
+      <div class="cp-concept"><div class="concept-dot math-dot"></div>AI의 자아</div>
+      <div class="math-formula">input → P(output|input)</div>
+      <div class="math-content">각종 모델을 사용하는 계정은 각각 쌓이는 데이터에 따라서 구현되는 양상이 달라진다. 인풋 데이터에 따른 아웃풋이 유저에 따라 결정된다.</div>
+    </div>
+    <div class="pair-line"></div>
+    <div class="cp-poem">
+      <div class="cp-concept"><div class="concept-dot poem-dot"></div>AI의 자아</div>
+      <div class="poem-content">AI에게 자아라고 정의내리는 현상이 생기면 이렇게 사고할 것처럼 보인다. 세상의 모습과 닮아가는 것처럼.</div>
+    </div>
+  </div>
+
+  <div class="concept-pair">
+    <div class="cp-math">
+      <div class="cp-concept"><div class="concept-dot math-dot"></div>미지의 영역</div>
+      <div class="math-formula">∃x : x ∉ K</div>
+      <div class="math-content">안다는 확신에 포섭되지 않는 미지의 영역이 있다. 이 여백은 상상할 수 있는 가능성을 내포한다.</div>
+    </div>
+    <div class="pair-line"></div>
+    <div class="cp-poem">
+      <div class="cp-concept"><div class="concept-dot poem-dot"></div>미지의 영역</div>
+      <div class="poem-content">현실과 판타지의 경계 안에서 구상하는 외재적 혹은 내재적 우주는 무엇인가. 과학적 탐구력과 예술적 상상력이 공존한다.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="questions-wrap">
+  <div class="q-label">두 개의 반문 — 이 글의 전환점</div>
+  <div class="big-questions">
+    <div class="big-q" onclick="this.classList.toggle('open')">
+      <div class="bq-head"><div class="bq-title">매트릭스인가?</div><span class="bq-arrow">↓</span></div>
+      <div class="bq-body">우주를 이해하는 방식을 '왜 이러한 물리법칙을 가지고 있는가'에서 '왜 이런 수학적 구조인가'로 바꿀 수 있다. 자연의 관찰 결과는 방정식을 유도하는 게 아니라 방정식을 찾아내는 태도로 전환 가능하다.</div>
+    </div>
+    <div class="big-q" onclick="this.classList.toggle('open')">
+      <div class="bq-head"><div class="bq-title">인공지능인가?</div><span class="bq-arrow">↓</span></div>
+      <div class="bq-body">생성형 인공지능이 실재한다. 글이 쓰인 시점과 달리 현재 유저 친화형 AI가 현실에 존재한다. AI에게 자아라고 정의내리는 현상이 생기면 이렇게 사고할 것처럼 보인다. 이 모습이 세상의 모습과 닮아가는 것처럼 보인다.</div>
+    </div>
+  </div>
+</div>
+
+<div class="closing">
+  <p>그 미지의 실재를 탐험할 때 수학적 언어로 구조를 이해하고 시적 언어를 통하여 건너간다. 과학적 탐구력과 예술적 상상력이 공존한다. 현실과 판타지의 경계 안에서 구상하는 외재적 혹은 내재적 우주는 무엇인가.</p>
+</div>
+
+<footer><span class="footer-label">Node Nods</span><a class="footer-next" href="entry-25.html">25 — 매스미디어 (Math-media) →</a></footer>
+<script>
+document.querySelectorAll('.concept-pair').forEach((p,i)=>{
+  p.style.transitionDelay=(i*.08)+'s';
+  new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add('visible')),{threshold:.15}).observe(p);
+});
+</script>
+</body>
+</html>

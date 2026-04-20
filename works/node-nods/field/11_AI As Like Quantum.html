@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>11 — Quantum AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b0d;
+    --ink: #dcdce8;
+    --ink-mid: #7878a0;
+    --ink-faint: #28283a;
+    --acc: #6060ff;
+    --acc-dim: rgba(96,96,255,0.12);
+    --bad: #ff5555;
+    --bad-dim: rgba(255,85,85,0.1);
+    --good: #44cc88;
+    --good-dim: rgba(68,204,136,0.08);
+    --rule: #1e1e2a;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: 'DM Mono', monospace; font-weight: 300; min-height: 100vh; }
+  nav { padding: 22px 36px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--rule); }
+  .nav-back { font-size: 10px; letter-spacing: .12em; color: var(--ink-mid); text-decoration: none; text-transform: uppercase; }
+  .nav-back:hover { color: var(--ink); }
+  .nav-num { font-size: 10px; color: var(--ink-faint); }
+  .hero { padding: 60px 36px 52px; border-bottom: 1px solid var(--rule); }
+  .hero-meta { font-size: 10px; letter-spacing: .14em; color: var(--acc); text-transform: uppercase; margin-bottom: 14px; }
+  .hero-title { font-family: 'DM Serif Display', serif; font-size: clamp(32px, 5.5vw, 58px); font-weight: 400; line-height: 1.05; letter-spacing: -.02em; }
+  .hero-sub { margin-top: 8px; font-family: 'DM Serif Display', serif; font-style: italic; font-size: clamp(16px, 2.5vw, 24px); color: var(--ink-mid); }
+  .hero-book { margin-top: 24px; font-size: 11px; color: var(--ink-mid); }
+  .verdict-rule { margin-top: 36px; padding: 18px 22px; border: 1px solid var(--acc); background: var(--acc-dim); }
+  .verdict-rule-label { font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: var(--acc); margin-bottom: 6px; }
+  .verdict-rule-text { font-size: 14px; color: var(--ink); line-height: 1.6; }
+  .verdict-rule-text strong { color: var(--acc); font-weight: 400; }
+  .body-wrap { max-width: 680px; margin: 0 auto; padding: 60px 36px 100px; }
+  .section { margin-bottom: 60px; opacity: 0; transform: translateY(14px); transition: opacity .55s ease, transform .55s ease; }
+  .section.visible { opacity: 1; transform: none; }
+  .sec-label { font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-mid); margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+  .concept-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+  .concept-card { padding: 20px; border: 1px solid var(--rule); }
+  .concept-card.known { border-color: var(--good); background: var(--good-dim); }
+  .concept-card.unknown { border-color: var(--bad); background: var(--bad-dim); }
+  .cc-tag { font-size: 9px; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 10px; }
+  .concept-card.known .cc-tag { color: var(--good); }
+  .concept-card.unknown .cc-tag { color: var(--bad); }
+  .cc-title { font-size: 13px; color: var(--ink); margin-bottom: 8px; }
+  .cc-body { font-size: 12px; color: var(--ink-mid); line-height: 1.65; }
+  .prose p { font-size: 15px; line-height: 1.92; color: var(--ink); opacity: .85; }
+  .prose p + p { margin-top: 1.1em; }
+  .disc-intro { font-size: 13px; color: var(--ink-mid); line-height: 1.7; margin-bottom: 20px; }
+  .disc-list { display: flex; flex-direction: column; gap: 8px; }
+  .disc-item { display: flex; align-items: stretch; border: 1px solid var(--rule); overflow: hidden; }
+  .disc-phrase { flex: 1; padding: 14px 18px; font-size: 13px; color: var(--ink); line-height: 1.55; }
+  .disc-phrase .q { color: var(--acc); }
+  .disc-btns { display: flex; flex-shrink: 0; border-left: 1px solid var(--rule); }
+  .disc-btn { width: 52px; padding: 0; cursor: pointer; font-size: 12px; color: var(--ink-mid); border: none; background: none; border-left: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; transition: background .15s, color .15s; min-height: 48px; }
+  .disc-btn:first-child { border-left: none; }
+  .disc-btn:hover { background: var(--acc-dim); color: var(--acc); }
+  .disc-btn.ok { background: var(--good-dim); color: var(--good); }
+  .disc-btn.bad { background: var(--bad-dim); color: var(--bad); }
+  .disc-score { margin-top: 16px; font-size: 11px; color: var(--ink-mid); min-height: 18px; }
+  .disc-score.pass { color: var(--good); }
+  .disc-score.fail { color: var(--bad); }
+  .analogy-box { border: 1px solid var(--rule); }
+  .analogy-row { display: flex; gap: 0; border-bottom: 1px solid var(--rule); }
+  .analogy-row:last-child { border-bottom: none; }
+  .analogy-key { width: 88px; flex-shrink: 0; padding: 14px 16px; font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: var(--acc); border-right: 1px solid var(--rule); display: flex; align-items: center; }
+  .analogy-val { padding: 14px 18px; font-size: 13px; color: var(--ink-mid); line-height: 1.6; }
+  footer { border-top: 1px solid var(--rule); padding: 26px 36px; display: flex; justify-content: space-between; }
+  .footer-label { font-size: 10px; letter-spacing: .1em; color: var(--ink-faint); text-transform: uppercase; }
+  .footer-next { font-size: 11px; color: var(--ink-mid); text-decoration: none; transition: color .2s; }
+  .footer-next:hover { color: var(--ink); }
+  @media (max-width: 600px) {
+    nav, footer { padding: 16px 20px; }
+    .hero, .body-wrap { padding-left: 20px; padding-right: 20px; }
+    .concept-pair { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-back" href="node-nods-demo.html">← Node Nods</a>
+  <span class="nav-num">No. 11 / 2410</span>
+</nav>
+<header class="hero">
+  <div class="hero-meta">2024.10 — 분별</div>
+  <h1 class="hero-title">Quantum AI</h1>
+  <div class="hero-sub">Quantum 뒤에 Physics를 제외한 모든 말은 헛소리</div>
+  <div class="hero-book">크리스 페리, 『괴짜 교수 크리스 페리의 빌어먹을 양자역학』</div>
+  <div class="verdict-rule">
+    <div class="verdict-rule-label">판별 원칙</div>
+    <div class="verdict-rule-text"><strong>Quantum</strong> 이라는 단어 뒤에는 99.9% 확률로 <strong>Physics</strong> 를 생성해야 한다. 그 외의 조합은 헛소리일 가능성이 매우 높다.</div>
+  </div>
+</header>
+<main class="body-wrap">
+  <div class="section">
+    <div class="sec-label">무지의 두 층위</div>
+    <div class="concept-pair">
+      <div class="concept-card unknown">
+        <div class="cc-tag">위험 — 분별 불가</div>
+        <div class="cc-title">unknown unknowns</div>
+        <div class="cc-body">모르는 것도 모른다는 걸 모르는 무지. 양자 헛소리꾼이 가장 경계해야 할 상태.</div>
+      </div>
+      <div class="concept-card known">
+        <div class="cc-tag">안전 — 분별 가능</div>
+        <div class="cc-title">known unknowns</div>
+        <div class="cc-body">모르는 걸 안다는 걸 아는 상태. 이 글의 독자들이 갖추길 바라는 태도.</div>
+      </div>
+    </div>
+    <div class="prose">
+      <p>저자는 이상한 양자 헛소리를 지껄이고 있거나 혹시 휘둘리고 있지는 않는지 점검해보라고 한다. 보통 일상에서 자주 낚일 법한 것들을 짚어준다 — 에너지, 파동, 무작위성, 얽힘 같은 개념들과 '하이젠베르크의 불확정성 원리', '슈뢰딩거의 고양이', 평행우주 같은 실재에 대한 다양한 해석까지 톺아보도록 한다.</p>
+    </div>
+  </div>
+  <div class="section">
+    <div class="sec-label">직접 판별해보기 — O (Physics) / X (헛소리)</div>
+    <div class="disc-intro">아래 문장들에서 Quantum이 올바르게 쓰였으면 O, 헛소리면 X를 눌러보세요.</div>
+    <div class="disc-list" id="discList"></div>
+    <div class="disc-score" id="discScore"></div>
+  </div>
+  <div class="section">
+    <div class="sec-label">Quantum과 AI — 닮은 점</div>
+    <div class="analogy-box">
+      <div class="analogy-row"><div class="analogy-key">복잡성</div><div class="analogy-val">두 시스템 모두 인간의 직관을 뛰어넘는 복잡한 계산과 추상화를 통해 결과를 산출한다.</div></div>
+      <div class="analogy-row"><div class="analogy-key">확률성</div><div class="analogy-val">결정적이지 않고 확률적인 방식으로 작동한다. 같은 입력이 같은 출력을 보장하지 않는다.</div></div>
+      <div class="analogy-row"><div class="analogy-key">불투명성</div><div class="analogy-val">널리 쓰이지만 전문가가 아닌 이상 잘 모른다. 그래서 헛소리꾼이 많을 수 있다.</div></div>
+      <div class="analogy-row"><div class="analogy-key">철학적<br>함정</div><div class="analogy-val">보통 철학적인 질문에 빠지지 말라는 경고를 듣는다. 자기가 철학에 대해 얼마나 모르고 있는지 깨닫지 못하기 때문이다.</div></div>
+    </div>
+  </div>
+</main>
+<footer>
+  <span class="footer-label">Node Nods</span>
+  <a class="footer-next" href="entry-12.html">12 — Into the unknown →</a>
+</footer>
+<script>
+const items = [
+  { html: 'Quantum <span class="q">Physics</span>는 파동함수로 입자의 상태를 기술한다.', ok: true },
+  { html: 'Quantum <span class="q">healing</span>으로 세포를 재생시킬 수 있습니다.', ok: false },
+  { html: 'Quantum <span class="q">entanglement</span>는 두 입자의 상태가 즉각 연동되는 현상이다.', ok: true },
+  { html: 'Quantum <span class="q">consciousness</span>가 우주의 진리를 깨닫게 합니다.', ok: false },
+  { html: 'Quantum <span class="q">computing</span>은 큐비트로 특정 계산을 가속한다.', ok: true },
+  { html: 'Quantum <span class="q">energy</span> 요법으로 몸의 에너지 균형을 맞출 수 있습니다.', ok: false },
+];
+const list = document.getElementById('discList');
+const score = document.getElementById('discScore');
+let done = 0, hits = 0;
+items.forEach((item, i) => {
+  const row = document.createElement('div');
+  row.className = 'disc-item';
+  row.innerHTML = `<div class="disc-phrase">${item.html}</div><div class="disc-btns"><button class="disc-btn" data-i="${i}" data-v="true">O</button><button class="disc-btn" data-i="${i}" data-v="false">X</button></div>`;
+  list.appendChild(row);
+});
+list.addEventListener('click', e => {
+  const btn = e.target.closest('.disc-btn');
+  if (!btn || btn.classList.contains('ok') || btn.classList.contains('bad')) return;
+  const i = +btn.dataset.i;
+  const v = btn.dataset.v === 'true';
+  const correct = v === items[i].ok;
+  btn.classList.add(correct ? 'ok' : 'bad');
+  const sibling = btn.parentElement.querySelector(`.disc-btn[data-v="${!v}"]`);
+  if (!correct) sibling.classList.add('ok');
+  done++; if (correct) hits++;
+  const pct = Math.round(hits/done*100);
+  score.textContent = `${done} / ${items.length} 판별 완료 — 정확도 ${pct}%`;
+  score.className = 'disc-score ' + (pct >= 70 ? 'pass' : 'fail');
+});
+const sections = document.querySelectorAll('.section');
+new IntersectionObserver(e => e.forEach(x => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: .12 }).observe
+? document.querySelectorAll('.section').forEach(s => new IntersectionObserver(e => e.forEach(x => x.isIntersecting && x.target.classList.add('visible')), {threshold:.12}).observe(s))
+: sections.forEach(s => s.classList.add('visible'));
+</script>
+</body>
+</html>

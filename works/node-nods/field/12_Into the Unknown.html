@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12 — Into the unknown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #070810;
+    --ink: #b8c8e0;
+    --ink-mid: #5870a0;
+    --ink-faint: #141828;
+    --acc: #4488ff;
+    --green: #44cc88;
+    --amber: #ffaa44;
+    --rule: #141828;
+    --term-bg: #040508;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: 'DM Mono', monospace; font-weight: 300; min-height: 100vh; }
+  nav { padding: 22px 36px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--rule); }
+  .nav-back { font-size: 10px; letter-spacing: .12em; color: var(--ink-mid); text-decoration: none; text-transform: uppercase; }
+  .nav-back:hover { color: var(--ink); }
+  .nav-num { font-size: 10px; color: var(--ink-faint); }
+
+  /* HERO */
+  .hero { padding: 60px 36px 52px; border-bottom: 1px solid var(--rule); }
+  .hero-meta { font-size: 10px; letter-spacing: .14em; color: var(--acc); text-transform: uppercase; margin-bottom: 14px; }
+  .hero-title { font-family: 'DM Serif Display', serif; font-size: clamp(30px, 5vw, 54px); font-weight: 400; line-height: 1.05; letter-spacing: -.02em; }
+  .hero-title em { font-style: italic; color: var(--ink-mid); }
+  .hero-book { margin-top: 24px; font-size: 11px; color: var(--ink-mid); }
+  .hero-def { margin-top: 28px; padding: 16px 20px; border-left: 2px solid var(--acc); font-size: 13px; color: var(--ink-mid); line-height: 1.7; }
+
+  /* SIMULATION LOG */
+  .body-wrap { max-width: 720px; margin: 0 auto; padding: 60px 36px 100px; }
+  .section { margin-bottom: 56px; opacity: 0; transform: translateY(14px); transition: opacity .55s ease, transform .55s ease; }
+  .section.visible { opacity: 1; transform: none; }
+  .sec-label { font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-mid); margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+
+  /* TERMINAL BLOCK */
+  .terminal { background: var(--term-bg); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; margin: 0 0 24px; }
+  .terminal-bar { padding: 10px 14px; border-bottom: 1px solid var(--rule); display: flex; align-items: center; gap: 8px; }
+  .t-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .t-dot:nth-child(1) { background: #ff5f57; }
+  .t-dot:nth-child(2) { background: #febc2e; }
+  .t-dot:nth-child(3) { background: #28c840; }
+  .terminal-title { font-size: 10px; color: var(--ink-mid); letter-spacing: .06em; margin-left: 4px; }
+  .terminal-body { padding: 20px 22px; }
+  .log-line { display: flex; gap: 12px; padding: 3px 0; font-size: 12px; line-height: 1.6; }
+  .log-line + .log-line { border-top: none; }
+  .log-ts { color: var(--ink-faint); flex-shrink: 0; width: 52px; font-size: 11px; }
+  .log-tag { flex-shrink: 0; width: 72px; font-size: 10px; letter-spacing: .06em; padding: 1px 0; }
+  .tag-init { color: var(--acc); }
+  .tag-run { color: var(--green); }
+  .tag-param { color: var(--amber); }
+  .tag-data { color: var(--ink-mid); }
+  .tag-out { color: var(--green); }
+  .tag-note { color: var(--ink-mid); }
+  .log-msg { color: var(--ink); flex: 1; }
+  .log-msg .hl { color: var(--acc); }
+  .log-msg .val { color: var(--green); }
+  .log-msg .warn { color: var(--amber); }
+  .log-msg em { font-style: normal; color: var(--ink-mid); }
+
+  .prose p { font-size: 15px; line-height: 1.92; color: var(--ink); opacity: .85; }
+  .prose p + p { margin-top: 1.1em; }
+
+  /* INSIGHT CARDS */
+  .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px; }
+  .insight-card { padding: 16px 18px; border: 1px solid var(--rule); }
+  .ic-q { font-size: 10px; letter-spacing: .1em; color: var(--acc); text-transform: uppercase; margin-bottom: 8px; }
+  .ic-body { font-size: 13px; color: var(--ink-mid); line-height: 1.6; }
+
+  .closing-quote { margin-top: 32px; padding: 20px 24px; border: 1px solid var(--rule); }
+  .cq-body { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 15px; color: var(--ink-mid); line-height: 1.7; }
+  .cq-attr { margin-top: 10px; font-size: 10px; color: var(--ink-faint); letter-spacing: .08em; }
+
+  footer { border-top: 1px solid var(--rule); padding: 26px 36px; display: flex; justify-content: space-between; }
+  .footer-label { font-size: 10px; letter-spacing: .1em; color: var(--ink-faint); text-transform: uppercase; }
+  .footer-next { font-size: 11px; color: var(--ink-mid); text-decoration: none; transition: color .2s; }
+  .footer-next:hover { color: var(--ink); }
+  @media (max-width: 600px) {
+    nav, footer { padding: 16px 20px; }
+    .hero, .body-wrap { padding-left: 20px; padding-right: 20px; }
+    .insight-grid { grid-template-columns: 1fr; }
+    .log-ts { display: none; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-back" href="node-nods-demo.html">← Node Nods</a>
+  <span class="nav-num">No. 12 / 2411</span>
+</nav>
+<header class="hero">
+  <div class="hero-meta">2024.11 — 미지</div>
+  <h1 class="hero-title">Into the<br><em>unknown</em></h1>
+  <div class="hero-book">앤드루 폰첸, 『상자 속 우주』</div>
+  <div class="hero-def">과학 연구에서 시뮬레이션은 현실을 단순화한 모델로 — 컴퓨터 상자 안에서 자연을 넣고 실험하는 기술이다.</div>
+</header>
+<main class="body-wrap">
+
+  <div class="section">
+    <div class="sec-label">시뮬레이션 실행 로그 — 홀름베리(1941) → 현재</div>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div>
+        <span class="terminal-title">simulation.run</span>
+      </div>
+      <div class="terminal-body">
+        <div class="log-line"><span class="log-ts">1941</span><span class="log-tag tag-init">INIT</span><span class="log-msg">홀름베리: <span class="hl">drift-kick</span> 반복 실행. 주기 = <span class="val">100만 년</span></span></div>
+        <div class="log-line"><span class="log-ts">    </span><span class="log-tag tag-param">PARAM</span><span class="log-msg">입력값 정의 — 암흑물질 덩어리 = <span class="hl">smarticle</span> <em>(simulation + particle)</em></span></div>
+        <div class="log-line"><span class="log-ts">    </span><span class="log-tag tag-run">RUN</span><span class="log-msg">틴슬리의 시뮬레이션: 단순하지만 작동함 — <span class="warn">"이렇게 줄여도 되나?" 싶을 정도로</span></span></div>
+        <div class="log-line"><span class="log-ts">    </span><span class="log-tag tag-param">GRID</span><span class="log-msg">대부분이 텅 비어 있는 우주 → <span class="hl">sub-grid</span> 크기 최적화 필요</span></div>
+        <div class="log-line"><span class="log-ts">    </span><span class="log-tag tag-data">DATA</span><span class="log-msg">미가공 정보에서 유용한 지식 추출 → <span class="warn">엄청난 처리 능력 요구</span></span></div>
+        <div class="log-line"><span class="log-ts">현재</span><span class="log-tag tag-run">AI</span><span class="log-msg">Raw data 정리 시간 → AI 도움으로 <span class="val">대폭 단축</span> 예상</span></div>
+        <div class="log-line"><span class="log-ts">    </span><span class="log-tag tag-note">NOTE</span><span class="log-msg">Command를 어떻게 줄지는 <span class="hl">인간의 영역</span></span></div>
+        <div class="log-line"><span class="log-ts">    </span><span class="log-tag tag-out">OUT</span><span class="log-msg">결과값 시각화 → 질문 → 해석 → <span class="val">현실에 유용한 지식</span></span></div>
+      </div>
+    </div>
+    <div class="prose">
+      <p>시뮬레이션은 결국 '계산'의 산물이므로 지구의 대기와 은하, 또는 우주 전체에 물리학을 적용한 결과를 추적할 수 있다. 다양한 과학적 아이디어를 하나로 연결하여 결과물을 만들어낸 사람들 사이의 협력.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-label">시뮬레이션이 열어주는 질문들</div>
+    <div class="insight-grid">
+      <div class="insight-card">
+        <div class="ic-q">무엇을 신호로, 무엇을 노이즈로</div>
+        <div class="ic-body">머나먼 우주에서 날아온 빛을 통해 "자연이 우리에게 무엇을 드러내려고 하는지" 눈여겨봐야 한다.</div>
+      </div>
+      <div class="insight-card">
+        <div class="ic-q">인간이 할 수 있는 것</div>
+        <div class="ic-body">결과를 보고 분석을 어떻게 하고 무엇을 읽어낼 수 있는가. Command를 어떻게 줄지는 인간의 영역이다.</div>
+      </div>
+      <div class="insight-card">
+        <div class="ic-q">시뮬라르크, 시뮬라시옹</div>
+        <div class="ic-body">시뮬레이션 — 현실을 대충 반영한 그림자. 그것이 어느 순간 현실 자체가 된다.</div>
+      </div>
+      <div class="insight-card">
+        <div class="ic-q">모델의 한계</div>
+        <div class="ic-body">어떤 파라미터를 선택하느냐에 따라 완전히 다른 우주가 나온다. 모델은 세계가 아니다.</div>
+      </div>
+    </div>
+    <div class="closing-quote">
+      <div class="cq-body">+시뮬라르크, 시뮬라시옹 — 이 단어들이 이 책과 만났을 때 어떤 마찰이 일어나는지를 생각해보고 싶다.</div>
+      <div class="cq-attr">작업노트 끝에 남긴 메모</div>
+    </div>
+  </div>
+
+</main>
+<footer>
+  <span class="footer-label">Node Nods</span>
+  <a class="footer-next" href="entry-13.html">13 — 수식이 작품이 될 때 →</a>
+</footer>
+<script>
+document.querySelectorAll('.section').forEach(s =>
+  new IntersectionObserver(e => e.forEach(x => x.isIntersecting && x.target.classList.add('visible')), {threshold:.12}).observe(s)
+);
+</script>
+</body>
+</html>

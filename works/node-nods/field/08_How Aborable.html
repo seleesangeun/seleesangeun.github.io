@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>08 — 귀여워..ㅠㅠ♥</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e8f2fa;--ink:#0a2038;--ink-mid:#4a7090;--ink-faint:#a8c8e0;--bl:#1a5a8a;--rule:#c8dff0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'DM Mono',monospace;font-weight:300;min-height:100vh}
+nav{padding:22px 36px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule)}
+.nav-back{font-size:10px;letter-spacing:.12em;color:var(--ink-mid);text-decoration:none;text-transform:uppercase}.nav-back:hover{color:var(--ink)}
+.nav-num{font-size:10px;color:var(--ink-faint)}
+.hero{padding:60px 36px 52px;border-bottom:1px solid var(--rule)}
+.hero-meta{font-size:10px;letter-spacing:.14em;color:var(--bl);text-transform:uppercase;margin-bottom:14px}
+.hero-title{font-family:'DM Serif Display',serif;font-size:clamp(32px,6vw,60px);font-weight:400;line-height:1.05;letter-spacing:-.02em}
+.hero-sub{margin-top:8px;font-size:13px;color:var(--ink-mid);font-style:italic}
+.hero-book{margin-top:20px;font-size:11px;color:var(--ink-mid)}
+
+/* TEMPERATURE HEADER SELECTOR */
+.temp-bar{display:flex;border-bottom:1px solid var(--rule);overflow-x:auto;scrollbar-width:none}
+.temp-bar::-webkit-scrollbar{display:none}
+.temp-btn{flex:1;min-width:120px;padding:20px 18px;cursor:pointer;border:none;background:transparent;font-family:'DM Mono',monospace;text-align:left;transition:background .2s;border-bottom:3px solid transparent}
+.temp-btn.active{border-bottom-color:var(--bl)}
+.temp-btn:hover:not(.active){background:rgba(26,90,138,.05)}
+.tb-icon{font-size:18px;display:block;margin-bottom:6px}
+.tb-name{font-size:12px;color:var(--ink);display:block;margin-bottom:2px}
+.tb-sub{font-size:10px;color:var(--ink-mid);display:block}
+
+/* TEMP PANELS */
+.temp-panel{display:none}
+.temp-panel.active{display:block;animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* BOGLING — gentle, slow rising bubbles of curiosity */
+.panel-bogle{background:var(--bg)}
+.bg-stage{height:160px;position:relative;overflow:hidden;border-bottom:1px solid var(--rule)}
+.bubble-anim{position:absolute;border-radius:50%;border:1px solid rgba(26,90,138,.25);animation:rise linear infinite}
+@keyframes rise{0%{transform:translateY(0) scale(1);opacity:.6}100%{transform:translateY(-180px) scale(1.4);opacity:0}}
+.bg-body{padding:32px 36px}
+.bg-quote{font-family:'DM Serif Display',serif;font-style:italic;font-size:15px;color:var(--bl);line-height:1.7;margin-bottom:20px;padding:16px 20px;background:rgba(26,90,138,.06);border-left:2px solid var(--bl)}
+.bg-text p{font-size:15px;line-height:1.92;color:var(--ink);opacity:.85}.bg-text p+p{margin-top:1em}
+
+/* BUBBLE — verification, peer review, popping */
+.panel-bubble{background:white}
+.bv-stage{height:160px;position:relative;overflow:hidden;border-bottom:1px solid var(--rule);background:var(--bg)}
+.pop-bubble{position:absolute;border-radius:50%;border:1.5px solid rgba(26,90,138,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(26,90,138,.6);text-align:center;padding:4px;letter-spacing:.04em;animation:float ease-in-out infinite alternate;transition:transform .1s}
+.pop-bubble:hover{transform:scale(1.1)!important}
+.pop-bubble.popped{animation:pop .2s ease forwards!important}
+@keyframes float{from{transform:translateY(0)}to{transform:translateY(-12px)}}
+@keyframes pop{0%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.5}100%{transform:scale(0);opacity:0}}
+.bv-count{position:absolute;bottom:10px;right:14px;font-size:10px;color:var(--ink-mid)}
+.bv-body{padding:32px 36px}
+.bv-text p{font-size:15px;line-height:1.92;color:var(--ink);opacity:.85}.bv-text p+p{margin-top:1em}
+.bv-note{margin-top:18px;font-size:13px;color:var(--ink-mid);padding:14px 18px;border:1px solid var(--rule);line-height:1.65}
+
+/* BOILING — energy, expectation, heat rising */
+.panel-boil{background:var(--ink)}
+.bl-stage{height:160px;position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.08)}
+.heat-particle{position:absolute;border-radius:50%;animation:heat linear infinite}
+@keyframes heat{0%{transform:translateY(0) translateX(0);opacity:.8}50%{opacity:1}100%{transform:translateY(-170px) translateX(var(--drift));opacity:0}}
+.bl-body{padding:32px 36px}
+.bl-quote{font-family:'DM Serif Display',serif;font-style:italic;font-size:16px;color:var(--bg);line-height:1.65;margin-bottom:20px}
+.bl-text p{font-size:15px;line-height:1.92;color:rgba(232,242,250,.7)}.bl-text p+p{margin-top:1em}
+.bl-close{margin-top:24px;font-size:14px;color:rgba(168,200,224,.6);font-style:italic}
+
+footer{border-top:1px solid var(--rule);padding:26px 36px;display:flex;justify-content:space-between}
+.footer-label{font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase}
+.footer-next{font-size:11px;color:var(--ink-mid);text-decoration:none;transition:color .2s}.footer-next:hover{color:var(--ink)}
+@media(max-width:600px){nav,footer{padding:16px 20px}.hero,.bg-body,.bv-body,.bl-body{padding-left:20px;padding-right:20px}}
+</style>
+</head>
+<body>
+<nav><a class="nav-back" href="node-nods-demo.html">← Node Nods</a><span class="nav-num">No. 08 / 2407</span></nav>
+<header class="hero">
+  <div class="hero-meta">2024.07 — 보글</div>
+  <h1 class="hero-title">귀여워..ㅠㅠ♥</h1>
+  <div class="hero-sub">아, 끝났네. 지금 나는 물리를 좋아한다.</div>
+  <div class="hero-book">짐 알칼릴리, 『어떻게 물리학을 사랑하지 않을 수 있을까?』</div>
+</header>
+
+<div class="temp-bar">
+  <button class="temp-btn active" onclick="setTemp('bogle')">
+    <span class="tb-icon">○</span>
+    <span class="tb-name">보글보글</span>
+    <span class="tb-sub">애정 · 출현</span>
+  </button>
+  <button class="temp-btn" onclick="setTemp('bubble')">
+    <span class="tb-icon">◌</span>
+    <span class="tb-name">버블버블</span>
+    <span class="tb-sub">검증 · 갱신</span>
+  </button>
+  <button class="temp-btn" onclick="setTemp('boil')">
+    <span class="tb-icon">●</span>
+    <span class="tb-name">부글부글</span>
+    <span class="tb-sub">기대 · 열망</span>
+  </button>
+</div>
+
+<!-- BOGLING -->
+<div class="temp-panel active" id="panel-bogle">
+  <div class="bg-stage" id="bogleStage"></div>
+  <div class="bg-body">
+    <div class="bg-quote">"물리학의 가장 중요한 목적은 실재를 가장 심오하고 완벽하게 이해하는 것이죠."</div>
+    <div class="bg-text">
+      <p>애정하는 에너지를 담은 장(field)이 펼쳐진다. 이 곳에는 객관적인 실재(reality)에 최대한 가까이 다가가보려고 노력하는 여러 개념들이 보글거리며 드러난다.</p>
+      <p>현대물리학까지 길어 올리기 위하여 핵심 이론들을 전체적으로 조망한다. 시간이 가는 줄 모르고 더 알고 싶고 계속해서 들여다보고 싶은 상태가 된다.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BUBBLE -->
+<div class="temp-panel" id="panel-bubble">
+  <div class="bv-stage" id="bubbleStage">
+    <div class="bv-count" id="bvCount">터뜨린 버블: 0</div>
+  </div>
+  <div class="bv-body">
+    <div class="bv-text">
+      <p>이 과학적 개념들은 실증적 증거와 재현 가능성에 기반한 연구 윤리에 따라 채택된다. 동료 심사(peer review)를 통하여 비판적 평가를 받는 과학방법론을 취한다.</p>
+      <p>이렇게 의문을 품고 더 나은 것이 출현하면 언제든 이전의 버블을 터트릴 수 있다. 끊임없는 변화의 과정이라고 깨닫게 한다.</p>
+    </div>
+    <div class="bv-note">버블을 터뜨리는 것이 과학의 방법입니다. 위의 개념들을 클릭해 터뜨려보세요.</div>
+  </div>
+</div>
+
+<!-- BOILING -->
+<div class="temp-panel" id="panel-boil">
+  <div class="bl-stage" id="boilStage"></div>
+  <div class="bl-body">
+    <div class="bl-quote">"무슨 일이 터질 듯 부글부글 끓고 있다는 물리학이 앞으로 보여줄 그 발견과 수용의 과정이 기대된다."</div>
+    <div class="bl-text">
+      <p>무엇보다 이는 세상을 이해하고 싶은 과학자의 호기심에서 연구 열망으로 출현한다. 물리라는 과학의 세계는 예측과 발견의 역사이며 상상과 측정의 양립 가능성을 드러낸다.</p>
+    </div>
+    <div class="bl-close">새로운 발견을 위한 실수의 필연과 불확실성에 대한 개방성을 포용한다.</div>
+  </div>
+</div>
+
+<footer><span class="footer-label">Node Nods</span><a class="footer-next" href="entry-09.html">09 — 요란한 변이의 우연 →</a></footer>
+<script>
+// BOGLING animation
+const bStage=document.getElementById('bogleStage');
+for(let i=0;i<12;i++){
+  const b=document.createElement('div');b.className='bubble-anim';
+  const sz=8+Math.random()*20;
+  b.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*95}%;bottom:-${sz}px;animation-duration:${3+Math.random()*4}s;animation-delay:${Math.random()*4}s`;
+  bStage.appendChild(b);
+}
+
+// BUBBLE poppable concepts
+const concepts=['실재','측정','파동','양자','엔트로피','peer review','불확정성','상호작용','힘','에너지','장(field)','표준모형'];
+const bvStage=document.getElementById('bubbleStage');
+const bvCount=document.getElementById('bvCount');
+let popped=0;
+concepts.forEach((c,i)=>{
+  const b=document.createElement('div');b.className='pop-bubble';
+  const sz=44+Math.random()*28;
+  const left=5+Math.random()*85;
+  const top=10+Math.random()*70;
+  const dur=2+Math.random()*2;
+  const delay=Math.random()*2;
+  b.style.cssText=`width:${sz}px;height:${sz}px;left:${left}%;top:${top}%;animation-duration:${dur}s;animation-delay:${delay}s`;
+  b.textContent=c;
+  b.addEventListener('click',()=>{
+    if(b.classList.contains('popped'))return;
+    b.classList.add('popped');popped++;
+    bvCount.textContent=`터뜨린 버블: ${popped}`;
+  });
+  bvStage.appendChild(b);
+});
+
+// BOILING particles
+const blStage=document.getElementById('boilStage');
+for(let i=0;i<20;i++){
+  const p=document.createElement('div');p.className='heat-particle';
+  const sz=3+Math.random()*7;
+  const drift=(Math.random()-.5)*40;
+  p.style.cssText=`width:${sz}px;height:${sz}px;background:rgba(168,200,224,${.2+Math.random()*.5});left:${Math.random()*98}%;bottom:0;animation-duration:${1.5+Math.random()*2.5}s;animation-delay:${Math.random()*3}s;--drift:${drift}px`;
+  blStage.appendChild(p);
+}
+
+const btns=document.querySelectorAll('.temp-btn');
+const panels=document.querySelectorAll('.temp-panel');
+function setTemp(id){
+  btns.forEach(b=>b.classList.remove('active'));
+  panels.forEach(p=>p.classList.remove('active'));
+  document.querySelector(`[onclick="setTemp('${id}')"]`).classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+}
+</script>
+</body>
+</html>

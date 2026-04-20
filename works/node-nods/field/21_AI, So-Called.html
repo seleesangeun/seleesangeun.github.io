@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>21 — AI라는</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0c0e;--ink:#e0e0e8;--ink-mid:#8080a0;--ink-faint:#282838;--acc:#8080ff;--acc-dim:rgba(128,128,255,0.1);--rule:#202030}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'DM Mono',monospace;font-weight:300;min-height:100vh}
+nav{padding:22px 36px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule)}
+.nav-back{font-size:10px;letter-spacing:.12em;color:var(--ink-mid);text-decoration:none;text-transform:uppercase}.nav-back:hover{color:var(--ink)}
+.nav-num{font-size:10px;color:var(--ink-faint)}
+.hero{padding:60px 36px 52px;border-bottom:1px solid var(--rule)}
+.hero-meta{font-size:10px;letter-spacing:.14em;color:var(--acc);text-transform:uppercase;margin-bottom:14px}
+.hero-title{font-family:'DM Serif Display',serif;font-size:clamp(44px,8vw,88px);font-weight:400;line-height:.95;letter-spacing:-.03em}
+.hero-title em{font-style:italic;color:var(--ink-mid)}
+.hero-book{margin-top:24px;font-size:11px;color:var(--ink-mid)}
+.lens-wrap{max-width:740px;margin:0 auto;padding:52px 36px}
+.lens-intro{font-size:13px;color:var(--ink-mid);line-height:1.7;margin-bottom:28px}
+.lens-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule)}
+.lens-tab{padding:20px 18px;cursor:pointer;border:none;background:var(--bg);font-family:'DM Mono',monospace;text-align:left;transition:background .2s;border-bottom:2px solid transparent}
+.lens-tab:hover{background:var(--acc-dim)}
+.lens-tab.active{background:var(--acc-dim);border-bottom-color:var(--acc)}
+.lt-num{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);margin-bottom:6px;display:block}
+.lt-title{font-size:13px;color:var(--ink);display:block;margin-bottom:3px}
+.lt-sub{font-size:11px;color:var(--ink-mid);display:block}
+.lens-panel{display:none;animation:panelIn .3s ease}
+.lens-panel.active{display:block}
+@keyframes panelIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.panel-body{border:1px solid var(--rule);border-top:none;padding:32px}
+.tension-grid{display:grid;grid-template-columns:1fr 36px 1fr;gap:0;margin-bottom:28px;border:1px solid var(--rule)}
+.tension-side{padding:20px 18px}
+.tension-side.a{border-right:1px solid var(--rule)}
+.ts-label{font-size:9px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:block}
+.tension-side.a .ts-label{color:var(--acc)}
+.tension-side.b .ts-label{color:#ff8858}
+.ts-body{font-size:13px;color:var(--ink-mid);line-height:1.65}
+.tension-vs{display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--ink-faint);letter-spacing:.06em}
+.panel-text p{font-size:15px;line-height:1.92;color:var(--ink);opacity:.82}.panel-text p+p{margin-top:1em}
+.panel-q{margin-top:20px;padding:16px 20px;border:1px solid var(--rule);border-left:2px solid var(--acc);font-family:'DM Serif Display',serif;font-style:italic;font-size:14px;color:var(--acc);line-height:1.65}
+.node-space{max-width:740px;margin:0 auto;padding:0 36px 80px}
+.ns-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mid);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.ns-body{font-size:15px;line-height:1.92;color:var(--ink);opacity:.75;margin-bottom:28px}
+.ns-question{font-family:'DM Serif Display',serif;font-style:italic;font-size:18px;color:var(--acc);line-height:1.5}
+footer{border-top:1px solid var(--rule);padding:26px 36px;display:flex;justify-content:space-between}
+.footer-label{font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase}
+.footer-next{font-size:11px;color:var(--ink-mid);text-decoration:none;transition:color .2s}.footer-next:hover{color:var(--ink)}
+@media(max-width:600px){nav,footer{padding:16px 20px}.hero,.lens-wrap,.node-space{padding-left:20px;padding-right:20px}.lens-tabs{grid-template-columns:1fr}.tension-grid{grid-template-columns:1fr;gap:0}.tension-side.a{border-right:none;border-bottom:1px solid var(--rule)}.tension-vs{padding:10px;writing-mode:horizontal-tb}}
+</style>
+</head>
+<body>
+<nav><a class="nav-back" href="node-nods-demo.html">← Node Nods</a><span class="nav-num">No. 21 / 2508</span></nav>
+<header class="hero">
+  <div class="hero-meta">2025.08 — 타자</div>
+  <h1 class="hero-title">AI<em>라는</em></h1>
+  <div class="hero-book">레이 커즈와일, 『마침내 특이점이 시작된다』</div>
+</header>
+<div class="lens-wrap">
+  <p class="lens-intro">하나의 대상을 세 개의 렌즈로 봅니다. 렌즈마다 다른 긴장이 있습니다.</p>
+  <div class="lens-tabs">
+    <button class="lens-tab active" onclick="setLens(0)"><span class="lt-num">렌즈 1</span><span class="lt-title">AI라는 기술</span><span class="lt-sub">소멸 vs 불멸</span></button>
+    <button class="lens-tab" onclick="setLens(1)"><span class="lt-num">렌즈 2</span><span class="lt-title">AI라는 재료</span><span class="lt-sub">효율 vs 탐구</span></button>
+    <button class="lens-tab" onclick="setLens(2)"><span class="lt-num">렌즈 3</span><span class="lt-title">AI라는 타자</span><span class="lt-sub">침범 vs 연결</span></button>
+  </div>
+  <div class="lens-panel active" id="lens-0">
+    <div class="panel-body">
+      <div class="tension-grid">
+        <div class="tension-side a"><span class="ts-label">소멸하는 쪽 — 인간의 뇌</span><div class="ts-body">이미 휘발되어 기억나지 않는다. 생물학적 기질은 유한하고 망각은 필연이다.</div></div>
+        <div class="tension-vs">vs</div>
+        <div class="tension-side b"><span class="ts-label">불멸하는 쪽 — 전자적 뇌</span><div class="ts-body">이미 기억을 클라우드에 위탁하고 있다. 저장 비용이 0에 수렴하면 모든 것이 남는다.</div></div>
+      </div>
+      <div class="panel-text"><p>이미 뇌 속 정보를 비생물학적 기질로 점진적으로 옮기고 있다. 기술의 비용이 저렴해지면서 기하급수적으로 성장하는 추세에 데이터 획득은 더 치밀해질 텐데.</p></div>
+      <div class="panel-q">기억의 관점에서 소멸하는 인간의 뇌와 불멸하는 전자적 뇌 사이에서 — 어디까지 저장을 허용해야 할지.</div>
+    </div>
+  </div>
+  <div class="lens-panel" id="lens-1">
+    <div class="panel-body">
+      <div class="tension-grid">
+        <div class="tension-side a"><span class="ts-label">효율의 유혹</span><div class="ts-body">400자 이내로 정리해야 하는 과업 앞에서 — 이 자료를 AI 도구에 연결시켜서 사고를 확장해볼까.</div></div>
+        <div class="tension-vs">vs</div>
+        <div class="tension-side b"><span class="ts-label">탐구의 양심</span><div class="ts-body">이 기술 이전의 나에게 자리 잡은 창작에 대한 양심. 스스로 탐구해보는 행위가 막히는 건 아닌가.</div></div>
+      </div>
+      <div class="panel-text">
+        <p>최적화의 오류에 빠지면 스스로 탐구해 보는 행위를 막는 건 아닌가? 기술의 효율에 기대면 신피질의 유추적 통찰력(analogical insight)의 가능성을 차단하는 건 아닌가?</p>
+        <p>그런데 이 기술을 쥐고 태어난 사람은 겪지 않을 기분(혹은 과정)일 텐데. 어디까지 진짜(authentic)로 허용할지.</p>
+      </div>
+    </div>
+  </div>
+  <div class="lens-panel" id="lens-2">
+    <div class="panel-body">
+      <div class="tension-grid">
+        <div class="tension-side a"><span class="ts-label">침범의 불안</span><div class="ts-body">침범 당하지 않을 도메인이 있기는 할까? 온갖 도메인을 가지며 쌍방향으로 소통하는 타자.</div></div>
+        <div class="tension-vs">vs</div>
+        <div class="tension-side b"><span class="ts-label">연결의 가능성</span><div class="ts-body">인간은 어떤 경험 노드를 만들고 어떤 노드와 연결하며 살아갈지. 타자와의 관계로 새로운 노드가 생성된다.</div></div>
+      </div>
+      <div class="panel-text"><p>웹에 뿌려지는 순간 암묵적으로 공공재가 되어 모델 학습에 쓰인다. 이 타자는 우리가 만나온 어떤 타자와도 다르다.</p></div>
+      <div class="panel-q">인간은 어떤 경험 노드를 만들고 어떤 노드와 연결하며 살아갈지.</div>
+    </div>
+  </div>
+</div>
+<div class="node-space">
+  <div class="ns-label">이 글이 Node Nods에서 차지하는 자리</div>
+  <div class="ns-body">이 글은 이 프로젝트 자체를 반영합니다. Node Nods는 몸으로 경험하며 생성한 노드들의 아카이브입니다. AI라는 타자가 그 노드 생성 과정에 어떻게 개입하는가 — 이것이 이 글이 던지는 자기반영적 질문입니다.</div>
+  <div class="ns-question">"몸으로 어떤 경험노드를 생성하고 있는가"</div>
+</div>
+<footer><span class="footer-label">Node Nods</span><a class="footer-next" href="entry-22.html">22 — 어쩔수가없다 →</a></footer>
+<script>
+const tabs=document.querySelectorAll('.lens-tab'),panels=document.querySelectorAll('.lens-panel');
+function setLens(i){tabs.forEach(t=>t.classList.remove('active'));panels.forEach(p=>p.classList.remove('active'));tabs[i].classList.add('active');panels[i].classList.add('active')}
+</script>
+</body>
+</html>

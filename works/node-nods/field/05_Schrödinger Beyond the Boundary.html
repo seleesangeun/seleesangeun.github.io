@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>05 — 선 넘는 슈뢰딩거</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0e0e;--ink:#e4e4dc;--ink-mid:#888880;--ink-faint:#303030;
+  --sci:#5090e0;--sci-dim:rgba(80,144,224,.08);
+  --art:#e07050;--art-dim:rgba(224,112,80,.08);
+  --cross:#c0c060;--rule:#202020;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'DM Mono',monospace;font-weight:300;min-height:100vh}
+nav{padding:22px 36px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule)}
+.nav-back{font-size:10px;letter-spacing:.12em;color:var(--ink-mid);text-decoration:none;text-transform:uppercase}.nav-back:hover{color:var(--ink)}
+.nav-num{font-size:10px;color:var(--ink-faint)}
+
+/* HERO */
+.hero{padding:60px 36px 52px;border-bottom:1px solid var(--rule)}
+.hero-meta{font-size:10px;letter-spacing:.14em;color:var(--cross);text-transform:uppercase;margin-bottom:14px}
+.hero-title{font-family:'DM Serif Display',serif;font-size:clamp(28px,5vw,54px);font-weight:400;line-height:1.08;letter-spacing:-.02em}
+.hero-title em{font-style:italic;color:var(--cross)}
+.hero-book{margin-top:20px;font-size:11px;color:var(--ink-mid)}
+.hero-attitude{margin-top:28px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.ha-pill{padding:6px 14px;border-radius:2px;font-size:11px;letter-spacing:.06em}
+.ha-pill.sci{background:var(--sci-dim);color:var(--sci);border:1px solid rgba(80,144,224,.2)}
+.ha-pill.art{background:var(--art-dim);color:var(--art);border:1px solid rgba(224,112,80,.2)}
+.ha-pill.cross{background:rgba(192,192,96,.08);color:var(--cross);border:1px solid rgba(192,192,96,.2)}
+.ha-arrow{font-size:14px;color:var(--ink-faint)}
+
+/* TWO-FIELD LAYOUT */
+.field-view{max-width:760px;margin:0 auto;padding:48px 36px 0}
+.fv-intro{font-size:13px;color:var(--ink-mid);line-height:1.7;margin-bottom:28px}
+.field-columns{display:grid;grid-template-columns:1fr 2px 1fr;border:1px solid var(--rule);overflow:hidden}
+.field-col{padding:0}
+.field-header{padding:14px 20px;border-bottom:1px solid var(--rule)}
+.fh-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:3px}
+.sci-col .fh-label{color:var(--sci)}
+.art-col .fh-label{color:var(--art)}
+.fh-title{font-size:12px;color:var(--ink-mid)}
+.field-divider{background:var(--rule);position:relative}
+.fd-cross{position:sticky;top:50%;transform:translateY(-50%);text-align:center;font-size:9px;color:var(--cross);letter-spacing:.08em;writing-mode:vertical-rl;padding:8px 0}
+
+/* CROSSING MOMENTS */
+.crossing-list{display:flex;flex-direction:column;gap:1px;background:var(--rule)}
+.cross-row{display:grid;grid-template-columns:1fr 2px 1fr;gap:0;background:var(--rule)}
+.cross-cell{background:var(--bg);padding:18px 20px;opacity:0;transform:translateY(8px);transition:opacity .45s ease,transform .45s ease}
+.cross-cell.visible{opacity:1;transform:none}
+.cross-cell.sci-cell{background:var(--sci-dim);border-right:none}
+.cross-cell.art-cell{background:var(--art-dim)}
+.cross-cell.empty-cell{background:var(--bg)}
+.cc-label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;display:block}
+.sci-cell .cc-label{color:var(--sci)}
+.art-cell .cc-label{color:var(--art)}
+.cc-text{font-size:13px;color:var(--ink-mid);line-height:1.65}
+.sci-cell .cc-text{color:rgba(200,220,248,.75)}
+.art-cell .cc-text{color:rgba(248,210,200,.75)}
+.cross-divider-cell{background:var(--rule)}
+
+/* CROSSING BANNER — appears between rows to mark the moment of crossing */
+.crossing-banner{padding:12px 0;background:rgba(192,192,96,.06);border-top:1px solid rgba(192,192,96,.2);border-bottom:1px solid rgba(192,192,96,.2);text-align:center;font-size:10px;letter-spacing:.1em;color:var(--cross);opacity:0;transition:opacity .5s ease}
+.crossing-banner.visible{opacity:1}
+
+/* PROSE */
+.prose-wrap{max-width:680px;margin:0 auto;padding:48px 36px 0}
+.section{margin-bottom:48px;opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease}.section.visible{opacity:1;transform:none}
+.sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mid);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.section p{font-size:15px;line-height:1.92;color:var(--ink);opacity:.8}.section p+p{margin-top:1em}
+.addendum{margin-top:24px;padding:14px 18px;border:1px solid var(--rule);font-size:13px;color:var(--ink-mid);line-height:1.65}
+.add-plus{color:var(--cross);margin-right:6px}
+
+.bottom-pad{padding-bottom:80px}
+footer{border-top:1px solid var(--rule);padding:26px 36px;display:flex;justify-content:space-between}
+.footer-label{font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase}
+.footer-next{font-size:11px;color:var(--ink-mid);text-decoration:none;transition:color .2s}.footer-next:hover{color:var(--ink)}
+@media(max-width:600px){nav,footer{padding:16px 20px}.hero,.field-view,.prose-wrap{padding-left:20px;padding-right:20px}.cross-row{grid-template-columns:1fr}.cross-divider-cell{display:none}.cross-cell.empty-cell{display:none}.field-columns{grid-template-columns:1fr}.field-divider{display:none}}
+</style>
+</head>
+<body>
+<nav><a class="nav-back" href="node-nods-demo.html">← Node Nods</a><span class="nav-num">No. 05 / 2404</span></nav>
+<header class="hero">
+  <div class="hero-meta">2024.04 — 월경(越境)</div>
+  <h1 class="hero-title">선 넘는<br><em>슈뢰딩거</em></h1>
+  <div class="hero-book">에르빈 슈뢰딩거, 『생명이란 무엇인가: 정신과 물질』</div>
+  <div class="hero-attitude">
+    <span class="ha-pill sci">물리학</span>
+    <span class="ha-arrow">↔</span>
+    <span class="ha-pill art">철학 · 예술</span>
+    <span class="ha-arrow">→</span>
+    <span class="ha-pill cross">선을 넘되 선은 지키는 태도</span>
+  </div>
+</header>
+
+<div class="field-view">
+  <p class="fv-intro">슈뢰딩거의 사유가 두 필드 사이를 어떻게 넘나드는지 — 경계를 넘는 순간마다 표시됩니다.</p>
+  <div class="field-columns">
+    <div class="field-col sci-col">
+      <div class="field-header"><span class="fh-label">필드 A</span><div class="fh-title">물리학 / 과학</div></div>
+    </div>
+    <div class="field-divider"><div class="fd-cross">경계</div></div>
+    <div class="field-col art-col">
+      <div class="field-header"><span class="fh-label">필드 B</span><div class="fh-title">철학 · 예술 · 인문</div></div>
+    </div>
+  </div>
+
+  <div class="crossing-list">
+
+    <div class="cross-row">
+      <div class="cross-cell sci-cell">
+        <span class="cc-label">생명이란 무엇인가</span>
+        <div class="cc-text">추론하고 질문하며 가설을 세우고 탐구하는 찐과학자의 모습. 물리학자이니까 오류는 봐주세요 — 하며 과감한 주장을 펼친다.</div>
+      </div>
+      <div class="cross-divider-cell"></div>
+      <div class="cross-cell empty-cell"></div>
+    </div>
+
+    <div class="crossing-banner">↔ 선을 넘는 순간 — 영역 바깥의 문제에 관심을 보인다</div>
+
+    <div class="cross-row">
+      <div class="cross-cell empty-cell"></div>
+      <div class="cross-divider-cell"></div>
+      <div class="cross-cell art-cell">
+        <span class="cc-label">정신과 물질</span>
+        <div class="cc-text">철학하는 물리학자의 언어가 흡수되는 기분. 세상을 전이차로 보는 물리학자의 시선이 닿으면 또다른 관점으로 문제가 해석된다.</div>
+      </div>
+    </div>
+
+    <div class="crossing-banner">↔ 선을 넘되 선은 지키는 태도 — 자신의 필드를 명시하며 넘어간다</div>
+
+    <div class="cross-row">
+      <div class="cross-cell sci-cell">
+        <span class="cc-label">2n = 46, n = 23</span>
+        <div class="cc-text">관찰되기 이전에 비슷하게 유추하다니. 결과가 아닌 추론 과정, 그 논리를 살펴본다.</div>
+      </div>
+      <div class="cross-divider-cell"></div>
+      <div class="cross-cell art-cell">
+        <span class="cc-label">왓슨과 크릭의 바톤</span>
+        <div class="cc-text">이 강연을 들은 왓슨과 크릭이 바톤을 이어받아서 논문 한 편을 쓴다. 필드를 넘나든 사유가 역사를 바꿨다.</div>
+      </div>
+    </div>
+
+    <div class="crossing-banner">↔ 과학-예술-철학 — 이 선을 넘나들며 소통할 수 있길</div>
+
+    <div class="cross-row">
+      <div class="cross-cell empty-cell"></div>
+      <div class="cross-divider-cell"></div>
+      <div class="cross-cell art-cell">
+        <span class="cc-label">판이 뒤집히는 시대</span>
+        <div class="cc-text">기술은 끊임없이 팽창한다. 각자 자신의 언어로 이야기하기를 멈추고 타자의 언어와 질문을 들여다볼 여유가 필요하다.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="prose-wrap">
+  <div class="section">
+    <div class="sec-label">두고두고 꺼내 읽을 책</div>
+    <p>두 가지 글을 모두 읽을 수 있어서 좋았다. 특히 &lt;정신과 물질&gt; 텍스트가 너무 매력적이다. 철학하는 물리학자의 언어가 나에게 흡수되는 기분을 느꼈다.</p>
+    <p>알 듯 말 듯 풀릴 듯 말 듯한 그 당시 주제에 이런 시선은 어떠냐며 툭 던지는 내용이 꽤 묵직하다. 세상을 전이차로 보는 물리학자의 시선이 닿으면 또다른 관점으로 문제가 해석되는 것! 이런 순간을 기다리고 있었는데, 역사 속에서 일어난 일이었다.</p>
+    <div class="addendum">
+      <span class="add-plus">+</span>이 강연을 들은 왓슨과 크릭이 바톤을 이어받아서 논문 한 편을 쓴다.<br>
+      <span class="add-plus">++</span>2n = 46, n = 23. 이것이 관찰되기 이전에 비슷하게 유추하다니 — 결과가 아닌 추론 과정, 그 논리를 살펴본다.
+    </div>
+  </div>
+  <div class="section bottom-pad">
+    <div class="sec-label">이 책에서 찾은 태도</div>
+    <p>판이 크게 흔들리고 뒤집히는 세상에서 살고 있다. 기술은 끊임없이 팽창한다. 계속해서 새로운 길이 펼쳐진다. 이 때 필요한 태도를 이 책에서 찾을 수 있었다.</p>
+    <p>과학-예술-철학. 꼭 이 선을 넘나들며 소통할 수 있길 바란다. 각자 자신의 언어로 이야기하기를 멈추고 타자의 언어와 질문을 들여다볼 여유가 필요하다.</p>
+  </div>
+</div>
+
+<footer><span class="footer-label">Node Nods</span><a class="footer-next" href="entry-06.html">06 — 인식론적 위기에 창발할 인간다움 →</a></footer>
+<script>
+document.querySelectorAll('.cross-cell,.crossing-banner').forEach((el,i)=>{
+  el.style.transitionDelay=(i*.06)+'s';
+  new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add('visible')),{threshold:.2}).observe(el);
+});
+document.querySelectorAll('.section').forEach(s=>
+  new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add('visible')),{threshold:.15}).observe(s)
+);
+</script>
+</body>
+</html>

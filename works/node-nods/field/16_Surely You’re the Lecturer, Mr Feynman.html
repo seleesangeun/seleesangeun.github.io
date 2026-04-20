@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>16 — 파인만 씨, 강연도 잘 하시네!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f8f6f0;--ink:#181410;--ink-mid:#807060;--ink-faint:#c0b8a8;--acc:#705020;--acc-dim:rgba(112,80,32,0.07);--rule:#e0d8c8}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'DM Mono',monospace;font-weight:300;min-height:100vh}
+nav{padding:22px 36px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule)}
+.nav-back{font-size:10px;letter-spacing:.12em;color:var(--ink-mid);text-decoration:none;text-transform:uppercase}.nav-back:hover{color:var(--ink)}
+.nav-num{font-size:10px;color:var(--ink-faint)}
+.hero{padding:60px 36px 52px;border-bottom:1px solid var(--rule)}
+.hero-meta{font-size:10px;letter-spacing:.14em;color:var(--acc);text-transform:uppercase;margin-bottom:14px}
+.hero-title{font-family:'DM Serif Display',serif;font-size:clamp(26px,4.5vw,48px);font-weight:400;line-height:1.1;letter-spacing:-.015em}
+.hero-sub{margin-top:8px;font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(13px,2vw,17px);color:var(--ink-mid)}
+.hero-book{margin-top:20px;font-size:11px;color:var(--ink-mid)}
+.dialogue-intro{max-width:680px;margin:0 auto;padding:36px 36px 0}
+.dialogue-intro p{font-size:13px;color:var(--ink-mid);line-height:1.7}
+.dialogue{max-width:680px;margin:0 auto;padding:24px 36px 0}
+.dialogue-header{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);margin-bottom:1px}
+.dh-col{background:var(--bg);padding:12px 20px}
+.dh-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:3px}
+.dh-name{font-size:12px;color:var(--ink-mid)}.dh-name span{color:var(--acc)}
+.q-row{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);margin-bottom:1px;opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease}
+.q-row.visible{opacity:1;transform:none}
+.q-cell{background:var(--bg);padding:22px 20px}
+.q-cell.feynman{background:var(--acc-dim)}
+.q-text{font-family:'DM Serif Display',serif;font-size:15px;color:var(--ink);line-height:1.6;font-style:italic}
+.q-cell.feynman .q-text{color:var(--acc)}
+.q-cell.empty{min-height:60px}
+.q-source{margin-top:8px;font-size:10px;color:var(--ink-faint);letter-spacing:.04em}
+.final-quote{max-width:680px;margin:0 auto;padding:40px 36px}
+.fq-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:14px}
+.fq-body{font-family:'DM Serif Display',serif;font-style:italic;font-size:15px;color:var(--ink-mid);line-height:1.85;padding:24px 28px;border:1px solid var(--rule);border-left:3px solid var(--acc);background:var(--acc-dim)}
+.fq-attr{margin-top:12px;font-family:'DM Mono',monospace;font-style:normal;font-size:10px;color:var(--ink-faint);letter-spacing:.06em}
+.prose-wrap{max-width:640px;margin:0 auto;padding:0 36px 60px}
+.prose-section{margin-bottom:44px;opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease}.prose-section.visible{opacity:1;transform:none}
+.sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mid);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.prose-section p{font-size:15px;line-height:1.92;color:var(--ink);opacity:.85}.prose-section p+p{margin-top:1em}
+footer{border-top:1px solid var(--rule);padding:26px 36px;display:flex;justify-content:space-between}
+.footer-label{font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase}
+.footer-next{font-size:11px;color:var(--ink-mid);text-decoration:none;transition:color .2s}.footer-next:hover{color:var(--ink)}
+@media(max-width:600px){nav,footer{padding:16px 20px}.hero,.dialogue-intro,.dialogue,.final-quote,.prose-wrap{padding-left:20px;padding-right:20px}}
+</style>
+</head>
+<body>
+<nav><a class="nav-back" href="node-nods-demo.html">← Node Nods</a><span class="nav-num">No. 16 / 2503</span></nav>
+<header class="hero">
+  <div class="hero-meta">2025.03 — 질문</div>
+  <h1 class="hero-title">파인만 씨,<br>강연도 잘 하시네!</h1>
+  <div class="hero-sub">그렇지만 당신은 어떤 대중(비전공 청자)에게 강연을 한 걸까요?</div>
+  <div class="hero-book">리처드 파인만, 『물리법칙의 특성』</div>
+</header>
+<div class="dialogue-intro">
+  <p>파인만이 1964년에 던진 질문들과, 이 책을 읽으며 생긴 질문들을 나란히 놓는다. 질문하는 태도 자체가 이 책의 핵심이기 때문에.</p>
+</div>
+<div class="dialogue">
+  <div class="dialogue-header">
+    <div class="dh-col"><span class="dh-label">강연자의 질문</span><div class="dh-name"><span>Richard Feynman</span>, 1964</div></div>
+    <div class="dh-col"><span class="dh-label">독자의 질문</span><div class="dh-name"><span>이상은</span>, 2025.03</div></div>
+  </div>
+  <div class="q-row">
+    <div class="q-cell feynman">
+      <div class="q-text">자연은 왜 이렇게 단순한 법칙들로 설명될 수 있는가?</div>
+      <div class="q-source">강연 전체를 관통하는 질문</div>
+    </div>
+    <div class="q-cell">
+      <div class="q-text">그 단순함이 아름다움인가, 아니면 우리가 단순함에 매혹되는 것인가?</div>
+      <div class="q-source">읽으면서 생긴 반문</div>
+    </div>
+  </div>
+  <div class="q-row">
+    <div class="q-cell feynman">
+      <div class="q-text">발견과 측정, 증명을 위한 실험 설계, 수학 언어를 배워야 할 이유. 이것이 과학이다.</div>
+      <div class="q-source">파인만의 과학 정의</div>
+    </div>
+    <div class="q-cell">
+      <div class="q-text">이 시점에서 최상으로 설명가능한 상태이며 언제든지 수정될 수 있다는 것 — 이것을 얼마나 많은 사람들이 알고 있는가?</div>
+      <div class="q-source">현시대로 끌어온 질문</div>
+    </div>
+  </div>
+  <div class="q-row">
+    <div class="q-cell empty"></div>
+    <div class="q-cell">
+      <div class="q-text">지금 시대의 파인만은 누구인가? 각종 실험실 기술들이 일상으로 침투하는 지금, 어떤 질문을 하고 있는가?</div>
+      <div class="q-source">동시대의 파인만을 찾는 질문</div>
+    </div>
+  </div>
+  <div class="q-row">
+    <div class="q-cell feynman">
+      <div class="q-text">What is it about nature that lets this happen — that it is possible to guess from one part what the rest is going to do?</div>
+      <div class="q-source">강연 마지막 — "비과학적인 질문"이라며</div>
+    </div>
+    <div class="q-cell">
+      <div class="q-text">비과학적인 언어가 새어나오는 걸 포착하면 재미있다. 필드 밖으로 나온 순간에 오히려 그 사람이 보인다.</div>
+      <div class="q-source">감상</div>
+    </div>
+  </div>
+</div>
+<div class="final-quote">
+  <div class="fq-label">강연의 마지막 문장</div>
+  <div class="fq-body">
+    "What is it about nature that lets this happen, that it is possible to guess from one part what the rest is going to do? That is an unscientific question: I do not know how to answer it, and therefore I am going to give an unscientific answer. I think it is because nature has a simplicity and therefore a great beauty."
+    <div class="fq-attr">— Richard Feynman, The Character of Physical Law (1964)</div>
+  </div>
+</div>
+<div class="prose-wrap">
+  <div class="prose-section">
+    <div class="sec-label">시대의 파인만</div>
+    <p>시대 인물이다. 그런 파인만이 고전 마냥 회자되는 이유를 알겠다. 각종 실험실 기술들이 일상으로 침투하고 있는 현시대를 향해 질문을 던지고 있는 것처럼 읽힌다. 그런 파인만이 지금 시대를 살면 어떨까? 어떤 질문을 하고, 무슨 말을 하며, 무엇을 위하여 일을 할까?</p>
+    <p>전체 강연을 맺는 말이 인상적이다. 비유 혹은 농담으로 과학자들 입에서 비과학적인 언어가 새어나오는 걸 포착하면 재미있다. 그래도 과학이라는 필드 밖에서는 그냥 사람이구나 싶은 생각이 들며 심리적 거리가 가까워진다.</p>
+  </div>
+</div>
+<footer>
+  <span class="footer-label">Node Nods</span>
+  <a class="footer-next" href="entry-17.html">17 — 직관이라는 확증편향 →</a>
+</footer>
+<script>
+[...document.querySelectorAll('.q-row,.prose-section')].forEach((el,i)=>{
+  el.style.transitionDelay=(i*.07)+'s';
+  new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add('visible')),{threshold:.15}).observe(el);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paper 06 — 인식론적 위기에 창발할 인간다움</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f3f5ee;--ink:#141a0e;--ink-mid:#6a7a60;--ink-faint:#b8c8b0;
+  --g:#2e6b3a;--g-dim:rgba(46,107,58,.08);--rule:#ccd8c4;
+  --unexplored:#eaede4;--explored-border:rgba(46,107,58,.35);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#bcc8b0;font-family:'EB Garamond',serif;min-height:100vh;padding:36px 16px 80px}
+
+.atlas{max-width:860px;margin:0 auto;background:var(--paper);box-shadow:0 2px 36px rgba(0,0,0,.16)}
+
+/* ATLAS HEADER */
+.atlas-header{padding:36px 44px 28px;border-bottom:2px solid var(--ink)}
+.ah-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.ah-title-block{}
+.atlas-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:8px}
+.atlas-title{font-size:clamp(22px,4vw,36px);font-weight:400;line-height:1.15;letter-spacing:-.01em}
+.atlas-source{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-faint);letter-spacing:.04em;margin-top:6px}
+.ah-legend{text-align:right;padding:10px 14px;border:1px solid var(--rule)}
+.legend-item{display:flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-mid);margin-bottom:5px}
+.legend-item:last-child{margin-bottom:0}
+.leg-box{width:12px;height:12px;border:1px solid var(--g);flex-shrink:0}
+.leg-box.unexplored{background:var(--unexplored)}
+.leg-box.explored{background:var(--g-dim)}
+.leg-box.pinned{background:rgba(46,107,58,.25)}
+.atlas-premise{font-style:italic;font-size:15px;color:var(--ink-mid);line-height:1.7;max-width:560px}
+
+/* MAP AREA */
+.map-area{padding:28px 44px;border-bottom:1px solid var(--rule)}
+.map-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.map-label::after{content:'';flex:1;height:1px;background:var(--rule)}
+.map-hint{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-faint);margin-bottom:20px}
+
+/* THE MAP GRID */
+.worldview-map{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;background:var(--rule);border:1px solid var(--rule);margin-bottom:16px}
+.wv-territory{background:var(--unexplored);padding:0;cursor:pointer;transition:background .3s ease;position:relative;overflow:hidden;min-height:100px}
+.wv-territory:hover{background:rgba(46,107,58,.06)}
+.wv-territory.explored{background:var(--g-dim)}
+.wv-territory.pinned{background:rgba(46,107,58,.18)}
+
+/* MAP COORDINATES — like a real map */
+.wv-coords{position:absolute;top:6px;left:6px;font-family:'DM Mono',monospace;font-size:8px;color:var(--ink-faint);letter-spacing:.06em}
+.wv-territory.explored .wv-coords{color:var(--g);opacity:.6}
+
+.wv-inner{padding:12px 10px 10px}
+.wv-category{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:5px}
+.wv-territory.explored .wv-category{color:var(--g);opacity:.7}
+.wv-name{font-size:13px;color:var(--ink);line-height:1.25;margin-bottom:4px;font-family:'EB Garamond',serif}
+.wv-territory.explored .wv-name{color:var(--g)}
+.wv-desc{font-size:11px;color:var(--ink-mid);line-height:1.45;font-family:'DM Mono',monospace;font-weight:300}
+
+/* PIN MARKER */
+.pin{position:absolute;top:8px;right:8px;width:10px;height:10px;border-radius:50%;background:var(--g);opacity:0;transition:opacity .25s;box-shadow:0 0 0 2px white,0 0 0 3px var(--g)}
+.wv-territory.pinned .pin{opacity:1}
+
+/* EXPLORATION PROGRESS */
+.exploration-bar{display:flex;align-items:center;gap:12px}
+.eb-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-mid);white-space:nowrap}
+.eb-track{flex:1;height:3px;background:var(--rule);border-radius:2px;overflow:hidden}
+.eb-fill{height:100%;background:var(--g);width:0%;transition:width .5s ease;border-radius:2px}
+.eb-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--g);min-width:40px;text-align:right}
+
+/* TERRITORY DETAIL */
+.territory-detail{display:none;padding:16px;background:white;border:1px solid var(--rule);margin-top:3px;animation:tdIn .3s ease}
+@keyframes tdIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.territory-detail.open{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.td-field{border-left:2px solid var(--g);padding-left:12px}
+.tdf-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:5px}
+.tdf-body{font-size:14px;color:var(--ink-mid);line-height:1.6}
+
+/* CHECKLIST — printed at bottom */
+.checklist-section{padding:28px 44px;border-bottom:1px solid var(--rule)}
+.cl-head{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.cl-head::after{content:'';flex:1;height:1px;background:var(--rule)}
+.check-card{padding:18px 22px;border:1px solid var(--rule);margin-bottom:8px;background:white;transition:border-color .2s,background .2s;cursor:pointer}
+.check-card:hover{border-color:var(--g);background:var(--g-dim)}
+.cc-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--g);margin-bottom:6px;display:block}
+.cc-text{font-style:italic;font-size:15px;color:var(--ink-mid);line-height:1.6}
+
+/* BODY */
+.body-section{padding:28px 44px 40px}
+.bs-head{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:14px}
+.bs-text{font-size:16px;line-height:1.9;color:var(--ink)}.bs-text+.bs-text{margin-top:1em}
+
+/* NAV */
+.atlas-nav{padding:16px 44px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;align-items:center}
+.pn-back{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-decoration:none;text-transform:uppercase}.pn-back:hover{color:var(--ink)}
+.pn-next{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--ink-mid);text-decoration:none}.pn-next:hover{color:var(--ink)}
+
+@media(max-width:640px){body{padding:12px 8px 60px}.atlas-header,.map-area,.checklist-section,.body-section,.atlas-nav{padding-left:20px;padding-right:20px}.worldview-map{grid-template-columns:repeat(2,1fr)}.ah-top{flex-direction:column;gap:12px}.territory-detail.open{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="atlas">
+
+<header class="atlas-header">
+  <div class="ah-top">
+    <div class="ah-title-block">
+      <span class="atlas-label">No. 06 / 2405 — 세계관 지도첩</span>
+      <h1 class="atlas-title">인식론적 위기에<br>창발할 인간다움</h1>
+      <div class="atlas-source">정우현, 『생명을 묻다』 — Node Nods 경험노드</div>
+    </div>
+    <div class="ah-legend">
+      <div class="legend-item"><div class="leg-box unexplored"></div>미탐험</div>
+      <div class="legend-item"><div class="leg-box explored"></div>방문함</div>
+      <div class="legend-item"><div class="leg-box pinned"></div>핀 꽂음</div>
+    </div>
+  </div>
+  <p class="atlas-premise">어떤 세계관에 축을 꽂아보았는가? 특정 생명관에만 사로잡혀있는 건 아닌가? 다른 세계들을 탐험해보는 것이 인식론적 위기를 헤쳐나갈 인간다움의 실천이다.</p>
+</header>
+
+<div class="map-area">
+  <div class="map-label">세계관 지도 — Worldview Map</div>
+  <div class="map-hint">영역을 클릭하면 탐험 표시가 됩니다. 한 번 더 클릭하면 핀을 꽂습니다.</div>
+  <div class="worldview-map" id="worldviewMap"></div>
+  <div class="territory-detail" id="territoryDetail">
+    <div class="td-field"><span class="tdf-label">핵심 주장</span><div class="tdf-body" id="tdClaim"></div></div>
+    <div class="td-field"><span class="tdf-label">이 관점의 질문</span><div class="tdf-body" id="tdQ"></div></div>
+  </div>
+  <div class="exploration-bar">
+    <div class="eb-label">탐험 진행</div>
+    <div class="eb-track"><div class="eb-fill" id="ebFill"></div></div>
+    <div class="eb-count" id="ebCount">0 / 8</div>
+  </div>
+</div>
+
+<div class="checklist-section">
+  <div class="cl-head">세계 구축 체크리스트 — 항상 확인할 것</div>
+  <div class="check-card"><span class="cc-label">잠정성의 원칙</span><div class="cc-text">"과학이 밝혀낸 모든 사실은 언제까지나 잠정적이며 임시적일 뿐"</div></div>
+  <div class="check-card"><span class="cc-label">회의의 태도</span><div class="cc-text">"중요한 발견과 연구결과를 최대한 존중하되, 끊임없이 의심하고 회의하는 자세"</div></div>
+  <div class="check-card"><span class="cc-label">구별의 정확성</span><div class="cc-text">"생물학적 이타주의는 도덕적 형이상학에서 말하는 이타주의와 다르다."</div></div>
+</div>
+
+<div class="body-section">
+  <div class="bs-head">창발할 인간다움</div>
+  <p class="bs-text">이런 저런 세계를 지닌 개체들이 모여 창발할 현상은 또 어떠할지 궁금하다. 인식론적 위기를 논하는 시대에 생성되는 인간다운 행태이자 하나의 생존 전략은 아닐까 싶다.</p>
+  <p class="bs-text">개인적이면서도 보편적일 수도 있는 어떤 세계관을 견고하게 구축할 논리를 찾아내고 모으는 재미도 쏠쏠하겠다.</p>
+</div>
+
+<nav class="atlas-nav">
+  <a class="pn-back" href="node-nods-demo.html">← Node Nods</a>
+  <a class="pn-next" href="paper-07.html">07 — 버블 현재 →</a>
+</nav>
+
+</div>
+<script>
+const territories=[
+  {coord:'A1',cat:'근대',name:'기계론적 생명관',desc:'생명은 복잡한 기계다',claim:'모든 생명 현상은 물리·화학적으로 환원된다.',q:'당신은 몸을 기계로 보는가?'},
+  {coord:'B1',cat:'전체론',name:'유기체론적 생명관',desc:'전체는 부분의 합이 아니다',claim:'생명은 전체로서만 이해될 수 있다. 부분으로 쪼개면 사라진다.',q:'어떤 전체성을 경험해본 적 있는가?'},
+  {coord:'C1',cat:'진화론',name:'다윈주의 생명관',desc:'변이와 선택의 과정',claim:'생명은 목적 없이 우연에서 필연으로 진화한다.',q:'우연의 결과물이라는 것이 불편한가?'},
+  {coord:'D1',cat:'현상학',name:'현상학적 생명관',desc:'살아있는 몸의 경험',claim:'생명은 의식과 육체가 분리되지 않는 체험이다.',q:'몸이 생각한다는 것이 가능한가?'},
+  {coord:'A2',cat:'신유물론',name:'객체지향 존재론',desc:'인간만이 주체가 아니다',claim:'모든 객체가 동등한 존재론적 지위를 갖는다.',q:'탁자도 생명체처럼 존재하는가?'},
+  {coord:'B2',cat:'복잡계',name:'시스템 생물학',desc:'생명은 네트워크다',claim:'관계와 상호작용이 개체의 성질을 결정한다.',q:'당신은 네트워크의 노드인가?'},
+  {coord:'C2',cat:'정보이론',name:'정보 생물학',desc:'DNA는 코드다',claim:'생명은 정보를 처리하는 시스템이다.',q:'코드는 생명인가?'},
+  {coord:'D2',cat:'공생이론',name:'공생 생명관',desc:'독립된 개체는 없다',claim:'모든 생명은 공생 관계 안에서만 존재한다.',q:'당신 안의 타자를 본 적 있는가?'},
+];
+
+const map=document.getElementById('worldviewMap');
+const detail=document.getElementById('territoryDetail');
+const ebFill=document.getElementById('ebFill');
+const ebCount=document.getElementById('ebCount');
+const tdClaim=document.getElementById('tdClaim');
+const tdQ=document.getElementById('tdQ');
+let explored=0;
+let openT=null;
+
+territories.forEach((t,i)=>{
+  const cell=document.createElement('div');
+  cell.className='wv-territory';
+  cell.innerHTML=`<div class="pin"></div><div class="wv-coords">${t.coord}</div><div class="wv-inner"><span class="wv-category">${t.cat}</span><div class="wv-name">${t.name}</div><div class="wv-desc">${t.desc}</div></div>`;
+  let state=0; // 0=unexplored, 1=explored, 2=pinned
+  cell.addEventListener('click',()=>{
+    const wasExplored=state>0;
+    state=(state+1)%3;
+    cell.classList.remove('explored','pinned');
+    if(state===1) cell.classList.add('explored');
+    if(state===2) cell.classList.add('pinned');
+    if(state===1&&!wasExplored) explored++;
+    if(state===0&&wasExplored) explored--;
+    const pct=Math.round(explored/territories.length*100);
+    ebFill.style.width=pct+'%';
+    ebCount.textContent=`${explored} / ${territories.length}`;
+    if(openT) openT=null;
+    if(state>0){
+      tdClaim.textContent=t.claim;
+      tdQ.textContent=t.q;
+      detail.classList.add('open');
+      openT=cell;
+    } else {
+      detail.classList.remove('open');
+    }
+  });
+  map.appendChild(cell);
+});
+</script>
+</body>
+</html>

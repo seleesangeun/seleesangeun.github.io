@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>02 — 아주 사적인 유체 과학사</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Lora:ital,wght@0,400;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf7f2;--ink:#1e1b17;--ink-mid:#7a7268;--ink-faint:#c8c2b8;--wm:#8b5e34;--wm-dim:rgba(139,94,52,.07);--rule:#e8e0d4}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'DM Mono',monospace;font-weight:300;min-height:100vh}
+nav{padding:22px 36px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule)}
+.nav-back{font-size:10px;letter-spacing:.12em;color:var(--ink-mid);text-decoration:none;text-transform:uppercase}.nav-back:hover{color:var(--ink)}
+.nav-num{font-size:10px;color:var(--ink-faint)}
+
+/* HERO */
+.hero{padding:60px 36px 52px;border-bottom:1px solid var(--rule)}
+.hero-meta{font-size:10px;letter-spacing:.14em;color:var(--wm);text-transform:uppercase;margin-bottom:14px}
+.hero-title{font-family:'DM Serif Display',serif;font-size:clamp(26px,4.5vw,48px);font-weight:400;line-height:1.1;letter-spacing:-.015em}
+.hero-title em{font-style:italic;color:var(--ink-mid)}
+.hero-book{margin-top:20px;font-size:11px;color:var(--ink-mid)}
+.hero-premise{margin-top:24px;font-size:14px;color:var(--wm);line-height:1.75;max-width:520px;font-style:italic}
+
+/* FLUID TIMELINE */
+.timeline{max-width:660px;margin:0 auto;padding:56px 36px}
+.tl-connector{width:1px;height:48px;background:var(--rule);margin-left:19px}
+
+/* INQUIRY BLOCK */
+.inquiry{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+.inquiry.visible{opacity:1;transform:none}
+.inq-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+.inq-dot{width:10px;height:10px;border-radius:50%;background:var(--ink-faint);flex-shrink:0;margin-top:5px;transition:background .4s}
+.inquiry.visible .inq-dot{background:var(--wm)}
+.inq-meta{}
+.inq-num{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--wm);display:block;margin-bottom:4px}
+.inq-question{font-family:'DM Serif Display',serif;font-style:italic;font-size:16px;color:var(--ink-mid);line-height:1.3}
+
+.inq-body{padding-left:26px}
+.inq-body p{font-family:'Lora',serif;font-size:15px;line-height:1.95;color:var(--ink);opacity:.85}
+.inq-body p+p{margin-top:1.1em}
+
+/* THE PARENTHETICAL — the real conclusion */
+.parenthetical{margin-top:24px;padding:18px 22px;background:var(--wm-dim);border-left:3px solid var(--wm);font-family:'DM Serif Display',serif;font-style:italic;font-size:16px;color:var(--wm);line-height:1.65;opacity:0;transform:translateY(8px);transition:opacity .5s ease .2s,transform .5s ease .2s}
+.inquiry.visible .parenthetical{opacity:1;transform:none}
+
+/* MISSION — 과업 */
+.mission{margin-top:0;padding:40px;background:var(--ink);color:var(--bg);opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+.mission.visible{opacity:1;transform:none}
+.ms-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(232,224,212,.4);margin-bottom:16px;display:block}
+.ms-title{font-family:'DM Serif Display',serif;font-style:italic;font-size:18px;color:var(--bg);line-height:1.4;margin-bottom:20px}
+.ms-body{font-size:14px;line-height:1.85;color:rgba(232,224,212,.75)}
+.ms-body p+p{margin-top:1em}
+
+/* CONTEXT LIST */
+.context-section{max-width:660px;margin:0 auto;padding:40px 36px 80px}
+.ctx-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mid);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.ctx-list{display:flex;flex-direction:column;gap:10px}
+.ctx-item{font-size:13px;color:var(--ink-mid);line-height:1.65;padding-left:14px;border-left:1px solid var(--rule)}
+
+footer{border-top:1px solid var(--rule);padding:26px 36px;display:flex;justify-content:space-between}
+.footer-label{font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase}
+.footer-next{font-size:11px;color:var(--ink-mid);text-decoration:none;transition:color .2s}.footer-next:hover{color:var(--ink)}
+@media(max-width:600px){nav,footer{padding:16px 20px}.hero,.timeline,.context-section{padding-left:20px;padding-right:20px}.mission{padding:28px 20px}}
+</style>
+</head>
+<body>
+<nav><a class="nav-back" href="node-nods-demo.html">← Node Nods</a><span class="nav-num">No. 02 / 2401</span></nav>
+<header class="hero">
+  <div class="hero-meta">2024.01 — 사적</div>
+  <h1 class="hero-title">아주 <em>사적인</em><br>유체 과학사</h1>
+  <div class="hero-book">민태기, 『판타 레이』</div>
+  <div class="hero-premise">지나치게 사적인 나의 역사도 유체과학의 관점으로 한 번 꿰어본다.</div>
+</header>
+
+<div class="timeline">
+
+  <div class="inquiry">
+    <div class="inq-header">
+      <div class="inq-dot"></div>
+      <div class="inq-meta">
+        <span class="inq-num">탐구 1 / 어린 시절</span>
+        <div class="inq-question">"비행기는 어떻게 하늘을 날까?"</div>
+      </div>
+    </div>
+    <div class="inq-body">
+      <p>어린 시절, 과학자가 되고 싶었던 거 같다. 비행을 보면서 우주에 가는 꿈도 꾸었다. 과학시간이 좋았다. 주변 현상을 한 줄의 수식으로 설명해내는 이 세계와 그 사람들이 멋있었다.</p>
+      <p>최초로 기간을 가지고 연구를 해보았던 주제는 무겁고 커다란 물체인 비행기가 하늘 위에 떠다니는 현상이었다. 책에서 소개되는 과학자들의 시작을 보면서 과학과 유체를 향한 나의 시작을 떠올린다.</p>
+      <div class="parenthetical">(그렇게 나를 둘러싸고 있는 것들에 관심이 많은 사람이 되었다.)</div>
+    </div>
+  </div>
+
+  <div class="tl-connector"></div>
+
+  <div class="inquiry">
+    <div class="inq-header">
+      <div class="inq-dot"></div>
+      <div class="inq-meta">
+        <span class="inq-num">탐구 2 / 대학 시절</span>
+        <div class="inq-question">"건물 영향에 따른 지상 바람의 공간 분포는 어떨까?"</div>
+      </div>
+    </div>
+    <div class="inq-body">
+      <p>대학 시절, 나를 둘러싼 유체인 대기를 탐구 대상으로 삼고 지냈다. 자연의 현상을 관찰하고 가정을 세운 후 수집한 데이터로 전산 모델링에 수식을 사용하고 이를 검증하였다.</p>
+      <p>이 책에서 그때 쓰인 수식들의 탄생 과정을 엿본다. 그 한 줄에는 얽힌 사람과 진한 관계가 있다. 그 자체에 탄탄한 역사가 있다. 그 때 이렇게 인간적인 시선으로 수식들을 대할 수 있었다면 얼마나 좋았을까!</p>
+      <div class="parenthetical">(특히 바람을 연구하였다. 그래서 대기의 움직임과 꽤 친한 편이다.)</div>
+    </div>
+  </div>
+
+  <div class="tl-connector"></div>
+
+  <div class="inquiry">
+    <div class="inq-header">
+      <div class="inq-dot"></div>
+      <div class="inq-meta">
+        <span class="inq-num">탐구 3 / 연구실 바깥</span>
+        <div class="inq-question">"유체를 논리가 아닌 감각으로 수용할 수 있을까?"</div>
+      </div>
+    </div>
+    <div class="inq-body">
+      <p>그 시절, 연구실 바깥에서 만난 다른 분야의 사람이 나의 사고 체계를 흔든다. 세상과 자신의 몸으로 관계 맺는 무용수와 대화를 나누었다. "이렇게 움직여보니 어땠어요?"라며 개인적인 감상을 묻는다.</p>
+      <p><strong style="font-weight:400;color:var(--wm)">"상은씨, 생각하지 말고 감각하세요!"</strong> 이 한 마디로 나를 꽝 때린다. 이 때부터 '감각'이라는 요상한 단어에 대하여 생각하기 시작한다. 아니, 감각하려 노력한다.</p>
+      <p>며칠 뒤 투명한 비닐 봉투를 가지고 다양한 움직임을 실험하면서 나의 주위를 가득 메우고 있는 유체를 달리 감각할 수 있었다. 자연 현상에 대한 태도가 달라졌다.</p>
+      <div class="parenthetical">(다른 분야의 사람과 교류하며 이전에 없던 무언가가 생성된다.)</div>
+    </div>
+  </div>
+
+  <div class="tl-connector"></div>
+
+</div>
+
+<div class="mission" id="mission">
+  <span class="ms-label">과업 / 지금</span>
+  <div class="ms-title">"과학과 예술, 이 철학의 흐름을 통합할 수 있을까?"</div>
+  <div class="ms-body">
+    <p>이 시절, 나는 과학의 세계와 예술의 세상을 만나게 하고 싶다. 우연히 과학과 예술로 발생한 그 복합적인 사건이 보편적으로 일어날 수 있는 장을 만들고 싶다.</p>
+    <p>요즘의 나는 비록 한 줄의 수식을 내놓진 못할 지라도 그런 것이 나올 수 있는 환경을 제공하는 촉매제가 되고 싶은 듯하다.</p>
+  </div>
+</div>
+
+<div class="context-section">
+  <div class="ctx-label">과학자들의 삶에서 배운 것</div>
+  <div class="ctx-list">
+    <div class="ctx-item">살롱. 모으고 모일 수 있는가. 어떤 커뮤니티에서 속하여 활동하는가.</div>
+    <div class="ctx-item">누구와 교류하는가. 여기서 관심사가 어떻게 변화 또는 확장하는가.</div>
+    <div class="ctx-item">동시대의 동료는 누구인가. 누구를 만나는가. 타자로부터 무엇을 발견하는가.</div>
+  </div>
+</div>
+
+<footer><span class="footer-label">Node Nods</span><a class="footer-next" href="entry-03.html">03 — 시간←[시계]→똑딱 →</a></footer>
+<script>
+document.querySelectorAll('.inquiry').forEach((el,i)=>{
+  el.style.transitionDelay=(i*.1)+'s';
+  new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add('visible')),{threshold:.15}).observe(el);
+});
+new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add('visible')),{threshold:.2}).observe(document.getElementById('mission'));
+</script>
+</body>
+</html>

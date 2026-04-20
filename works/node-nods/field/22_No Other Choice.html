@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paper 22 — 어쩔수가없다</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#0a0a08;--ink:#e8e8e0;--ink-mid:#808078;
+  --ink-faint:#282820;--acc:#c0b060;--acc-dim:rgba(192,176,96,.08);
+  --l1:#c06050;--l2:#50a070;--l3:#5070c0;--rule:#1e1e18;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#141410;font-family:'DM Mono',monospace;font-weight:300;min-height:100vh;padding:36px 16px 80px}
+
+.chart{max-width:820px;margin:0 auto;background:var(--paper);box-shadow:0 2px 40px rgba(0,0,0,.6)}
+
+/* CHART HEADER */
+.chart-header{padding:32px 44px 24px;border-bottom:1px solid var(--rule)}
+.ch-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.ch-id{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:8px}
+.chart-title{font-family:'EB Garamond',serif;font-size:clamp(28px,5vw,52px);font-weight:400;line-height:1;letter-spacing:-.01em}
+.ch-right{text-align:right}
+.ch-meta{font-size:10px;color:var(--ink-faint);line-height:1.8;letter-spacing:.04em}
+.chart-sub{font-style:italic;font-size:15px;color:var(--ink-mid);margin-top:6px}
+.chart-premise{margin-top:16px;font-family:'EB Garamond',serif;font-style:italic;font-size:15px;color:var(--ink-mid);line-height:1.7;padding:12px 18px;border-left:2px solid var(--acc);background:var(--acc-dim)}
+
+/* CHART INFO ROW */
+.chart-info{padding:10px 44px;border-bottom:1px solid var(--rule);background:rgba(255,255,255,.02);display:flex;gap:32px;flex-wrap:wrap}
+.ci-field{font-size:10px;letter-spacing:.06em;color:var(--ink-faint)}.ci-field span{color:var(--ink-mid)}
+
+/* SECTIONS */
+.sections{padding:0 44px}
+
+.chart-section{margin:28px 0;border:1px solid var(--rule);overflow:hidden;opacity:0;transform:translateY(10px);transition:opacity .55s ease,transform .55s ease}
+.chart-section.visible{opacity:1;transform:none}
+
+/* SECTION HEADER */
+.cs-head{display:grid;grid-template-columns:auto 1fr auto;align-items:stretch;border-bottom:1px solid var(--rule)}
+.csh-num{padding:14px 18px;border-right:1px solid var(--rule);font-size:24px;font-weight:500;font-family:'EB Garamond',serif;display:flex;align-items:center}
+.chart-section.s1 .csh-num{color:var(--l1)}
+.chart-section.s2 .csh-num{color:var(--l2)}
+.chart-section.s3 .csh-num{color:var(--l3)}
+.csh-title{padding:14px 18px}
+.csh-diagnosis{font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;display:block}
+.chart-section.s1 .csh-diagnosis{color:var(--l1);opacity:.7}
+.chart-section.s2 .csh-diagnosis{color:var(--l2);opacity:.7}
+.chart-section.s3 .csh-diagnosis{color:var(--l3);opacity:.7}
+.csh-name{font-family:'EB Garamond',serif;font-size:clamp(16px,2.8vw,22px);color:var(--ink)}
+.csh-tag{padding:14px 18px;border-left:1px solid var(--rule);display:flex;align-items:center}
+.csh-badge{font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:2px}
+.chart-section.s1 .csh-badge{background:rgba(192,96,80,.15);color:var(--l1)}
+.chart-section.s2 .csh-badge{background:rgba(80,160,112,.1);color:var(--l2)}
+.chart-section.s3 .csh-badge{background:rgba(80,112,192,.1);color:var(--l3)}
+
+/* SECTION BODY */
+.cs-body{padding:20px}
+.cs-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.cs-field{padding:14px;border:1px solid var(--rule)}
+.csf-label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:7px}
+.csf-body{font-size:14px;color:var(--ink-mid);line-height:1.65}
+
+/* KEY QUOTE — the punch */
+.key-quote{padding:16px 18px;border-left:3px solid;background:rgba(255,255,255,.03)}
+.chart-section.s1 .key-quote{border-left-color:var(--l1)}
+.chart-section.s2 .key-quote{border-left-color:var(--l2)}
+.chart-section.s3 .key-quote{border-left-color:var(--l3)}
+.kq-prefix{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:7px}
+.kq-text{font-family:'EB Garamond',serif;font-style:italic;font-size:16px;color:var(--ink);line-height:1.65}
+.chart-section.s1 .kq-text{color:var(--l1)}
+.chart-section.s2 .kq-text{color:var(--l2)}
+.chart-section.s3 .kq-text{color:var(--l3)}
+
+/* PROGNOSIS — the reframe */
+.prognosis{margin:28px 44px 36px;padding:24px;border:1px solid var(--acc)}
+.prog-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);margin-bottom:14px;display:flex;align-items:center;gap:10px;opacity:.7}
+.prog-label::after{content:'';flex:1;height:1px;background:rgba(192,176,96,.25)}
+.prog-reframe{font-family:'EB Garamond',serif;font-size:clamp(16px,2.8vw,22px);color:var(--acc);font-style:italic;margin-bottom:12px;line-height:1.45}
+.prog-body{font-size:14px;color:var(--ink-mid);line-height:1.75}
+.prog-stamp{display:inline-block;border:1.5px solid var(--acc);padding:7px 18px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);transform:rotate(-1.5deg);margin-top:14px;opacity:.75}
+
+/* NAV */
+.chart-nav{padding:16px 44px;border-top:1px solid var(--rule);display:flex;justify-content:space-between}
+.pn-back{font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-decoration:none;text-transform:uppercase}.pn-back:hover{color:var(--ink)}
+.pn-next{font-size:10px;letter-spacing:.06em;color:var(--ink-mid);text-decoration:none}.pn-next:hover{color:var(--ink)}
+
+@media(max-width:600px){body{padding:12px 8px 60px}.chart-header,.chart-info,.sections,.prognosis,.chart-nav{padding-left:20px;padding-right:20px}.cs-grid{grid-template-columns:1fr}.csh-tag{display:none}}
+</style>
+</head>
+<body>
+<div class="chart">
+
+<header class="chart-header">
+  <div class="ch-top">
+    <div>
+      <span class="ch-id">의무 기록지 — Node Nods 경험노드</span>
+      <h1 class="chart-title">어쩔수가없다</h1>
+      <div class="chart-sub">인간 본성 탓이 아니라 정보 네트워크 탓</div>
+    </div>
+    <div class="ch-right">
+      <div class="ch-meta">No. 22 / 2509<br>유발 하라리, 『넥서스』<br>진단 기록 3개 층위</div>
+    </div>
+  </div>
+  <div class="chart-premise">네트워크에 내재된 구조를 보면, 인간 본성을 탓하는 것이 얼마나 잘못된 진단인지가 보인다. 어쩔 수 없는 구조를 알아야 어디를 바꿀 수 있는지 보인다.</div>
+</header>
+
+<div class="chart-info">
+  <div class="ci-field">진단 체계: <span>3개 층위</span></div>
+  <div class="ci-field">원인: <span>정보 네트워크 구조</span></div>
+  <div class="ci-field">치료 방향: <span>구조 인식 → 책임</span></div>
+</div>
+
+<div class="sections">
+
+  <div class="chart-section s1">
+    <div class="cs-head">
+      <div class="csh-num">I</div>
+      <div class="csh-title"><span class="csh-diagnosis">층위 1 — 인간의 상황</span><div class="csh-name">유기적 네트워크 속에서만 존재한다</div></div>
+      <div class="csh-tag"><span class="csh-badge">네트워크</span></div>
+    </div>
+    <div class="cs-body">
+      <div class="cs-grid">
+        <div class="cs-field"><span class="csf-label">관찰 소견</span><div class="csf-body">고정된 실체가 아니라 유기적으로 얽힌 네트워크 속에서만 존재한다. 기록된 정보는 현실을 단순히 재현하는 것이 아니라 현실 자체가 되었다.</div></div>
+        <div class="cs-field"><span class="csf-label">취약성</span><div class="csf-body">네트워크가 흔들리면 개인도 흔들린다. 우리는 뇌로 스치던 정보를 아웃소싱하며 문서 기술을 개발하였다.</div></div>
+      </div>
+      <div class="key-quote"><span class="kq-prefix">핵심 인용</span><div class="kq-text">"정보를 교환할 때 상호주관적 현실이 생긴다."</div></div>
+    </div>
+  </div>
+
+  <div class="chart-section s2">
+    <div class="cs-head">
+      <div class="csh-num">II</div>
+      <div class="csh-title"><span class="csh-diagnosis">층위 2 — 인간의 맥락</span><div class="csh-name">믿고 있는 이야기가 현실이 된다</div></div>
+      <div class="csh-tag"><span class="csh-badge">서사</span></div>
+    </div>
+    <div class="cs-body">
+      <div class="cs-grid">
+        <div class="cs-field"><span class="csf-label">관찰 소견</span><div class="csf-body">화폐는 신뢰로, 세금은 시민권으로, 데이터는 정체성으로 변환된다. 무엇을 믿게 할 것인가가 권력의 핵심이다.</div></div>
+        <div class="cs-field"><span class="csf-label">현시대 적용</span><div class="csf-body">다 같이 믿는 이야기는 문화인가? 다 같이 믿어야만 하는 이야기는 제도인가? AI는 새로운 믿음의 장치인가?</div></div>
+      </div>
+      <div class="key-quote"><span class="kq-prefix">핵심 인용</span><div class="kq-text">"이야기는 인간이 개발한 최초의 정보기술."</div></div>
+    </div>
+  </div>
+
+  <div class="chart-section s3">
+    <div class="cs-head">
+      <div class="csh-num">III</div>
+      <div class="csh-title"><span class="csh-diagnosis">층위 3 — 인간의 역사</span><div class="csh-name">오류와 자정작용의 반복</div></div>
+      <div class="csh-tag"><span class="csh-badge">자정</span></div>
+    </div>
+    <div class="cs-body">
+      <div class="cs-grid">
+        <div class="cs-field"><span class="csf-label">관찰 소견</span><div class="csf-body">역사는 오류를 드러내고 자정 장치를 마련해온 과정이다. 무오류성을 주장하는 순간 함정에 빠진다. 과학은 재현과 검증의 제도를 만들었다.</div></div>
+        <div class="cs-field"><span class="csf-label">현시대 적용</span><div class="csf-body">AI alignment라는 이름으로 생존을 위한 협력-공생-이타의 가능성을 다시 묻고 있다.</div></div>
+      </div>
+      <div class="key-quote"><span class="kq-prefix">핵심 인용</span><div class="kq-text">"기술은 단지 새로운 기회를 열어줄 뿐이며, 어느 쪽으로 갈지는 우리에게 달렸다."</div></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="prognosis">
+  <div class="prog-label">예후 및 치료 방향</div>
+  <div class="prog-reframe">"어쩔수가없다"는 체념이 아니라 — 정확한 진단이다.</div>
+  <div class="prog-body">네트워크에 내재된 구조를 보면, 인간 본성을 탓하는 것이 얼마나 잘못된 진단인지가 보인다. 어쩔 수 없는 구조를 알아야 어디를 바꿀 수 있는지 보인다. 어느 쪽으로 갈지는 우리에게 달렸다.</div>
+  <div class="prog-stamp">진단 — 체념이 아니라 책임</div>
+</div>
+
+<nav class="chart-nav">
+  <a class="pn-back" href="node-nods-demo.html">← Node Nods</a>
+  <a class="pn-next" href="paper-23.html">23 — 주인공이 되기까지는 →</a>
+</nav>
+</div>
+
+<script>
+document.querySelectorAll('.chart-section').forEach((s,i)=>{
+  s.style.transitionDelay=(i*.1)+'s';
+  new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add('visible')),{threshold:.15}).observe(s);
+});
+</script>
+</body>
+</html>

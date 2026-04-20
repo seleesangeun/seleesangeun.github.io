@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>15 — 각자 놓인 맥락이 다를 뿐</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f2f0f8;
+    --ink: #141028;
+    --ink-mid: #6860a0;
+    --ink-faint: #c0b8e0;
+    --acc: #4838a0;
+    --acc-dim: rgba(72,56,160,0.08);
+    --rule: #d8d4f0;
+    --seq: #2a5080;
+    --sim: #803050;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: 'DM Mono', monospace; font-weight: 300; min-height: 100vh; }
+  nav { padding: 22px 36px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--rule); }
+  .nav-back { font-size: 10px; letter-spacing: .12em; color: var(--ink-mid); text-decoration: none; text-transform: uppercase; }
+  .nav-back:hover { color: var(--ink); }
+  .nav-num { font-size: 10px; color: var(--ink-faint); }
+
+  /* HERO */
+  .hero { padding: 60px 36px 52px; border-bottom: 1px solid var(--rule); }
+  .hero-meta { font-size: 10px; letter-spacing: .14em; color: var(--acc); text-transform: uppercase; margin-bottom: 14px; }
+  .hero-title { font-family: 'DM Serif Display', serif; font-size: clamp(26px, 5vw, 50px); font-weight: 400; line-height: 1.1; letter-spacing: -.015em; }
+  .hero-book { margin-top: 20px; font-size: 11px; color: var(--ink-mid); }
+  .hero-pull { margin-top: 24px; font-size: 14px; font-style: italic; color: var(--acc); line-height: 1.7; }
+
+  /* COGNITION MODE TOGGLE */
+  .mode-bar { display: flex; border-bottom: 1px solid var(--rule); }
+  .mode-btn { flex: 1; padding: 18px 24px; cursor: pointer; border: none; background: none; font-family: 'DM Mono', monospace; font-size: 12px; color: var(--ink-mid); letter-spacing: .06em; border-right: 1px solid var(--rule); transition: background .2s, color .2s; text-align: left; }
+  .mode-btn:last-child { border-right: none; }
+  .mode-btn.active { background: var(--acc); color: white; }
+  .mode-btn .mode-label { font-size: 9px; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 4px; opacity: .7; display: block; }
+  .mode-btn .mode-title { font-size: 13px; display: block; }
+
+  /* PARALLEL READING AREA */
+  .reading-area { border-bottom: 1px solid var(--rule); min-height: 320px; }
+  .reading-mode { display: none; }
+  .reading-mode.active { display: block; animation: fadeIn .3s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* SEQUENTIAL MODE — left-to-right linear */
+  .seq-content { padding: 36px; max-width: 640px; }
+  .seq-para { font-size: 15px; line-height: 1.95; color: var(--ink); margin-bottom: 1.2em; }
+  .seq-para .hep { color: var(--sim); }
+
+  /* SIMULTANEOUS MODE — all at once, spatially arranged */
+  .sim-content { padding: 36px; position: relative; min-height: 320px; }
+  .sim-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .sim-cell { background: var(--bg); padding: 20px; }
+  .sim-cell-label { font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 8px; }
+  .sim-cell-body { font-size: 13px; color: var(--ink-mid); line-height: 1.65; }
+  .sim-cell.center { background: var(--acc-dim); }
+  .sim-cell.center .sim-cell-body { color: var(--acc); }
+  .sim-note { margin-top: 16px; font-size: 12px; color: var(--ink-mid); font-style: italic; }
+
+  /* WORK ENTRIES */
+  .body-wrap { max-width: 700px; margin: 0 auto; padding: 56px 36px 100px; }
+  .work-entry { margin-bottom: 52px; opacity: 0; transform: translateY(14px); transition: opacity .55s ease, transform .55s ease; }
+  .work-entry.visible { opacity: 1; transform: none; }
+  .work-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+  .work-year { font-size: 11px; color: var(--ink-faint); }
+  .work-title { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 15px; color: var(--ink-mid); }
+  .work-body p { font-size: 15px; line-height: 1.92; color: var(--ink); opacity: .85; }
+  .work-body p + p { margin-top: 1em; }
+  .work-note { margin-top: 16px; font-size: 12px; color: var(--ink-mid); padding: 12px 16px; border-left: 2px solid var(--acc); line-height: 1.6; }
+
+  footer { border-top: 1px solid var(--rule); padding: 26px 36px; display: flex; justify-content: space-between; }
+  .footer-label { font-size: 10px; letter-spacing: .1em; color: var(--ink-faint); text-transform: uppercase; }
+  .footer-next { font-size: 11px; color: var(--ink-mid); text-decoration: none; transition: color .2s; }
+  .footer-next:hover { color: var(--ink); }
+  @media (max-width: 600px) {
+    nav, footer { padding: 16px 20px; }
+    .hero, .body-wrap { padding-left: 20px; padding-right: 20px; }
+    .sim-grid { grid-template-columns: 1fr; }
+    .seq-content, .sim-content { padding: 24px 20px; }
+    .mode-bar { flex-direction: column; }
+    .mode-btn { border-right: none; border-bottom: 1px solid var(--rule); }
+    .mode-btn:last-child { border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-back" href="node-nods-demo.html">← Node Nods</a>
+  <span class="nav-num">No. 15 / 2502</span>
+</nav>
+<header class="hero">
+  <div class="hero-meta">2025.02 — 동시</div>
+  <h1 class="hero-title">각자 놓인 맥락이<br>다를 뿐</h1>
+  <div class="hero-book">테드 창, 『당신 인생의 이야기』</div>
+  <div class="hero-pull">동시에 존재하는 어떤 미래를 보고 온 듯한 기분이다.</div>
+</header>
+
+<div class="mode-bar">
+  <button class="mode-btn active" id="btn-seq" onclick="setMode('seq')">
+    <span class="mode-label">인간의 인지 방식</span>
+    <span class="mode-title">순차적 읽기 →</span>
+  </button>
+  <button class="mode-btn" id="btn-sim" onclick="setMode('sim')">
+    <span class="mode-label">헵타포드의 인지 방식</span>
+    <span class="mode-title">동시적 읽기 ⊞</span>
+  </button>
+</div>
+
+<div class="reading-area">
+  <div class="reading-mode active" id="mode-seq">
+    <div class="seq-content">
+      <p class="seq-para">외계생명체와 조우한 언어학자와 물리학자가 극단의 타자성을 향하는 과정. <span class="hep">헵타포드</span>는 인간은 만들어낼 수 없는 음성과 알아들을 수 없는 소리를 낸다.</p>
+      <p class="seq-para">이름을 불러주고 행동에 언어를 입힌다. 상대를 번역하기 위하여 일대일 대응 시킨다. 그런데 주어가 없는 문장을 상정할 수 없는 영어를 쓰는 연구자에게는 본인의 언어로 이해하려는 시도가 꽤 적절치 않다.</p>
+      <p class="seq-para">자신의 체계 안에서 이해하려할 수록 더 복잡해질 뿐이다. <span class="hep">헵타포드</span>의 문자는 1차원 줄글을 쓰는 영어라는 조립어의 체계와 완전히 다르다. 그들의 문자인 2차원 비선형적인 어표는 전체 문맥을 미리 아는 듯 동시에 존재한다.</p>
+    </div>
+  </div>
+
+  <div class="reading-mode" id="mode-sim">
+    <div class="sim-content">
+      <div class="sim-grid">
+        <div class="sim-cell">
+          <div class="sim-cell-label">과거</div>
+          <div class="sim-cell-body">조우한 언어학자와 물리학자. 이름을 불러주고 행동에 언어를 입힌다.</div>
+        </div>
+        <div class="sim-cell center">
+          <div class="sim-cell-label">현재 / 이미 알고 있는 것</div>
+          <div class="sim-cell-body">전체 문맥을 미리 아는 듯 동시에 존재하는 어표. 시작과 끝이 동시에.</div>
+        </div>
+        <div class="sim-cell">
+          <div class="sim-cell-label">미래</div>
+          <div class="sim-cell-body">딸의 죽음. 이미 알고 있지만 — 그래도 선택한다.</div>
+        </div>
+        <div class="sim-cell">
+          <div class="sim-cell-label">타자성</div>
+          <div class="sim-cell-body">나의 체계를 기꺼이 무너트리고 온 몸으로 다가가야 한다.</div>
+        </div>
+        <div class="sim-cell">
+          <div class="sim-cell-label">번역의 불가능성</div>
+          <div class="sim-cell-body">1차원 줄글의 언어와 2차원 비선형 어표는 근본적으로 다르다.</div>
+        </div>
+        <div class="sim-cell">
+          <div class="sim-cell-label">각자의 맥락</div>
+          <div class="sim-cell-body">동시에 존재하는 같은 세상을 꽤 다르게 인식한다는 사실.</div>
+        </div>
+      </div>
+      <div class="sim-note">헵타포드에게는 이 여섯 칸이 선형이 아니라 하나의 덩어리로 존재한다.</div>
+    </div>
+  </div>
+</div>
+
+<main class="body-wrap">
+  <div class="work-entry">
+    <div class="work-header">
+      <span class="work-year">Story of Your Life (1998)</span>
+      <span class="work-title">네 인생의 이야기</span>
+    </div>
+    <div class="work-body">
+      <p>왜 한국어 영화 제목을 저렇게 지었는지 이제는 알겠다. 온 몸으로 상대에게 향한다. 타자성에 닿기 위해서는 나의 체계를 기꺼이 무너트리고 온 몸으로 다가가야 한다.</p>
+      <div class="work-note">밤 새서 이야기 나눌 수 있을 정도로 할 말이 너무 많지만 여기서는 적당히 여기까지.</div>
+    </div>
+  </div>
+  <div class="work-entry">
+    <div class="work-header">
+      <span class="work-year">Understand (1991)</span>
+      <span class="work-title">이해</span>
+    </div>
+    <div class="work-body">
+      <p>뇌의 논리를 증축시키고 몸의 감각을 깨우는 작업도 경험해보았다. 과학도 예술도 경험한 몸의 입장에서 어떤 한계에 부딪힐 때 해 본 상상이었다. 그런데 광기어린 극단의 상태를 직접 마주하니깐 별로 그러고 싶지 않아졌다.</p>
+    </div>
+  </div>
+  <div class="work-entry">
+    <div class="work-header">
+      <span class="work-year">Liking What You See (2002)</span>
+      <span class="work-title">외모 지상주의에 관한 소고 : 다큐멘터리</span>
+    </div>
+    <div class="work-body">
+      <p>&lt;The Substance&gt;(2024) 감독의 작품 &lt;Reality+&gt;(2014)가 계속 떠올랐다. 칼리가 계속 calibration으로 읽혔다.</p>
+    </div>
+  </div>
+</main>
+<footer>
+  <span class="footer-label">Node Nods</span>
+  <a class="footer-next" href="entry-16.html">16 — 파인만 씨, 강연도 잘 하시네! →</a>
+</footer>
+<script>
+function setMode(m) {
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.reading-mode').forEach(r => r.classList.remove('active'));
+  document.getElementById('btn-' + m).classList.add('active');
+  document.getElementById('mode-' + m).classList.add('active');
+}
+document.querySelectorAll('.work-entry').forEach(s =>
+  new IntersectionObserver(e => e.forEach(x => x.isIntersecting && x.target.classList.add('visible')), {threshold:.15}).observe(s)
+);
+</script>
+</body>
+</html>

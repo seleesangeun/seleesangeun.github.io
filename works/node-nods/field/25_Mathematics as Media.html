@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paper 25 — 매스미디어 (Math-media)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f8f8f4;--wall:#f0efe8;--ink:#141410;--ink-mid:#787068;
+  --ink-faint:#c8c4b8;--acc:#303030;--acc-dim:rgba(48,48,48,.06);
+  --rule:#e4e0d4;--open-bg:#141410;--open-ink:#f0efe8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#c4c0b4;font-family:'EB Garamond',serif;min-height:100vh;padding:36px 16px 80px}
+
+.catalog{max-width:860px;margin:0 auto;background:var(--paper);box-shadow:0 2px 40px rgba(0,0,0,.16)}
+
+/* CATALOG COVER */
+.catalog-cover{padding:40px 48px 32px;border-bottom:3px solid var(--ink);background:var(--wall)}
+.cc-meta{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:12px;display:flex;gap:20px;flex-wrap:wrap}
+.catalog-title{font-size:clamp(24px,4vw,44px);font-weight:400;line-height:1.1;letter-spacing:-.015em;margin-bottom:4px}
+.catalog-en{font-style:italic;font-size:clamp(18px,3vw,30px);color:var(--ink-mid)}
+.catalog-source{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-faint);letter-spacing:.04em;margin-top:10px}
+.catalog-thesis{margin-top:20px;font-style:italic;font-size:15px;color:var(--ink-mid);line-height:1.75;max-width:580px}
+
+/* FOREWORD */
+.foreword{padding:24px 48px;border-bottom:1px solid var(--rule)}
+.fw-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.fw-label::after{content:'';flex:1;height:1px;background:var(--rule)}
+.fw-text{font-size:15px;line-height:1.85;color:var(--ink-mid);font-style:italic}
+
+/* CATALOG ENTRIES */
+.entries-section{padding:0 48px}
+.entries-hint{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-faint);padding:16px 0;font-style:italic}
+.entries-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+
+/* EACH ENTRY CARD */
+.entry-card{background:var(--paper);padding:0;cursor:pointer;transition:background .15s}
+.entry-card:hover{background:var(--acc-dim)}
+.entry-card.open{background:var(--open-bg)}
+.entry-front{padding:18px 16px}
+.entry-num{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--ink-faint);display:block;margin-bottom:8px}
+.entry-card.open .entry-num{color:rgba(240,239,232,.3)}
+.entry-formula{font-size:18px;color:var(--ink);margin-bottom:6px;letter-spacing:.03em;line-height:1.2}
+.entry-card.open .entry-formula{color:var(--open-ink)}
+.entry-name{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-mid);line-height:1.3}
+.entry-card.open .entry-name{color:rgba(240,239,232,.45)}
+
+/* EXPANDED NOTE */
+.entry-note{display:none;padding:0 16px 18px;animation:enIn .3s ease}
+.entry-card.open .entry-note{display:block}
+@keyframes enIn{from{opacity:0}to{opacity:1}}
+.en-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,239,232,.35);margin-bottom:8px;display:block;padding-top:14px;border-top:1px solid rgba(240,239,232,.1)}
+.en-text{font-size:13px;color:rgba(240,239,232,.65);line-height:1.65;font-style:italic;font-family:'EB Garamond',serif}
+
+/* ESSAY SECTION */
+.essay-section{padding:28px 48px;border-top:1px solid var(--rule)}
+.es-head{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:14px}
+.es-text{font-size:16px;line-height:1.9;color:var(--ink-mid)}.es-text+.es-text{margin-top:.9em}
+
+/* NEXT EXPEDITION */
+.next-expedition{margin:28px 48px;padding:24px;border:1px solid var(--ink);background:var(--wall)}
+.ne-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.ne-label::after{content:'';flex:1;height:1px;background:var(--rule)}
+.ne-title{font-style:italic;font-size:clamp(18px,3vw,26px);color:var(--ink);margin-bottom:10px}
+.ne-targets{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.ne-target{font-size:15px;color:var(--ink);padding:6px 16px;border:1px solid var(--ink)}
+.ne-note{font-size:14px;color:var(--ink-mid);line-height:1.65}
+
+/* NAV */
+.catalog-nav{padding:16px 48px;border-top:1px solid var(--rule);display:flex;justify-content:space-between}
+.pn-back{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-decoration:none;text-transform:uppercase}.pn-back:hover{color:var(--ink)}
+.pn-next{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--ink-mid);text-decoration:none}.pn-next:hover{color:var(--ink)}
+
+@media(max-width:600px){body{padding:12px 8px 60px}.catalog-cover,.foreword,.entries-section,.essay-section,.next-expedition,.catalog-nav{padding-left:20px;padding-right:20px}.entries-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="catalog">
+
+<div class="catalog-cover">
+  <div class="cc-meta">
+    <span>No. 25 / 2512</span>
+    <span>이언 스튜어트, 『세상을 바꾼 17가지 방정식』</span>
+    <span>전시 카탈로그</span>
+  </div>
+  <h1 class="catalog-title">매스미디어</h1>
+  <div class="catalog-en">(Math-media)</div>
+  <div class="catalog-source">Node Nods 경험노드 — 방정식이 작품이 되는 전시</div>
+  <div class="catalog-thesis">방정식은 시대의 사유를 매개(medium)한다. 이는 시대 전체에 작동하고 있는 매체(media)가 아닐지. 한 줄의 수식으로 향해가는 과정은 마치 조각가가 재료를 다루는 모습과 닮았다.</div>
+</div>
+
+<div class="foreword">
+  <div class="fw-label">큐레이터 노트</div>
+  <div class="fw-text">방정식의 탄생 맥락을 확인하면 그 시대의 사유와 그 이후의 세계를 읽을 수 있다. 각 방정식 카드를 클릭하면 작가 노트가 열립니다.</div>
+</div>
+
+<div class="entries-section">
+  <div class="entries-hint">작품을 클릭하면 작가 노트가 열립니다 — 17점</div>
+  <div class="entries-grid" id="entriesGrid"></div>
+</div>
+
+<div class="essay-section">
+  <div class="es-head">식(에서 시)적 아름다움</div>
+  <p class="es-text">한 줄의 방정식으로 향해가는 과정은 마치 조각가가 재료를 다루는 모습과 닮았다. 수학이라는 재료로 만들어진 수식을 살펴보며 대수적 아이디어에 의하여 다음 식으로 전개한다.</p>
+  <p class="es-text">온갖 수와 기호를 재료로 추상 작업을 하는 치열한 모습이 보인다. 그래서 식(에서 시)적 아름다움을 느낄 수 있는 건 아닐지.</p>
+</div>
+
+<div class="next-expedition">
+  <div class="ne-label">다음 탐구 예고</div>
+  <div class="ne-title">이 과정에서 발견한 새로운 목적지</div>
+  <div class="ne-targets">
+    <div class="ne-target">오일러 방정식</div>
+    <div class="ne-target">리만 수학</div>
+  </div>
+  <div class="ne-note">이제 여기로 향해볼까 한다. 어떤 생각을 하였는지 추적해보고 불편해하며 좌절해볼 결심일 수도.</div>
+</div>
+
+<nav class="catalog-nav">
+  <a class="pn-back" href="node-nods-demo.html">← Node Nods</a>
+  <a class="pn-next" href="entry-26.html">26 — 우주에서 건져내기 →</a>
+</nav>
+</div>
+
+<script>
+const equations=[
+  {n:1,f:'a²+b²=c²',name:'피타고라스 정리',note:'측량에서부터 시작되었다. 자연과 어떻게 관계 맺는가, 인간이 살고 있는 자연에서 측정하는 행위가 갖는 의의.'},
+  {n:2,f:'log(ab)=log a+log b',name:'로그',note:'"양 변에 로그를 취해보면" — 곱셈이 덧셈으로 전환되는 그런 양상이 얼마나 대단한 문법인가.'},
+  {n:3,f:'df/dt = lim(Δf/Δt)',name:'미적분',note:'응축된 함축. 방정식을 보고 "응축된 함축"이라고 표현하던 시적 아름다움이 이런 걸까.'},
+  {n:4,f:'∇·F=0',name:'벡터 미적분',note:'수학적 상상력이란. 이 영역에서 경이로움을 처음으로 느꼈다.'},
+  {n:5,f:'z=x+iy',name:'복소수',note:'실수를 복소수라는 수체계로 확장시킨 매력쟁이. 허수가 실재보다 더 유용하게 작동하는 세계.'},
+  {n:6,f:'eⁱπ+1=0',name:'오일러 항등식',note:'오일러 선생님을 깊이 뵙고. 이 다섯 상수가 하나로 연결되는 순간의 충격.'},
+  {n:7,f:'C=2πr',name:'원주율',note:'수식에 π가 왜 있는지 알 수 있었고. 원이라는 완전함과 무한소수 사이의 긴장.'},
+  {n:8,f:'∂²u/∂t²=c²∇²u',name:'파동 방정식',note:'"물리학자들은 이 식을 보면 딱 알거든요. 아, 파동 방정식이구나!" 그 직감의 원천.'},
+  {n:9,f:'S=−Σp log p',name:'정보 엔트로피',note:'Noise. 지금은 그냥 사실로 받아들이자 → 수학에서 그냥 넘기는 부분은 아직 그만큼의 이해력이 부족하다는 것.'},
+  {n:10,f:'∂u/∂t+u·∇u=−∇p',name:'나비에-스토크스',note:'turbulence. CFD, 모델 예측을 하고 측정 결과와 이를 비교해본 작업이 얼마나 가치있던 건지.'},
+  {n:11,f:'E=hν',name:'광양자 가설',note:'"수식으로 써보면 많은 것을 볼 수 있어요." — 아름다워.'},
+  {n:12,f:'S=k log W',name:'볼츠만 엔트로피',note:'복잡계 → 통계 물리. 물리학 분야가 크게 어떻게 분화되어 있는지.'},
+  {n:13,f:'Rμν−½gμνR=8πGTμν',name:'아인슈타인 장방정식',note:'수식을 뜯어본지 1년 만에 다시 수식으로 만나고. 그리고 리만 텐서.'},
+  {n:14,f:'iℏ∂ψ/∂t=Ĥψ',name:'슈뢰딩거 방정식',note:'관측과 동시에 붕괴하는 파동함수. 관측이 실재를 결정한다.'},
+  {n:15,f:'H=−Σp log p',name:'섀넌 정보이론',note:'AI-Human, 정보라는 신호의 이동. 지금 내가 살고 있는 세계의 토대.'},
+  {n:16,f:'dx/dt=f(x)',name:'카오스·비선형',note:'현실 물리계는 비선형 복잡계. 초기조건의 민감성 — 나비 효과.'},
+  {n:17,f:'∂C/∂t+½σ²S²…',name:'블랙-숄즈',note:'사회라는 분야의 경제에서 사용하는 수학 모델이 유효한지 고민. 금융 수식이 세상을 어떻게 바꿨는가.'},
+];
+
+const grid=document.getElementById('entriesGrid');
+let openCard=null;
+
+equations.forEach(eq=>{
+  const card=document.createElement('div');
+  card.className='entry-card';
+  card.innerHTML=`<div class="entry-front"><span class="entry-num">No. ${String(eq.n).padStart(2,'0')}</span><div class="entry-formula">${eq.f}</div><div class="entry-name">${eq.name}</div></div><div class="entry-note"><span class="en-label">작가 노트</span><div class="en-text">${eq.note}</div></div>`;
+  card.addEventListener('click',()=>{
+    if(openCard&&openCard!==card)openCard.classList.remove('open');
+    card.classList.toggle('open');
+    openCard=card.classList.contains('open')?card:null;
+  });
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>

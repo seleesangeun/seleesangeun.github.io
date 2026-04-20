@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paper 14 — 또다시 찾아온 기후변화의 위기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f2f5f0;--ink:#101810;--ink-mid:#507050;
+  --ink-faint:#a8c0a8;--g:#2e6b3a;--g-dim:rgba(46,107,58,.08);
+  --warn:#8a3010;--warn-dim:rgba(138,48,16,.08);--rule:#ccdacc;
+  --stratum-w:80px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#b0c4b0;font-family:'EB Garamond',serif;min-height:100vh;padding:36px 16px 80px}
+
+.report{max-width:860px;margin:0 auto;background:var(--paper);box-shadow:0 2px 40px rgba(0,0,0,.16)}
+
+/* REPORT HEADER */
+.report-header{padding:36px 44px 28px;border-bottom:2px solid var(--ink)}
+.rh-meta{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:12px;display:flex;gap:20px;flex-wrap:wrap}
+.report-title{font-size:clamp(22px,4vw,38px);font-weight:400;line-height:1.15;letter-spacing:-.01em;margin-bottom:6px}
+.report-sub{font-style:italic;font-size:15px;color:var(--ink-mid);margin-bottom:14px}
+.report-thesis{font-size:15px;line-height:1.8;color:var(--ink-mid);padding:14px 18px;border-left:2px solid var(--warn);background:var(--warn-dim);font-style:italic}
+
+/* CROSS-SECTION DIAGRAM */
+.section-diagram{padding:32px 44px;border-bottom:1px solid var(--rule)}
+.sd-head{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.sd-head::after{content:'';flex:1;height:1px;background:var(--rule)}
+
+/* STRATA LAYOUT */
+.strata{display:flex;flex-direction:column;gap:2px;margin-bottom:16px}
+.stratum{display:grid;grid-template-columns:var(--stratum-w) 1fr;gap:0;opacity:0;transform:translateX(-10px);transition:opacity .5s ease,transform .5s ease}
+.stratum.visible{opacity:1;transform:none}
+
+/* DEPTH MARKER */
+.depth-col{padding:14px 10px 14px 0;text-align:right;border-right:3px solid transparent;display:flex;flex-direction:column;justify-content:center;gap:3px}
+.depth-era{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;color:var(--ink-faint)}
+.depth-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-mid)}
+
+/* STRATUM CONTENT */
+.stratum-content{padding:14px 18px;border-left:4px solid;position:relative}
+.stratum-head{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:5px;display:flex;align-items:center;gap:8px}
+.stratum-body{font-size:14px;color:var(--ink-mid);line-height:1.6}
+
+/* COLOR PER ERA */
+.era-ancient .depth-col{border-right-color:#8a9880}.era-ancient .stratum-content{border-left-color:#8a9880;background:#f0f2ec}
+.era-historical .depth-col{border-right-color:#6a8070}.era-historical .stratum-content{border-left-color:#6a8070;background:#eef2ee}
+.era-modern .depth-col{border-right-color:var(--g)}.era-modern .stratum-content{border-left-color:var(--g);background:var(--g-dim)}
+.era-present .depth-col{border-right-color:var(--warn)}.era-present .stratum-content{border-left-color:var(--warn);background:var(--warn-dim)}
+.era-future .depth-col{border-right-color:rgba(138,48,16,.3);border-right-style:dashed}.era-future .stratum-content{border-left-color:rgba(138,48,16,.25);border-left-style:dashed;background:rgba(138,48,16,.03)}
+
+/* WARNING BADGE */
+.warn-badge{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.08em;color:var(--warn);border:1px solid var(--warn);padding:1px 6px;border-radius:2px;opacity:.85}
+
+/* TWO AXES CROSS SECTION */
+.axes-section{padding:28px 44px;border-bottom:1px solid var(--rule)}
+.as-head{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.as-head::after{content:'';flex:1;height:1px;background:var(--rule)}
+.axes-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.axis-col{padding:20px;border:1px solid var(--rule);background:white;position:relative}
+.axis-col.politics{border-left:3px solid var(--g)}
+.axis-col.capital{border-left:3px solid var(--warn)}
+.ax-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:10px}
+.axis-col.politics .ax-label{color:var(--g)}
+.axis-col.capital .ax-label{color:var(--warn)}
+.ax-title{font-size:16px;font-weight:400;color:var(--ink);margin-bottom:10px;line-height:1.3}
+.ax-body{font-size:14px;color:var(--ink-mid);line-height:1.65}
+.ax-q{margin-top:12px;font-style:italic;font-size:13px;color:var(--ink);padding-top:10px;border-top:1px solid var(--rule)}
+
+/* CLOSING */
+.closing{padding:28px 44px 36px}
+.cl-head{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:14px}
+.cl-text{font-size:16px;line-height:1.9;color:var(--ink-mid)}
+
+/* NAV */
+.report-nav{padding:16px 44px;border-top:1px solid var(--rule);display:flex;justify-content:space-between}
+.pn-back{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-decoration:none;text-transform:uppercase}.pn-back:hover{color:var(--ink)}
+.pn-next{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--ink-mid);text-decoration:none}.pn-next:hover{color:var(--ink)}
+
+@media(max-width:640px){body{padding:12px 8px 60px}.report-header,.section-diagram,.axes-section,.closing,.report-nav{padding-left:20px;padding-right:20px}.axes-grid{grid-template-columns:1fr}:root{--stratum-w:56px}}
+</style>
+</head>
+<body>
+<div class="report">
+
+<header class="report-header">
+  <div class="rh-meta">
+    <span>No. 14 / 2501</span>
+    <span>박정재, 『한국인의 기원』</span>
+    <span>지질 단면 분석 보고서</span>
+  </div>
+  <h1 class="report-title">또다시 찾아온<br>기후변화의 위기</h1>
+  <div class="report-sub">현재 한반도에서 정착하여 살고 있는 한국인은 숱한 기후 변동에 의하여 이주할 수밖에 없었다</div>
+  <div class="report-thesis">과학을 정당성으로 가져간, 힘 그리고 돈이 만들어가는 기후변화의 시대</div>
+</header>
+
+<div class="section-diagram">
+  <div class="sd-head">시대 지층 단면도 — 위에서 아래로 시간이 쌓인다</div>
+  <div class="strata" id="strata"></div>
+</div>
+
+<div class="axes-section">
+  <div class="as-head">현재 층위에서 교차하는 두 개의 축</div>
+  <div class="axes-grid">
+    <div class="axis-col politics">
+      <span class="ax-label">축 1 — 정치</span>
+      <div class="ax-title">기후와 권력의 정치 논리</div>
+      <div class="ax-body">역사적으로 날씨를 읽고 예측할 수 있는 사람은 막강한 권력을 가졌다. 21세기에는 과학자가 데이터로 자연 현상을 해석하며 현대판 제사장의 역할을 맡고 있다. 이 판단이 어떻게 활용되는지는 지리에 기반한 정치적 환경과 밀접하게 연결되어 있다.</div>
+      <div class="ax-q">과학이 정당성이 될 때 — 누구의 정당성인가?</div>
+    </div>
+    <div class="axis-col capital">
+      <span class="ax-label">축 2 — 자본</span>
+      <div class="ax-title">기후와 자본의 경제 논리</div>
+      <div class="ax-body">빠른 속도로 지구 시스템이 변화하고 있다고 데이터가 말한다. 기후난민과 분쟁이 발생할 경우 어떻게 해야 할까? 지속가능한 미래를 위하여 자본이 향해야 할 방향은 어디인가? 이번에 어떤 이들은 지구 안이 아닌 바깥으로 가려나?</div>
+      <div class="ax-q">인류세 멸종 위기 상황을 어떤 기술로 극복해낼까?</div>
+    </div>
+  </div>
+</div>
+
+<div class="closing">
+  <div class="cl-head">과거 여러 차례 적응하며 생존해온 기원을 살피며</div>
+  <p class="cl-text">그 시절을 시뮬레이션 했던 것처럼 기후변화로부터 추동될 인류의 생존과 그 전략에 영향을 미칠 요인을 떠올린다. 생명체는 생존에 적합한 서식처를 발견하고 안정을 찾으면 정착한다.</p>
+</div>
+
+<nav class="report-nav">
+  <a class="pn-back" href="node-nods-demo.html">← Node Nods</a>
+  <a class="pn-next" href="paper-15.html">15 — 각자 놓인 맥락이 다를 뿐 →</a>
+</nav>
+</div>
+
+<script>
+const strata=[
+  {era:'era-ancient',ageLabel:'수만 년 전',time:'빙하기 말',head:'기후변동 → 이주 → 정착',body:'척박했던 한반도 지역까지 나아가 정착. 생명체는 생존에 적합한 서식처를 발견하고 안정을 찾으면 정착한다.',warn:false},
+  {era:'era-historical',ageLabel:'역사 시대',time:'문명 형성기',head:'날씨를 읽는 자가 권력을 가졌다',body:'제사장이 하늘의 뜻이라고 해석하며 권위를 가졌다. 자연 현상을 해석하는 자 = 권력자.',warn:false},
+  {era:'era-modern',ageLabel:'21세기',time:'인류세',head:'과학자가 현대판 제사장',body:'데이터로 자연 현상을 해석하며 합리적으로 현상을 해석하고 판단한다. 다만, 이 판단이 어떻게 활용되는지는 정치적 환경과 밀접하게 연결되어 있다.',warn:false},
+  {era:'era-present',ageLabel:'현재',time:'지금',head:'또다시 기후 위기',body:'데이터가 빠른 변화를 말한다. 대규모 이주와 분쟁의 예상 시나리오. 힘 그리고 돈이 만들어가는 기후변화의 시대.',warn:true},
+  {era:'era-future',ageLabel:'미래',time:'?',head:'호모 사피엔스의 다음 선택',body:'인류세 멸종 위기 상황을 어떤 기술로 극복해낼까? 이번에 어떤 이들은 지구 안이 아닌 바깥으로 가려나?',warn:true},
+];
+
+const container=document.getElementById('strata');
+strata.forEach((s,i)=>{
+  const row=document.createElement('div');
+  row.className=`stratum ${s.era}`;
+  row.style.transitionDelay=(i*.1)+'s';
+  row.innerHTML=`<div class="depth-col"><div class="depth-era">${s.ageLabel}</div><div class="depth-time">${s.time}</div></div><div class="stratum-content"><div class="stratum-head">${s.head}${s.warn?'<span class="warn-badge">경고</span>':''}</div><div class="stratum-body">${s.body}</div></div>`;
+  container.appendChild(row);
+  new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add('visible')),{threshold:.2}).observe(row);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>01 — AI 어쩌고 vs 인간 생명체</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f0e0c;--ink:#e8e4dc;--ink-mid:#8a8780;--ink-faint:#3a3835;
+  --acc:#c4511e;--acc-dim:rgba(196,81,30,.12);
+  --agree:#4a9060;--agree-dim:rgba(74,144,96,.12);
+  --counter:#4060a8;--counter-dim:rgba(64,96,168,.12);
+  --rule:#2a2825;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'DM Mono',monospace;font-weight:300;min-height:100vh}
+nav{padding:22px 36px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule)}
+.nav-back{font-size:10px;letter-spacing:.12em;color:var(--ink-mid);text-decoration:none;text-transform:uppercase}.nav-back:hover{color:var(--ink)}
+.nav-num{font-size:10px;color:var(--ink-faint)}
+
+/* HERO */
+.hero{padding:60px 36px 52px;border-bottom:1px solid var(--rule)}
+.hero-meta{font-size:10px;letter-spacing:.14em;color:var(--acc);text-transform:uppercase;margin-bottom:14px}
+.hero-title{font-family:'DM Serif Display',serif;font-size:clamp(26px,5vw,52px);font-weight:400;line-height:1.1;letter-spacing:-.02em}
+.hero-title .vs{color:var(--acc);font-style:italic}
+.hero-book{margin-top:20px;font-size:11px;color:var(--ink-mid)}
+.hero-opening{margin-top:28px;font-size:15px;color:var(--ink-mid);line-height:1.85;max-width:560px;border-left:2px solid var(--acc);padding-left:18px}
+
+/* PROPOSITIONS */
+.prop-wrap{max-width:700px;margin:0 auto;padding:52px 36px 0}
+.prop-intro{font-size:13px;color:var(--ink-mid);line-height:1.7;margin-bottom:28px}
+.prop-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mid);margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+
+.prop-item{display:flex;align-items:stretch;gap:0;border:1px solid var(--rule);margin-bottom:8px;opacity:0;transform:translateX(-12px);transition:opacity .45s ease,transform .45s ease,border-color .2s,background .2s}
+.prop-item.visible{opacity:1;transform:none}
+.prop-item.marked-agree{border-color:var(--agree);background:var(--agree-dim)}
+.prop-item.marked-counter{border-color:var(--counter);background:var(--counter-dim)}
+
+.prop-num{width:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--ink-faint);border-right:1px solid var(--rule);padding:16px 0}
+.prop-body{flex:1;padding:16px 20px}
+.prop-claim{font-size:13px;color:var(--ink-mid);line-height:1.5;margin-bottom:6px}
+.prop-claim span.op{color:var(--acc)}
+.prop-arrow{font-size:11px;color:var(--ink-faint)}
+.prop-result{font-size:12px;color:var(--ink);line-height:1.4}
+.prop-mark{font-size:10px;letter-spacing:.08em;margin-top:8px;display:none}
+.prop-item.marked-agree .prop-mark{display:block;color:var(--agree)}
+.prop-item.marked-counter .prop-mark{display:block;color:var(--counter)}
+
+.prop-btns{flex-shrink:0;display:flex;flex-direction:column;border-left:1px solid var(--rule)}
+.pb{padding:0 14px;flex:1;cursor:pointer;border:none;background:none;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--ink-faint);transition:background .15s,color .15s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.pb:first-child{border-bottom:1px solid var(--rule)}
+.pb:hover{background:rgba(255,255,255,.04);color:var(--ink)}
+.prop-item.marked-agree .pb.agree-btn{color:var(--agree)}
+.prop-item.marked-counter .pb.counter-btn{color:var(--counter)}
+
+/* RESULT BAR */
+.result-bar{margin-top:20px;padding:16px 20px;border:1px solid var(--rule);display:flex;align-items:center;gap:16px}
+.rb-label{font-size:10px;color:var(--ink-faint);white-space:nowrap}
+.rb-track{flex:1;height:4px;background:var(--rule);border-radius:2px;position:relative;overflow:hidden}
+.rb-agree{position:absolute;left:0;top:0;bottom:0;background:var(--agree);border-radius:2px;transition:width .4s ease}
+.rb-counter{position:absolute;right:0;top:0;bottom:0;background:var(--counter);border-radius:2px;transition:width .4s ease}
+.rb-count{font-size:10px;color:var(--ink-mid);white-space:nowrap}
+
+/* FINAL QUESTION */
+.final-wrap{max-width:700px;margin:0 auto;padding:40px 36px 80px;opacity:0;transition:opacity .8s ease}
+.final-wrap.visible{opacity:1}
+.fq-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.fq-question{font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(18px,3.5vw,28px);color:var(--acc);line-height:1.5;margin-bottom:24px}
+.fq-close{font-size:15px;color:var(--ink-mid);line-height:1.9;opacity:.8}
+
+footer{border-top:1px solid var(--rule);padding:26px 36px;display:flex;justify-content:space-between}
+.footer-label{font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase}
+.footer-next{font-size:11px;color:var(--ink-mid);text-decoration:none;transition:color .2s}.footer-next:hover{color:var(--ink)}
+@media(max-width:600px){nav,footer{padding:16px 20px}.hero,.prop-wrap,.final-wrap{padding-left:20px;padding-right:20px}.pb{padding:0 10px;font-size:9px}}
+</style>
+</head>
+<body>
+<nav><a class="nav-back" href="node-nods-demo.html">← Node Nods</a><span class="nav-num">No. 01 / 2312</span></nav>
+<header class="hero">
+  <div class="hero-meta">2023.12 — 충돌</div>
+  <h1 class="hero-title">AI 어쩌고 <span class="vs">vs</span> 인간 생명체</h1>
+  <div class="hero-book">울프 다니엘손, 『세계 그 자체』</div>
+  <div class="hero-opening">
+    "모든 것은 물리학이다." 처음부터 강력하다. 물리학이 아닌 건 없다고 한다. 이론 물리학자가 세상을 감각하는 방식이다. 이 세계는 궁극적으로 실재를 다루는 물리학이라고 정의한다.
+  </div>
+</header>
+
+<div class="prop-wrap">
+  <p class="prop-intro">저자가 세운 논증들입니다. 각 명제에 동의하거나 반문을 표시해보세요. 읽으면서 어디서 충돌이 일어나는지 발견합니다.</p>
+  <div class="prop-label">8개의 명제 — 논증과 충돌</div>
+  <div id="propList"></div>
+  <div class="result-bar" id="resultBar">
+    <div class="rb-label">동의</div>
+    <div class="rb-track"><div class="rb-agree" id="rbAgree" style="width:0%"></div><div class="rb-counter" id="rbCounter" style="width:0%"></div></div>
+    <div class="rb-label" style="text-align:right">반문</div>
+    <div class="rb-count" id="rbCount">0 / 8 응답</div>
+  </div>
+</div>
+
+<div class="final-wrap" id="finalWrap">
+  <div class="fq-label">논증이 수렴하는 곳</div>
+  <div class="fq-question">실재적 물리계에 내재적 상상계를 들일 수 있는가?</div>
+  <div class="fq-close">논리의 명백함으로 표백되어있는 물리의 세계에 상상의 눈을 하나씩 붙여본다. 마침내 인간이라는 세계-내-관계와 몸이라는 감각적 실재로 '세계 그 자체'를 경험한다. 경직된 인간의 몸이 말랑한 상태가 될 때, 아이디어가 보글거리지 않을까? 인간이 인간이 될 때. 몸이 몸으로 실재할 때.</div>
+</div>
+
+<footer><span class="footer-label">Node Nods</span><a class="footer-next" href="entry-02.html">02 — 아주 사적인 유체 과학사 →</a></footer>
+<script>
+const props=[
+  {op:'All',arrow:'→',result:'Physics',note:'물리학이 아닌 건 없다'},
+  {op:'살아있는 존재',arrow:'≠',result:'기계',note:'생명은 기계로 환원되지 않는다'},
+  {op:'우주',arrow:'≠',result:'수학',note:'수학이 우주를 기술하지만 우주는 수학이 아니다'},
+  {op:'모형',arrow:'≠',result:'실재',note:'지도는 영토가 아니다'},
+  {op:'컴퓨터',arrow:'≠',result:'의식',note:'계산은 경험이 아니다'},
+  {op:'All',arrow:'≠',result:'계산',note:'환원 불가능한 것들이 있다'},
+  {op:'인간',arrow:'≠',result:'특별한 존재',note:'코페르니쿠스 이후로'},
+  {op:'자유의지',arrow:'≠',result:'존재',note:'물리법칙 안에서 자유가 가능한가'},
+];
+const list=document.getElementById('propList');
+const rbAgree=document.getElementById('rbAgree');
+const rbCounter=document.getElementById('rbCounter');
+const rbCount=document.getElementById('rbCount');
+const finalWrap=document.getElementById('finalWrap');
+let agrees=0,counters=0,total=0;
+
+props.forEach((p,i)=>{
+  const item=document.createElement('div');
+  item.className='prop-item';
+  item.innerHTML=`
+    <div class="prop-num">${String(i+1).padStart(2,'0')}</div>
+    <div class="prop-body">
+      <div class="prop-claim"><span class="op">[${p.op}]</span> <span class="prop-arrow">${p.arrow}</span> [${p.result}]</div>
+      <div class="prop-result">${p.note}</div>
+      <div class="prop-mark" id="mark-${i}"></div>
+    </div>
+    <div class="prop-btns">
+      <button class="pb agree-btn" data-i="${i}">동의 ○</button>
+      <button class="pb counter-btn" data-i="${i}">반문 ×</button>
+    </div>`;
+  list.appendChild(item);
+
+  setTimeout(()=>{
+    new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');}}),{threshold:.3}).observe(item);
+  },i*60);
+});
+
+list.addEventListener('click',e=>{
+  const btn=e.target.closest('.pb');
+  if(!btn)return;
+  const i=+btn.dataset.i;
+  const item=list.children[i];
+  const mark=document.getElementById('mark-'+i);
+  const wasAgree=item.classList.contains('marked-agree');
+  const wasCounter=item.classList.contains('marked-counter');
+  const isAgree=btn.classList.contains('agree-btn');
+
+  if(wasAgree)agrees--;
+  if(wasCounter)counters--;
+  if(!wasAgree&&isAgree){item.classList.remove('marked-counter');item.classList.add('marked-agree');agrees++;mark.textContent='동의했습니다';}
+  else if(!wasCounter&&!isAgree){item.classList.remove('marked-agree');item.classList.add('marked-counter');counters++;mark.textContent='반문을 남겼습니다';}
+  else{item.classList.remove('marked-agree','marked-counter');}
+
+  total=agrees+counters;
+  const pctA=Math.round(agrees/props.length*100);
+  const pctC=Math.round(counters/props.length*100);
+  rbAgree.style.width=pctA+'%';
+  rbCounter.style.width=pctC+'%';
+  rbCount.textContent=`${total} / ${props.length} 응답`;
+  if(total>=4)finalWrap.classList.add('visible');
+});
+</script>
+</body>
+</html>

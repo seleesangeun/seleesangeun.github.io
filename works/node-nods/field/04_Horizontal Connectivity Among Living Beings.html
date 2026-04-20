@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paper 04 — 생명체_사이의_평평한_연결감</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f4f5f0;
+  --ink: #141e12;
+  --ink-mid: #6a7a68;
+  --ink-faint: #b8c8b4;
+  --g: #2e6b3a;
+  --g-dim: rgba(46,107,58,.08);
+  --rule: #d0dcc8;
+  --card-w: 160px;
+  --card-h: 120px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #c8d4c0;
+  font-family: 'DM Mono', monospace;
+  font-weight: 300;
+  min-height: 100vh;
+  padding: 36px 20px 80px;
+}
+
+.catalog {
+  max-width: 880px;
+  margin: 0 auto;
+  background: var(--paper);
+  box-shadow: 0 2px 36px rgba(0,0,0,.16);
+  position: relative;
+}
+
+/* DNA BORDER — top and bottom */
+.dna-border {
+  padding: 8px 0;
+  background: var(--ink);
+  overflow: hidden;
+  white-space: nowrap;
+}
+.dna-inner {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: .14em;
+  color: rgba(212,220,200,.5);
+  animation: dna 18s linear infinite;
+}
+.dna-inner:nth-child(2) { animation-direction: reverse; }
+@keyframes dna { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* HEADER */
+.cat-header {
+  padding: 36px 40px 28px;
+  border-bottom: 1px solid var(--rule);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
+  align-items: center;
+}
+.cat-title {
+  font-family: 'EB Garamond', serif;
+  font-size: clamp(22px, 3.8vw, 36px);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -.01em;
+}
+.cat-source {
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: .04em;
+  margin-top: 6px;
+}
+.cat-badge {
+  padding: 8px 16px;
+  border: 1px solid var(--g);
+  font-size: 11px;
+  color: var(--g);
+  letter-spacing: .06em;
+  text-align: center;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
+/* INTRO TEXT */
+.cat-intro {
+  padding: 20px 40px;
+  border-bottom: 1px solid var(--rule);
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--ink-mid);
+}
+
+/* SPECIMEN GRID */
+.specimen-section {
+  padding: 28px 32px;
+  border-bottom: 1px solid var(--rule);
+}
+.ss-label {
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ss-label::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+.ss-hint { font-size: 11px; color: var(--ink-faint); margin-bottom: 20px; }
+
+.specimen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr));
+  gap: 8px;
+}
+
+/* SPECIMEN CARD — the flip card */
+.specimen-card {
+  height: var(--card-h);
+  perspective: 800px;
+  cursor: pointer;
+}
+.card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform .5s cubic-bezier(.22,1,.36,1);
+}
+.specimen-card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-face, .card-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border: 1px solid var(--rule);
+  padding: 14px;
+}
+.card-face {
+  background: white;
+}
+.card-back {
+  background: var(--g);
+  transform: rotateY(180deg);
+}
+
+/* SAME HEIGHT INDICATOR — the flat bar */
+.flat-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--rule);
+}
+.card-face:hover .flat-bar { background: var(--g); }
+
+.cf-num {
+  font-size: 9px;
+  color: var(--ink-faint);
+  letter-spacing: .08em;
+  margin-bottom: 8px;
+  display: block;
+}
+.cf-name {
+  font-size: 13px;
+  color: var(--ink);
+  margin-bottom: 3px;
+  font-weight: 400;
+}
+.cf-type {
+  font-size: 10px;
+  color: var(--ink-mid);
+  letter-spacing: .04em;
+}
+.cf-dna {
+  font-size: 9px;
+  color: var(--ink-faint);
+  margin-top: 6px;
+  letter-spacing: .08em;
+}
+
+/* BACK OF CARD */
+.cb-name {
+  font-size: 11px;
+  color: rgba(212,232,204,.9);
+  letter-spacing: .06em;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.cb-fact {
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  color: rgba(212,232,204,.8);
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+.cb-flat {
+  font-size: 10px;
+  color: rgba(212,232,204,.5);
+  letter-spacing: .04em;
+  font-style: italic;
+}
+
+/* DETAIL PANEL — opens below grid */
+.detail-panel {
+  display: none;
+  padding: 20px;
+  background: var(--g-dim);
+  border-top: 1px solid var(--rule);
+  margin-top: 8px;
+  animation: dpIn .3s ease;
+}
+@keyframes dpIn { from { opacity: 0; } to { opacity: 1; } }
+.detail-panel.open { display: block; }
+.dp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+.dp-field { border-left: 2px solid var(--g); padding-left: 12px; }
+.dpf-label { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 5px; display: block; }
+.dpf-body { font-size: 13px; color: var(--ink-mid); line-height: 1.55; }
+
+/* BODY TEXT */
+.body-section {
+  padding: 32px 40px 40px;
+}
+.bs-head {
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 16px;
+}
+.bs-text {
+  font-family: 'EB Garamond', serif;
+  font-size: 17px;
+  line-height: 1.85;
+  color: var(--ink);
+}
+.bs-text + .bs-text { margin-top: 1.1em; }
+.bs-quote {
+  margin-top: 20px;
+  font-style: italic;
+  color: var(--ink-mid);
+  font-size: 16px;
+  padding: 14px 0;
+  border-top: 1px solid var(--rule);
+}
+
+/* NAV */
+.cat-nav {
+  padding: 16px 40px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+}
+.pn-back { font-size: 10px; letter-spacing: .1em; color: var(--ink-faint); text-decoration: none; text-transform: uppercase; }
+.pn-back:hover { color: var(--ink); }
+.pn-next { font-size: 10px; letter-spacing: .06em; color: var(--ink-mid); text-decoration: none; }
+.pn-next:hover { color: var(--ink); }
+
+@media (max-width: 600px) {
+  body { padding: 12px 8px 60px; }
+  .cat-header { grid-template-columns: 1fr; padding: 24px 20px 20px; }
+  .cat-intro, .specimen-section, .body-section, .cat-nav { padding-left: 20px; padding-right: 20px; }
+  :root { --card-w: 130px; --card-h: 110px; }
+  .dp-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="catalog">
+
+  <div class="dna-border">
+    <span class="dna-inner">— ATCG — GCTA — 공통 언어 — ATCG — GCTA — DNA — ATCG — 모든 생명 — GCTA — ATCG — GCTA — DNA — 평평한 연결 — ATCG — GCTA — &nbsp;&nbsp;&nbsp;— ATCG — GCTA — 공통 언어 — ATCG — GCTA — DNA — ATCG — 모든 생명 — GCTA — ATCG — GCTA — DNA — 평평한 연결 — ATCG — GCTA — &nbsp;&nbsp;&nbsp;</span>
+  </div>
+
+  <header class="cat-header">
+    <div>
+      <h1 class="cat-title">생명체_사이의<br>_평평한_연결감</h1>
+      <div class="cat-source">No. 04 / 2403 — 닐 슈빈, 『자연은 어떻게 발명하는가』</div>
+    </div>
+    <div class="cat-badge">DNA<br>공통 언어<br>위계 없음</div>
+  </header>
+
+  <div class="cat-intro">
+    생명체라면 DNA를 가지고 있다는 사실만으로 유대감이 생기는 걸까? 나와 마주치는 또다른 사람의 관계에서도, 내가 먹는 음식에서도, 눈에 보이지 않는 수많은 미생물들까지도 — _평평하게_ 연결되어 있다.
+  </div>
+
+  <div class="specimen-section">
+    <div class="ss-label">표본 목록 — Specimen Catalog</div>
+    <div class="ss-hint">카드를 클릭하면 뒤집힙니다. 모든 카드는 같은 높이입니다.</div>
+    <div class="specimen-grid" id="specimenGrid"></div>
+    <div class="detail-panel" id="detailPanel">
+      <div class="dp-grid">
+        <div class="dp-field"><span class="dpf-label">분류</span><div class="dpf-body" id="dpType"></div></div>
+        <div class="dp-field"><span class="dpf-label">DNA 공유</span><div class="dpf-body" id="dpDna"></div></div>
+        <div class="dp-field"><span class="dpf-label">평평한 연결</span><div class="dpf-body" id="dpFlat"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="body-section">
+    <div class="bs-head">생물학자들은 흡사 수행자 같다</div>
+    <p class="bs-text">글쓴이는 암석을 깨면서 생명을 바라본다. 또 누군가는 실험군 초파리를 키우고 직접 하나씩 확인하며 변이 개체를 솎아낸다. 어떤 하나의 퍼포먼스처럼 보인다.</p>
+    <p class="bs-text">개체들 사이의 다양성은 진화의 연료다. 다양성은 우연히 발생하지만 진화는 필연적이다. 우리가 특정 생물을 뭐라고 부르든 환경에서 발생하여 기능하며 생존하고 있다.</p>
+    <div class="bs-quote">trial and error, chance and inevitability, detours, revolution, and invention</div>
+  </div>
+
+  <div class="dna-border" style="animation-direction:reverse">
+    <span class="dna-inner" style="animation-direction:reverse">— GCTA — ATCG — 평평한 연결 — GCTA — DNA — ATCG — 위계 없음 — GCTA — ATCG — 공통 언어 — GCTA — ATCG — &nbsp;&nbsp;&nbsp;— GCTA — ATCG — 평평한 연결 — GCTA — DNA — ATCG — 위계 없음 — GCTA — ATCG — 공통 언어 — GCTA — ATCG — &nbsp;&nbsp;&nbsp;</span>
+  </div>
+
+  <nav class="cat-nav">
+    <a class="pn-back" href="node-nods-demo.html">← Node Nods</a>
+    <a class="pn-next" href="paper-05.html">05 — 선 넘는 슈뢰딩거 →</a>
+  </nav>
+
+</div>
+
+<script>
+const specimens = [
+  { name:'인간',     type:'포유류',   fact:'약 30억 염기쌍. 침팬지와 98.7% 일치.',      dna:'인간 게놈 99.9%가 서로 동일하다.',       flat:'당신도 이 목록의 하나다.' },
+  { name:'침팬지',   type:'영장류',   fact:'인간과 98.7% 공유. 가장 가까운 친척.',       dna:'차이는 1.3%. 그 안에 언어가 있다.',        flat:'같은 높이에서 바라본다.' },
+  { name:'초파리',   type:'곤충',     fact:'유전자 60%가 인간과 공유됨.',               dna:'발생의 기본 설계도가 같다.',               flat:'연구실에서 인간을 밝혔다.' },
+  { name:'도롱뇽',   type:'양서류',   fact:'물과 육지 사이. 진화의 전환점.',            dna:'사지동물의 공통 조상.',                   flat:'경계에 서 있다는 것.' },
+  { name:'멍게',     type:'척삭동물', fact:'유충 때 척삭이 있다. 우리의 먼 조상.',       dna:'척추동물의 기원과 연결된다.',             flat:'외모와 관계없이.' },
+  { name:'다프니아', type:'갑각류',   fact:'물벼룩. 환경 변화에 민감한 지표종.',        dna:'잊고 살던 다프니아가 오랜만에 떠올랐다.', flat:'오랜만에 기억났다.' },
+  { name:'효모',     type:'균류',     fact:'인간과 유전자 31% 공유.',                  dna:'세포 분열의 기본 원리를 공유한다.',        flat:'빵 속에도 DNA가 있다.' },
+  { name:'대장균',   type:'세균',     fact:'3시간마다 세대교체. 가장 많이 연구됨.',      dna:'생명 연구의 표준. 모든 생물학이 여기서.',  flat:'가장 많이 알려진 존재.' },
+  { name:'옥수수',   type:'식물',     fact:'인간보다 더 많은 염기쌍.',                  dna:'식물의 복잡성은 동물에 뒤지지 않는다.',   flat:'내가 먹는 것 안에도.' },
+  { name:'해파리',   type:'자포동물', fact:'뇌와 심장 없이 5억 년 생존.',              dna:'신경계 이전의 생존 방식.',               flat:'단순함이 전략이다.' },
+  { name:'미토콘드리아',type:'세포소기관',fact:'독립 세균이었다. 지금 세포 안에 공생 중.',dna:'우리 세포 안에 또 다른 DNA.',           flat:'내 안에 타자가 산다.' },
+  { name:'지구',     type:'행성',     fact:'46억 년. 대멸종을 다섯 번 겪었다.',         dna:'생명의 조건을 제공한다.',                flat:'모든 생명이 이 위에.' },
+];
+
+const grid = document.getElementById('specimenGrid');
+const panel = document.getElementById('detailPanel');
+let openCard = null;
+
+specimens.forEach((s, i) => {
+  const card = document.createElement('div');
+  card.className = 'specimen-card';
+  card.innerHTML = `
+    <div class="card-inner">
+      <div class="card-face">
+        <span class="cf-num">${String(i+1).padStart(2,'0')}</span>
+        <div class="cf-name">${s.name}</div>
+        <div class="cf-type">${s.type}</div>
+        <div class="cf-dna">DNA ●</div>
+        <div class="flat-bar"></div>
+      </div>
+      <div class="card-back">
+        <div class="cb-name">${s.name}</div>
+        <div class="cb-fact">${s.fact}</div>
+        <div class="cb-flat">${s.flat}</div>
+      </div>
+    </div>`;
+
+  card.addEventListener('click', () => {
+    const isOpen = card.classList.contains('flipped');
+    if (openCard && openCard !== card) {
+      openCard.classList.remove('flipped');
+    }
+    card.classList.toggle('flipped');
+    openCard = card.classList.contains('flipped') ? card : null;
+
+    if (card.classList.contains('flipped')) {
+      document.getElementById('dpType').textContent = s.type;
+      document.getElementById('dpDna').textContent = s.dna;
+      document.getElementById('dpFlat').textContent = s.flat;
+      panel.classList.add('open');
+    } else {
+      panel.classList.remove('open');
+    }
+  });
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>
