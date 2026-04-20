@@ -931,22 +931,6 @@ function draw(){
     }
 
     boxPath();
-        // 윗면 (평행사변형)
-    ctx.beginPath();
-    ctx.moveTo(bx-hw, by-hh);
-    ctx.lineTo(bx-hw+depth, by-hh-depth);
-    ctx.lineTo(bx+hw+depth, by-hh-depth);
-    ctx.lineTo(bx+hw, by-hh);
-    ctx.fillStyle = p.s + "44"; ctx.fill();
-
-    // 오른쪽 측면
-    ctx.beginPath();
-    ctx.moveTo(bx+hw, by-hh);
-    ctx.lineTo(bx+hw+depth, by-hh-depth);
-    ctx.lineTo(bx+hw+depth, by+hh-depth);
-    ctx.lineTo(bx+hw, by+hh);
-    ctx.fillStyle = p.s + "22"; ctx.fill();
-
     if(dimmed){
       ctx.fillStyle="rgba(15,15,35,0.55)";ctx.fill();
       ctx.strokeStyle="rgba(60,55,100,0.2)";ctx.lineWidth=0.5;ctx.stroke();
