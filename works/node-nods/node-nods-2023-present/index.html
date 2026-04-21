@@ -966,18 +966,17 @@ function draw(){
   concepts.forEach(c=>{
     const isActive=!hasSel&&!hasCSel||acIds.has(c.id);
     const dimmed=(hasSel||hasCSel)&&!isActive;
-    const deepDimmed=dimmed&&clk>=2;
     const isSel2=hasCSel&&selC===c.label;
     const isDrag=dragConcept===c.label;
     ctx.beginPath();ctx.arc(c.x,c.y,c.size,0,Math.PI*2);
-    ctx.fillStyle=c.color+(deepDimmed?"22":dimmed?"88":"cc");ctx.fill();
+    ctx.fillStyle=c.color+(dimmed?"28":"cc");ctx.fill();
     // if(dimmed){ctx.fillStyle="rgba(0,0,0,0.5)";ctx.fill();}
-    ctx.strokeStyle=c.color+(deepDimmed?"33":dimmed?"99":isDrag?"ff":"99");
-    ctx.lineWidth=isDrag?3:isSel2?2.5:deepDimmed?0.3:dimmed?0.8:1.2;ctx.stroke();
+    ctx.strokeStyle=c.color+(dimmed?"38":isDrag?"ff":"99");
+    ctx.lineWidth=isDrag?3:isSel2?2.5:dimmed?0.8:1.2;ctx.stroke();
     if(isSel2||isDrag){ctx.beginPath();ctx.arc(c.x,c.y,c.size+7,0,Math.PI*2);ctx.strokeStyle=c.color+"44";ctx.lineWidth=2;ctx.stroke();}
     const fs=Math.min(38,18+c.count*0.5);
     ctx.font=`600 ${fs}px "Noto Sans KR",sans-serif`;ctx.textAlign="center";
-    ctx.fillStyle=dimmed?"rgba(120,120,150,0.12)":dimmed?"rgba(180,185,205,0.55)":"rgba(245,245,255,0.92)";
+    ctx.fillStyle=dimmed?"rgba(120,120,150,0.18)":"rgba(245,245,255,0.92)";
     ctx.fillText(c.label,c.x,c.y+c.size+18);
   });
 
@@ -989,10 +988,10 @@ function draw(){
   // 좌상단 캡션 박스
   ctx.fillStyle="rgba(20,20,20,0.72)";
   ctx.beginPath();ctx.roundRect(10,10,220,42,6);ctx.fill();
-  ctx.font='500 10px "Noto Sans KR",sans-serif';ctx.fillStyle="rgba(220,225,240,0.95)";ctx.textAlign="left";
+  ctx.font='600 15px "Noto Sans KR",sans-serif';ctx.fillStyle="rgba(220,225,240,0.95)";ctx.textAlign="left";
   ctx.fillText("Node Nods 경험노드",18,28);
-  ctx.font='300 8px "Noto Sans KR",sans-serif';ctx.fillStyle="rgba(180,185,205,0.85)";
-  ctx.fillText("이상은 (2023.12 – present)",18,40);
+  ctx.font='300 10px "Noto Sans KR",sans-serif';ctx.fillStyle="rgba(180,185,205,0.85)";
+  ctx.fillText("이상은 (2023.12 – present)",18,44);
 
   // 하단 안내 박스
   let hint="경험노드·개념구 클릭  ·  드래그 이동  ·  스크롤 확대/축소";
