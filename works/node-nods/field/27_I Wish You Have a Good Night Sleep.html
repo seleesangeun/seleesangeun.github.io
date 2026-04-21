@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paper 27 — 잘 잤으면 좋겠다는 안부 인사</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@300;400&family=Caveat:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f8f6f2;--paper-deep:#1a1814;
+  --ink:#181614;--ink-mid:#888078;--ink-faint:#c8c0b4;
+  --nrem:#2a3860;--nrem-dim:rgba(42,56,96,.07);/* deep sleep — cool blue */
+  --rem:#7a3040;--rem-dim:rgba(122,48,64,.07);/* REM — warm rose */
+  --rule:#e0dcd4;--slash:#c0b8a8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#d0c8bc;font-family:'Lora',serif;min-height:100vh;padding:36px 16px 80px}
+
+.journal{max-width:740px;margin:0 auto;background:var(--paper);box-shadow:0 2px 40px rgba(0,0,0,.16)}
+
+/* COVER — dark, like closed eyes */
+.journal-cover{background:var(--paper-deep);padding:36px 44px 28px}
+.jc-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(200,190,175,.35);display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.jc-label::after{content:'';flex:1;height:1px;background:rgba(200,190,175,.15)}
+.cover-title{font-size:clamp(22px,4vw,38px);color:rgba(240,232,215,.88);line-height:1.15;margin-bottom:8px}
+.cover-sub{font-style:italic;font-size:14px;color:rgba(200,190,175,.5)}
+.cover-source{font-family:'DM Mono',monospace;font-size:10px;color:rgba(180,170,155,.35);letter-spacing:.04em;margin-top:14px}
+
+/* OPENING — repeated state */
+.opening{padding:28px 44px;border-bottom:1px solid var(--rule);background:white}
+.op-lines{font-size:15px;line-height:2.2;color:var(--ink-mid)}
+.op-lines span{display:block}
+.op-break{height:16px}
+.op-note{font-size:14px;color:var(--ink-mid);font-style:italic;margin-top:12px;padding-top:12px;border-top:1px solid var(--rule)}
+
+/* SLEEP CYCLE LEGEND */
+.cycle-legend{padding:14px 44px;border-bottom:1px solid var(--rule);background:rgba(0,0,0,.02);display:flex;gap:24px;flex-wrap:wrap}
+.cl-item{display:flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-mid)}
+.cl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.cl-dot.nrem{background:rgba(42,56,96,.5)}
+.cl-dot.rem{background:rgba(122,48,64,.5)}
+.cl-slash{font-size:14px;color:var(--slash);margin-left:4px}
+
+/* ————— SECTION 1: 잠에서 깨어나면 ————— */
+.sleep-section{border-bottom:2px solid var(--rule)}
+.section-header{padding:16px 44px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:12px}
+.sh-arrow{font-size:12px;color:var(--ink-faint);flex-shrink:0}
+.sh-title{font-size:14px;color:var(--ink-mid)}
+.sh-subtitle{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-faint);margin-left:auto;letter-spacing:.04em}
+
+/* FRAGMENTS — each / is a fragment */
+.fragments{padding:0 44px}
+
+.fragment{padding:22px 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:28px 1fr;gap:0;opacity:0;transform:translateY(6px);transition:opacity .45s ease,transform .45s ease}
+.fragment.visible{opacity:1;transform:none}
+.fragment.nrem-frag{background:var(--nrem-dim);margin:0 -44px;padding:22px 44px}
+.fragment.rem-frag{background:var(--rem-dim);margin:0 -44px;padding:22px 44px}
+
+.frag-slash{font-family:'DM Mono',monospace;font-size:18px;color:var(--slash);padding-top:2px;line-height:1;flex-shrink:0;opacity:.6}
+.frag-body{font-size:15px;line-height:1.92;color:var(--ink)}
+.frag-body em{font-style:italic;color:var(--ink-mid)}
+
+/* KEY QUOTE — inset */
+.key-quote{margin:0 -44px;padding:18px 44px;background:rgba(0,0,0,.04);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.kq-text{font-style:italic;font-size:15px;color:var(--ink-mid);line-height:1.7}
+.kq-attr{font-family:'DM Mono',monospace;font-size:9px;color:var(--ink-faint);margin-top:8px;letter-spacing:.06em}
+
+/* CLOSING FRAGMENT */
+.closing-fragment{padding:22px 44px;border-bottom:2px solid var(--ink);background:rgba(0,0,0,.02)}
+.cf-body{font-size:15px;line-height:2.0;color:var(--ink-mid)}.cf-body span{display:block}
+
+/* ————— SECTION 2: 꿈에서 깨어나면 ————— */
+
+/* SEPARATOR */
+.section-sep{padding:20px 44px;background:var(--paper-deep);border-top:2px solid var(--paper-deep)}
+.sep-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(200,190,175,.3);display:block;margin-bottom:4px}
+.sep-text{font-style:italic;font-size:13px;color:rgba(200,190,175,.45)}
+
+/* NAV */
+.journal-nav{padding:16px 44px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;background:white}
+.pn-back{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-decoration:none;text-transform:uppercase}.pn-back:hover{color:var(--ink)}
+.pn-end{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--ink-mid)}
+
+@media(max-width:600px){body{padding:12px 8px 60px}.journal-cover,.opening,.cycle-legend,.section-header,.fragments,.closing-fragment,.section-sep,.journal-nav{padding-left:20px;padding-right:20px}.fragment.nrem-frag,.fragment.rem-frag,.key-quote{margin-left:-20px;margin-right:-20px;padding-left:20px;padding-right:20px}}
+</style>
+</head>
+<body>
+<div class="journal">
+
+<div class="journal-cover">
+  <div class="jc-label">수면 일지 — Node Nods 경험노드</div>
+  <h1 class="cover-title">잘 잤으면 좋겠다는<br>안부 인사</h1>
+  <div class="cover-sub">매번 반복되는 상태.</div>
+  <div class="cover-source">No. 27 / 2602 — 매슈 워커, 『우리는 왜 잠을 자야 할까』</div>
+</div>
+
+<div class="opening">
+  <div class="op-lines">
+    <span>자야 한다. 잠 들기 아쉬워도 자야 한다.</span>
+    <span>일어나야 한다. 피곤해도 일어나야 한다.</span>
+  </div>
+  <div class="op-break"></div>
+  <div class="op-note">아하, 그럼 난 평생 만성 수면부족의 상태였던 건가. 다른 사람들을 어떻게 수면(건강)을 챙기는지 궁금하다.</div>
+</div>
+
+<div class="cycle-legend">
+  <div class="cl-item"><div class="cl-dot nrem"></div>회복의 구간 — 잠에서 깨어나면</div>
+  <div class="cl-item"><div class="cl-dot rem"></div>꿈의 구간 — 꿈에서 깨어나면</div>
+  <div class="cl-item"><span class="cl-slash">/</span>&nbsp;슬래시 = 의식의 전환점</div>
+</div>
+
+<!-- SECTION 1: 잠에서 깨어나면 -->
+<div class="sleep-section" style="background:var(--nrem-dim)">
+  <div class="section-header" style="background:var(--paper)">
+    <div class="sh-arrow">→</div>
+    <div class="sh-title">잠에서 깨어나면</div>
+    <div class="sh-subtitle">회복된 몸 / 뇌</div>
+  </div>
+
+  <div class="fragments">
+
+    <div class="fragment">
+      <div class="frag-slash">—</div>
+      <div class="frag-body">"사람(그리고 다른 모든 종)은 앞서 잃어버렸던 잠을 결코 &lt;되찾을&gt; 수 없다는 것"</div>
+    </div>
+
+    <div class="fragment nrem-frag">
+      <div class="frag-slash">/</div>
+      <div class="frag-body">수혈한다며 습관적으로 마시던 커피를 멀리하고 있다. 이 과정에서 엄청난 무기력을 느낀다. 이는 어디에서 온 걸까. <em>카페인 허탈감 caffeine crash</em> 때문이었을까.</div>
+    </div>
+
+    <div class="fragment">
+      <div class="frag-slash">/</div>
+      <div class="frag-body">'졸면 안 돼, 졸면 안 돼, 피곤했나?' 이 <em>수면 압력 sleep pressure</em>은 어디에서 오는 걸까. 그렇게 몸을/뇌를 많이 썼나? 아데노신이 이렇게 쌓였다고?</div>
+    </div>
+
+    <div class="fragment nrem-frag">
+      <div class="frag-slash">/</div>
+      <div class="frag-body">알람을 끈 기억이 없다. 도저히 안 되겠다. 아침에 일어나는 게 항상 스트레스다. 어렸을 때부터 그랬다. <em>REM 수면 주기</em>를 추적하면서 알람이 잘 들릴 시간에 의도적으로 시간을 맞춰 조정해본 경험이 있다.</div>
+    </div>
+
+    <div class="fragment">
+      <div class="frag-slash">/</div>
+      <div class="frag-body">내 침대는 디지털 프리 존이라고 설정해 놓았지만, 쉽지 않다.</div>
+    </div>
+
+    <div class="key-quote">
+      <div class="kq-text">"편안하게 하는 신경 화학 물질에 뇌를 푹 담금으로써 고통스러운 기억을 누그러뜨리고, 과거와 현재의 지식을 뒤섞은 가상 현실 공간을 통해 창의성을 부추기는 것도 잠이 주는 선물 중 하나다."</div>
+    </div>
+
+    <div class="fragment nrem-frag">
+      <div class="frag-slash">/</div>
+      <div class="frag-body">나는 안다. 자고 일어나야 정리되는 것을. 자는 동안 신경이 알아서 재배열 되는 듯한 경험을. 어제 안 되던 게 오늘 되는 건 잠을 자고 이루어지는 현상이라는 걸.</div>
+    </div>
+
+  </div>
+
+  <div class="closing-fragment">
+    <div class="cf-body">
+      <span>잠자는 동물.</span>
+      <span>가장 취약한 상태를 내보인다.</span>
+      <span>축 늘어진 이완의 상태.</span>
+    </div>
+  </div>
+</div>
+
+<!-- SEPARATOR -->
+<div class="section-sep">
+  <span class="sep-label">전환 — 잠과 꿈의 경계</span>
+  <div class="sep-text">"잠에서 각성 상태가 출현했다"</div>
+</div>
+
+<!-- SECTION 2: 꿈에서 깨어나면 -->
+<div class="sleep-section" style="background:var(--rem-dim)">
+  <div class="section-header" style="background:var(--paper)">
+    <div class="sh-arrow">→</div>
+    <div class="sh-title">꿈에서 깨어나면</div>
+    <div class="sh-subtitle" style="color:var(--rem)">깨어있는 꿈</div>
+  </div>
+
+  <div class="fragments">
+
+    <div class="fragment rem-frag">
+      <div class="frag-slash">/</div>
+      <div class="frag-body">평소랑 다르게 현실감 있는 꿈을 많이 꾸었다. <em>호접지몽</em> 같은 경험을 한다.</div>
+    </div>
+
+    <div class="fragment">
+      <div class="frag-slash">/</div>
+      <div class="frag-body">잠을 잘 못 자나, 주기의 중간 쯤 깬 건가, 스트레스가 많나 싶다가도 — 현실 감각경험을 기반으로 어떤 창의성을 대신 발현해주는 걸까하고 생각을 바꿔보기도 한다.</div>
+    </div>
+
+  </div>
+</div>
+
+<nav class="journal-nav">
+  <a class="pn-back" href="node-nods-demo.html">← Node Nods</a>
+  <span class="pn-end">No. 27 / 27 — 끝이자 계속</span>
+</nav>
+</div>
+
+<script>
+document.querySelectorAll('.fragment').forEach((f,i)=>{
+  f.style.transitionDelay=(i*.06)+'s';
+  new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add('visible')),{threshold:.2}).observe(f);
+});
+</script>
+</body>
+</html>

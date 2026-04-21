@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paper 26 — 우주에서 건져내기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@300;400&family=Caveat:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#07080f;--ink:#d0d8f0;--ink-mid:#6070a0;
+  --ink-faint:#181c2c;--astro:#4080d0;--astro-dim:rgba(64,128,208,.08);
+  --poet:#c07080;--poet-dim:rgba(192,112,128,.08);
+  --signal:#a0d0ff;--acc:#8090c0;--rule:#181e30;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#04050a;font-family:'EB Garamond',serif;min-height:100vh;padding:36px 16px 80px}
+
+.log{max-width:880px;margin:0 auto;background:var(--paper);box-shadow:0 2px 60px rgba(64,128,208,.12)}
+
+/* HEADER — observatory style */
+.log-header{padding:36px 44px 24px;border-bottom:1px solid var(--rule)}
+.lh-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.lh-station{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:8px}
+.log-title{font-size:clamp(24px,4.5vw,44px);font-weight:400;line-height:1.1;letter-spacing:-.015em;color:var(--ink)}
+.lh-right{text-align:right}
+.lh-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-faint);line-height:1.8;letter-spacing:.04em}
+.log-opening{margin-top:16px;font-family:'DM Mono',monospace;font-size:13px;color:var(--ink-faint);letter-spacing:.04em;font-style:italic;padding:10px 16px;border-left:2px solid var(--ink-faint)}
+
+/* SIGNAL INCOMING */
+.signal-section{padding:28px 44px;border-bottom:1px solid var(--rule)}
+.ss-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mid);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.ss-label::after{content:'';flex:1;height:1px;background:var(--rule)}
+
+/* SIGNAL SOURCE CARDS */
+.signal-types{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--rule);margin-bottom:14px}
+.sig-type{background:var(--paper);padding:14px 12px;text-align:center}
+.st-icon{font-family:'DM Mono',monospace;font-size:20px;color:var(--signal);margin-bottom:6px;display:block;line-height:1}
+.st-name{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-mid);letter-spacing:.06em;display:block;margin-bottom:3px}
+.st-desc{font-size:12px;color:var(--ink-faint)}
+
+.signal-note{font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-faint);font-style:italic;line-height:1.6;padding:10px 14px;border:1px solid var(--rule);background:rgba(64,128,208,.04)}
+
+/* INSTRUMENT HEADERS */
+.instrument-headers{display:grid;grid-template-columns:1fr 1px 1fr;border-bottom:1px solid var(--rule)}
+.ih{padding:14px 20px}
+.ih-badge{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:3px;opacity:.6}
+.ih.astro .ih-badge{color:var(--astro)}
+.ih.poet .ih-badge{color:var(--poet)}
+.ih-name{font-size:13px;color:var(--ink-mid)}
+.ih-divider{background:var(--rule)}
+
+/* DUAL OBSERVATION ROWS */
+.obs-rows{}
+.obs-row{display:grid;grid-template-columns:1fr 1px 1fr;border-bottom:1px solid var(--rule);opacity:0;transform:translateY(8px);transition:opacity .5s ease,transform .5s ease}
+.obs-row.visible{opacity:1;transform:none}
+.obs-cell{padding:22px 20px}
+.obs-cell.astro{background:var(--astro-dim)}
+.obs-cell.poet{background:var(--poet-dim)}
+.obs-cell.empty{background:var(--paper)}
+.obs-divider{background:var(--rule)}
+.oc-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:9px;opacity:.6}
+.obs-cell.astro .oc-label{color:var(--astro)}
+.obs-cell.poet .oc-label{color:var(--poet)}
+.oc-body{font-size:15px;line-height:1.85;color:var(--ink)}
+.obs-cell.astro .oc-body{color:rgba(160,210,255,.82)}
+.obs-cell.poet .oc-body{color:rgba(240,180,190,.82);font-style:italic}
+
+/* CONVERGENCE — where the two meet */
+.convergence{padding:24px 44px;border-bottom:1px solid var(--rule);display:flex;gap:14px;align-items:flex-start}
+.conv-icon{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);flex-shrink:0;padding-top:3px;opacity:.7}
+.conv-text{font-family:'EB Garamond',serif;font-style:italic;font-size:clamp(16px,2.8vw,21px);color:var(--ink);line-height:1.55}
+
+/* PROCESS TEXT */
+.process-section{padding:28px 44px;border-bottom:1px solid var(--rule)}
+.ps-head{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:14px}
+.ps-text{font-size:16px;line-height:1.9;color:rgba(208,216,240,.72)}.ps-text+.ps-text{margin-top:.9em}
+
+/* FINAL NOTE */
+.final-note{padding:28px 44px 36px}
+.fn-head{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:14px}
+.fn-text{font-style:italic;font-size:clamp(16px,2.8vw,22px);color:var(--signal);line-height:1.55;opacity:.75}
+
+/* NAV */
+.log-nav{padding:16px 44px;border-top:1px solid var(--rule);display:flex;justify-content:space-between}
+.pn-back{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--ink-faint);text-decoration:none;text-transform:uppercase}.pn-back:hover{color:var(--ink)}
+.pn-next{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--ink-mid);text-decoration:none}.pn-next:hover{color:var(--ink)}
+
+@media(max-width:640px){body{padding:12px 8px 60px}.log-header,.signal-section,.process-section,.final-note,.log-nav,.convergence{padding-left:20px;padding-right:20px}.signal-types{grid-template-columns:repeat(2,1fr)}.obs-row{grid-template-columns:1fr}.obs-divider{display:none}.obs-cell.empty{display:none}.obs-cell.poet{border-top:1px solid var(--rule)}.instrument-headers{grid-template-columns:1fr 1fr}.ih-divider{display:none}}
+</style>
+</head>
+<body>
+<div class="log">
+
+<header class="log-header">
+  <div class="lh-top">
+    <div>
+      <span class="lh-station">관측 기록지 — Node Nods 경험노드</span>
+      <h1 class="log-title">우주에서 건져내기</h1>
+    </div>
+    <div class="lh-right">
+      <div class="lh-meta">No. 26 / 2601<br>지웅배<br>『우리는 모두<br>천문학자로 태어난다』</div>
+    </div>
+  </div>
+  <div class="log-opening">뭐, 별도 있겠고, 블랙홀, 암흑 물질? 암흑에너지??</div>
+</header>
+
+<div class="signal-section">
+  <div class="ss-label">수신된 신호의 종류</div>
+  <div class="signal-types">
+    <div class="sig-type"><span class="st-icon">⊙</span><span class="st-name">광자</span><div class="st-desc">빛. 가장 오래된 신호.</div></div>
+    <div class="sig-type"><span class="st-icon">〜〜</span><span class="st-name">전파</span><div class="st-desc">파장이 긴 전자기파.</div></div>
+    <div class="sig-type"><span class="st-icon">◎</span><span class="st-name">중력파</span><div class="st-desc">시공간의 파문.</div></div>
+    <div class="sig-type"><span class="st-icon">∿</span><span class="st-name">흔적</span><div class="st-desc">우주가 남긴 것들.</div></div>
+  </div>
+  <div class="signal-note">천문학의 1차 재료는 물질이 아니라 획득한 신호다. 이 신호들은 우주의 실체를 직접 제시하지 않는다. 우주가 남긴 흔적이며 — 인간은 이 흔적을 센서, 기록, 통계라는 인식 장치를 통하여 해석한다.</div>
+</div>
+
+<!-- TWO INSTRUMENTS SIDE BY SIDE -->
+<div class="instrument-headers">
+  <div class="ih astro"><span class="ih-badge">수신 장치 A</span><div class="ih-name">천문학자의 눈 — 관측·측정·검증</div></div>
+  <div class="ih-divider"></div>
+  <div class="ih poet"><span class="ih-badge">수신 장치 B</span><div class="ih-name">시인의 눈 — 관조·상상·의미</div></div>
+</div>
+
+<div class="obs-rows">
+
+  <div class="obs-row">
+    <div class="obs-cell astro">
+      <span class="oc-label">관측 대상</span>
+      <div class="oc-body">인간은 하늘을 올려다 보았다. 예측 불가능하고 변화무쌍해서 볼 수밖에 없었다. 그렇게 머리 위로 떨어지지 않는 것들을 보았다. 수천 년 동안 지속해서 시선을 주고 있다.</div>
+    </div>
+    <div class="obs-divider"></div>
+    <div class="obs-cell poet">
+      <span class="oc-label">관조의 태도</span>
+      <div class="oc-body">이 관조는 세계를 이해하려는 태도이며 미지를 향하는 상상을 불러일으킨다.</div>
+    </div>
+  </div>
+
+  <div class="obs-row">
+    <div class="obs-cell astro">
+      <span class="oc-label">방법론</span>
+      <div class="oc-body">이미 벌어진 우주의 사건을 되돌릴 수 없기에 관측(측정)을 통하여 가능한 시나리오들을 세우고 다시 관측(측정)하여 검증한다. 무엇을 노이즈로 버리고 신호로 간주할지 판단이 필요하다.</div>
+    </div>
+    <div class="obs-divider"></div>
+    <div class="obs-cell empty"></div>
+  </div>
+
+  <div class="obs-row">
+    <div class="obs-cell empty"></div>
+    <div class="obs-divider"></div>
+    <div class="obs-cell poet">
+      <span class="oc-label">시대와 인식 조건</span>
+      <div class="oc-body">시대와 인식 조건에 따라 세계는 서로 다른 방식으로 나타난다. 공통의 세계를 대하는 경계와 충돌에서 새로운 가능성이 발생하는 게 아닐지.</div>
+    </div>
+  </div>
+
+  <div class="obs-row">
+    <div class="obs-cell astro">
+      <span class="oc-label">신호의 본질</span>
+      <div class="oc-body">광자, 전파, 중력파와 같은 신호들은 우주의 실체를 직접 제시하지 않는다. 우주가 남긴 흔적이며 인간은 이 흔적을 센서, 기록, 통계라는 인식 장치를 통하여 해석한다.</div>
+    </div>
+    <div class="obs-divider"></div>
+    <div class="obs-cell poet">
+      <span class="oc-label">별을 바라본다는 것</span>
+      <div class="oc-body">천문학자가 바라보는 별과 시인이 바라보는 별은 동일한 대상이지만 각자가 바라보는 우주는 동일하지 않다.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="convergence">
+  <div class="conv-icon">교차점</div>
+  <div class="conv-text">천문학자가 바라보는 별과 시인이 바라보는 별은 동일한 대상이지만 각자가 바라보는 우주는 동일하지 않다. 시대와 인식 조건에 따라 세계는 서로 다른 방식으로 나타난다. 공통의 세계를 대하는 경계와 충돌에서 새로운 가능성이 발생하는 게 아닐지.</div>
+</div>
+
+<div class="process-section">
+  <div class="ps-head">건져내기의 과정</div>
+  <p class="ps-text">천문학은 그 목격을 추적 가능한 관측과 신호를 수치화하는 측정으로 확장하였다. 이미 벌어진 우주의 사건을 되돌릴 수 없기에 관측(측정)을 통하여 가능한 시나리오들을 세우고 다시 관측(측정)하여 검증한다.</p>
+  <p class="ps-text">무엇을 노이즈로 버리고 신호로 간주할지 이에 어떤 질문을 던질지 판단이 필요하다.</p>
+</div>
+
+<div class="final-note">
+  <div class="fn-head">이 글이 남기는 것</div>
+  <div class="fn-text">공통의 세계를 대하는 경계와 충돌에서 새로운 가능성이 발생하는 게 아닐지.</div>
+</div>
+
+<nav class="log-nav">
+  <a class="pn-back" href="node-nods-demo.html">← Node Nods</a>
+  <a class="pn-next" href="paper-27.html">27 — 잘 잤으면 좋겠다는 안부 인사 →</a>
+</nav>
+</div>
+
+<script>
+document.querySelectorAll('.obs-row').forEach((r,i)=>{
+  r.style.transitionDelay=(i*.1)+'s';
+  new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add('visible')),{threshold:.15}).observe(r);
+});
+</script>
+</body>
+</html>
