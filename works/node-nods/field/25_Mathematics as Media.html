@@ -6,16 +6,13 @@
 <title>Paper 25 — 매스미디어 (Math-media)</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-<nav style="padding:16px 40px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule);background:var(--paper);">
-  <a style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--ink-faint);text-decoration:none;text-transform:uppercase;" href="/works/node-nods/node-nods-2023-present/index.html">← NODE NODS</a>
-  <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-faint);">No. 25 / 2512</span>
-</nav>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#f8f8f4;--wall:#f0efe8;--ink:#141410;--ink-mid:#787068;
-  --ink-faint:#c8c4b8;--acc:#303030;--acc-dim:rgba(48,48,48,.06);
+  --ink-faint:#847753;--acc:#303030;--acc-dim:rgba(48,48,48,.06);
   --rule:#e4e0d4;--open-bg:#141410;--open-ink:#f0efe8;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -23,67 +20,53 @@ body{background:#c4c0b4;font-family:'EB Garamond',serif;min-height:100vh;padding
 
 .catalog{max-width:860px;margin:0 auto;background:var(--paper);box-shadow:0 2px 40px rgba(0,0,0,.16)}
 
-/* CATALOG COVER */
+/* 상단 네비게이션 */
+.catalog-topnav {padding:16px 40px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule);background:var(--paper);}
+.topnav-link {font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--ink-faint);text-decoration:none;text-transform:uppercase;}
+
+/* 커버 섹션 */
 .catalog-cover{padding:40px 48px 32px;border-bottom:3px solid var(--ink);background:var(--wall)}
 .cc-meta{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:12px;display:flex;gap:20px;flex-wrap:wrap}
 .catalog-title{font-size:clamp(24px,4vw,44px);font-weight:400;line-height:1.1;letter-spacing:-.015em;margin-bottom:4px}
 .catalog-en{font-style:italic;font-size:clamp(18px,3vw,30px);color:var(--ink-mid)}
-.catalog-source{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-faint);letter-spacing:.04em;margin-top:10px}
-.catalog-thesis{margin-top:20px;font-style:italic;font-size:15px;color:var(--ink-mid);line-height:1.75;max-width:580px}
 
-/* FOREWORD */
-.foreword{padding:24px 48px;border-bottom:1px solid var(--rule)}
-.fw-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:12px;display:flex;align-items:center;gap:10px}
-.fw-label::after{content:'';flex:1;height:1px;background:var(--rule)}
-.fw-text{font-size:15px;line-height:1.85;color:var(--ink-mid);font-style:italic}
-
-/* CATALOG ENTRIES */
+/* 그리드 시스템 (UI 깨짐 방지) */
 .entries-section{padding:0 48px}
 .entries-hint{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-faint);padding:16px 0;font-style:italic}
 .entries-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
 
-/* 3D FLIP CARD UI 수정 */
-.entry-card {
-  height: 220px; /* 카드 높이 고정 */
-  perspective: 1000px;
-  background: none;
-  cursor: pointer;
-}
-.card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-style: preserve-3d;
-}
-.entry-card.open .card-inner {
-  transform: rotateY(180deg);
-}
-.entry-front, .entry-note {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  padding: 18px 16px;
-  display: flex;
-  flex-direction: column;
-}
-.entry-front {
-  background: var(--paper);
-}
+/* 펼쳐지는 카드 UI */
+.entry-card {background:var(--paper);cursor:pointer;transition:background .2s;display:flex;flex-direction:column;overflow:hidden;}
+.entry-card:hover {background:var(--acc-dim)}
+.entry-card.open {background:var(--open-bg);grid-row: span 1;} 
+
+.entry-front {padding:18px 16px;min-height:160px;display:flex;flex-direction:column;}
+.entry-num {font-family:'DM Mono',monospace;font-size:9px;color:var(--ink-faint);margin-bottom:8px}
+.entry-card.open .entry-num {color:rgba(240,239,232,0.3)}
+
+.entry-formula {font-size:14px;color:var(--ink);margin:15px 0;min-height:45px;display:flex;align-items:center}
+.entry-card.open .entry-formula {color:var(--open-ink)}
+
+.entry-name {font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-mid);margin-top:auto}
+.entry-card.open .entry-name {color:rgba(240,239,232,0.4)}
+
+/* 작가 노트 (그리드 밖으로 벗어나지 않게 처리) */
 .entry-note {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0 16px;
   background: var(--open-bg);
-  transform: rotateY(180deg);
-  display: block; /* 펼쳐지는 방식 대신 뒤집히는 방식으로 변경 */
 }
-
-.entry-num{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--ink-faint);margin-bottom:8px}
-.entry-formula{font-size:17px;color:var(--ink);margin: 15px 0; min-height: 40px;}
-.entry-name{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-mid);line-height:1.3; margin-top: auto;}
-
-.en-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,239,232,0.35);margin-bottom:12px;display:block;border-bottom:1px solid rgba(240,239,232,0.1);padding-bottom:8px}
-.en-text{font-size:13px;color:rgba(240,239,232,0.7);line-height:1.6;font-style:italic; overflow-y: auto;}
+.entry-card.open .entry-note {
+  max-height: 500px;
+  opacity: 1;
+  padding: 0 16px 24px;
+  border-top: 1px solid rgba(240,239,232,0.1);
+}
+.en-label {font-family:'DM Mono',monospace;font-size:8px;color:rgba(240,239,232,0.35);margin:12px 0 8px;display:block;text-transform:uppercase;}
+.en-text {font-size:13px;color:rgba(240,239,232,0.7);line-height:1.6;font-style:italic}
 
 /* ESSAY & NAV (기존 유지) */
 .essay-section{padding:28px 48px;border-top:1px solid var(--rule)}
@@ -99,32 +82,32 @@ body{background:#c4c0b4;font-family:'EB Garamond',serif;min-height:100vh;padding
 .catalog-nav{padding:16px 48px;border-top:1px solid var(--rule);display:flex;justify-content:space-between}
 .pn-back,.pn-next{font-family:'DM Mono',monospace;font-size:10px;text-decoration:none;color:var(--ink-mid)}
 
-@media(max-width:600px){body{padding:12px 8px 60px}.catalog-cover,.foreword,.entries-section,.essay-section,.next-expedition,.catalog-nav{padding-left:20px;padding-right:20px}.entries-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.entries-grid{grid-template-columns:repeat(2,1fr)}.entries-section,.catalog-cover{padding-left:20px;padding-right:20px}}
 </style>
 </head>
 <body>
 <div class="catalog">
-<div class="catalog-cover">
-  <div class="cc-meta">
-    <span>No. 25 / 2512</span>
-    <span>이언 스튜어트, 『세상을 바꾼 17가지 방정식』</span>
-    <span>전시 카탈로그</span>
+  <nav class="catalog-topnav">
+    <a class="topnav-link" href="#">← NODE NODS</a>
+    <span class="topnav-link">No. 25 / 2512</span>
+  </nav>
+
+  <div class="catalog-cover">
+    <div class="cc-meta">
+      <span>No. 25 / 2512</span>
+      <span>이언 스튜어트, 『세상을 바꾼 17가지 방정식』</span>
+      <span>전시 카탈로그</span>
+    </div>
+    <h1 class="catalog-title">매스미디어</h1>
+    <div class="catalog-en">(Math-media)</div>
   </div>
-  <h1 class="catalog-title">매스미디어</h1>
-  <div class="catalog-en">(Math-media)</div>
-  <div class="catalog-source">Node Nods 경험노드 — 방정식이 작품이 되는 전시</div>
-  <div class="catalog-thesis">방정식은 시대의 사유를 매개(medium)한다. 이는 시대 전체에 작동하고 있는 매체(media)가 아닐지.</div>
+
+  <div class="entries-section">
+    <div class="entries-hint">클릭하면 작가 노트가 열립니다 — 17점</div>
+    <div class="entries-grid" id="entriesGrid"></div>
+  </div>
 </div>
 
-<div class="foreword">
-  <div class="fw-label">큐레이터 노트</div>
-  <div class="fw-text">각 방정식 카드를 클릭하면 작가 노트가 열립니다.</div>
-</div>
-
-<div class="entries-section">
-  <div class="entries-hint">작품을 클릭하면 뒤집힙니다 — 17점</div>
-  <div class="entries-grid" id="entriesGrid"></div>
-</div>
 
 <div class="essay-section">
   <div class="es-head">식(에서 시)적 아름다움</div>
@@ -146,7 +129,9 @@ body{background:#c4c0b4;font-family:'EB Garamond',serif;min-height:100vh;padding
 </nav>
 </div>
 
+
 <script>
+// 수식 기호 깨짐 방지를 위해 역슬래시(\)를 두 번(\\) 사용
 const equations = [
   {n:1,f:'a^2+b^2 = c^2',name:'피타고라스 정리',note:'측량에서부터 시작되었다. 자연과 어떻게 관계 맺는가, 인간이 살고 있는 자연에서 측정하는 행위가 갖는 의의.'},
   {n:2,f:'\\log(ab) = \\log a + \\log b',name:'로그',note:'‘양 변에 로그를 취해보면’ 이라고 넘어가던 대수적 아이디어. 그냥 그런가보다 하면서 넘어갔지만, = 등호를 사이에 두고 곱셈이 덧셈으로 전환되는 그런 양상이 얼마나 대단한 문법인가 싶고.'},
@@ -167,29 +152,36 @@ const equations = [
   {n:17,f:'\\frac{\\partial V}{\\partial t} + \\frac{1}{2}\\sigma^2 S^2 \\frac{\\partial^2 V}{\\partial S^2} + rS \\frac{\\partial V}{\\partial S} - rV = 0',name:'블랙-숄스 방정식',note:'사회라는 분야의 경제에서 사용하는 수학 모델이 유효한지 고민.'},
 ];
 
-const grid=document.getElementById('entriesGrid');
-let openCard=null;
+const grid = document.getElementById('entriesGrid');
+let openCard = null;
 
-equations.forEach(eq=>{
-  const card=document.createElement('div');
-  card.className='entry-card';
-  
-  card.innerHTML=`
-    <div class="card-inner">
-      <div class="entry-front">
-        <span class="entry-num">No. ${String(eq.n).padStart(2,'0')}</span>
-        <div class="entry-formula" id="formula-${eq.n}"></div>
-        <div class="entry-name">${eq.name}</div>
-      </div>
-      <div class="entry-note">
-        <span class="en-label">작가 노트</span>
-        <div class="en-text">${eq.note}</div>
-      </div>
+equations.forEach(eq => {
+  const card = document.createElement('div');
+  card.className = 'entry-card';
+  card.innerHTML = `
+    <div class="entry-front">
+      <span class="entry-num">No. ${String(eq.n).padStart(2,'0')}</span>
+      <div class="entry-formula" id="formula-${eq.n}"></div>
+      <div class="entry-name">${eq.name}</div>
+    </div>
+    <div class="entry-note">
+      <span class="en-label">작가 노트</span>
+      <div class="en-text">${eq.note}</div>
     </div>
   `;
 
-  // 수식 렌더링 실행 (KaTeX 전용 함수 호출)
-  const formulaEl = card.querySelector(`#formula-${eq.n}`);
+  grid.appendChild(card);
+  
+  // // 수식 렌더링 호출 (지연 없이 즉시 실행)
+  // const formulaEl = document.getElementById(`formula-${eq.n}`);
+  // try {
+  //   katex.render(eq.f, formulaEl, { throwOnError: false });
+  // } catch (e) {
+  //   formulaEl.textContent = eq.f;
+  // }
+
+    // 수식 렌더링 실행 (KaTeX 전용 함수 호출)
+    const formulaEl = card.querySelector(`#formula-${eq.n}`);
   window.addEventListener('load', () => {
     try {
       katex.render(eq.f, formulaEl, { throwOnError: false });
@@ -198,13 +190,11 @@ equations.forEach(eq=>{
     }
   });
 
-  card.addEventListener('click',()=>{
-    if(openCard&&openCard!==card) openCard.classList.remove('open');
+  card.addEventListener('click', () => {
+    if (openCard && openCard !== card) openCard.classList.remove('open');
     card.classList.toggle('open');
-    openCard=card.classList.contains('open')?card:null;
+    openCard = card.classList.contains('open') ? card : null;
   });
-  grid.appendChild(card);
-  
 });
 </script>
 </body>
