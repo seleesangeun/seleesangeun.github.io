@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,user-scalable=1">
 <title>Node Nods 경험노드 — 이상은</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -793,6 +793,9 @@ function resize(){
   W=window.innerWidth;H=window.innerHeight;
   const c=document.getElementById('c');
   c.width=W*2;c.height=H*2;c.style.width=W+'px';c.style.height=H+'px';
+    // 가로/세로 전환 후 zoom 리셋 방지
+  document.body.style.width=W+'px';
+  document.body.style.height=H+'px';
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1142,8 +1145,8 @@ function openRead(ep){
       </div>
       <div class="rb-btns">
         <button class="rb-btn" style="border:1px solid ${p.s}33;color:${p.t}99" onclick="">▶️ 듣기 Listen</button>
-        <button class="rb-btn" style="border:1px solid ${p.s}33;color:${p.t}99" onclick="window.open('../field/'+FIELD_FILES[${ep.id}],'_blank')">💌 구조 Experience</button>
-        <button class="rb-btn rb-close" style="border:1px solid ${p.s}44;color:${p.t}" onclick="closeRead()">닫기</button>
+        <button class="rb-btn" style="background:${p.s}22;border:1px solid ${p.s}33;color:${p.t}99" onclick="window.open('../field/'+FIELD_FILES[${ep.id}],'_blank')">💌 구조 Experience</button>
+        <button class="rb-btn rb-close" style="background:${p.s}22;border:1px solid ${p.s}44;color:${p.t}" onclick="closeRead()">닫기</button>
       </div>
     </div>
     <div class="rb-text">${ep.text}</div>
