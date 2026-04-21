@@ -929,22 +929,22 @@ function draw(){
       ctx.quadraticCurveTo(bx-hw,by-hh,bx-hw+rx,by-hh);ctx.closePath();
     };
 
-        // 활성 박스 재드로우 — 맨 위 레이어
-    if(hasSel){
-      const b=boxes.find(b=>b.ep.id===sel.id);
-      if(b){
-        const bx=b.x,by=b.y,hw=b.w/2,hh=b.h/2,rx=7,p=b.p;
-        ctx.shadowColor=p.s;ctx.shadowBlur=18;
-        ctx.beginPath();
-        ctx.moveTo(bx-hw+rx,by-hh);ctx.lineTo(bx+hw-rx,by-hh);
-        ctx.quadraticCurveTo(bx+hw,by-hh,bx+hw,by-hh+rx);ctx.lineTo(bx+hw,by+hh-rx);
-        ctx.quadraticCurveTo(bx+hw,by+hh,bx+hw-rx,by+hh);ctx.lineTo(bx-hw+rx,by+hh);
-        ctx.quadraticCurveTo(bx-hw,by+hh,bx-hw,by+hh-rx);ctx.lineTo(bx-hw,by-hh+rx);
-        ctx.quadraticCurveTo(bx-hw,by-hh,bx-hw+rx,by-hh);ctx.closePath();
-        ctx.strokeStyle=p.t;ctx.lineWidth=3;ctx.stroke();
-        ctx.shadowBlur=0;
-      }
-    }
+    //     // 활성 박스 재드로우 — 맨 위 레이어
+    // if(hasSel){
+    //   const b=boxes.find(b=>b.ep.id===sel.id);
+    //   if(b){
+    //     const bx=b.x,by=b.y,hw=b.w/2,hh=b.h/2,rx=7,p=b.p;
+    //     ctx.shadowColor=p.s;ctx.shadowBlur=18;
+    //     ctx.beginPath();
+    //     ctx.moveTo(bx-hw+rx,by-hh);ctx.lineTo(bx+hw-rx,by-hh);
+    //     ctx.quadraticCurveTo(bx+hw,by-hh,bx+hw,by-hh+rx);ctx.lineTo(bx+hw,by+hh-rx);
+    //     ctx.quadraticCurveTo(bx+hw,by+hh,bx+hw-rx,by+hh);ctx.lineTo(bx-hw+rx,by+hh);
+    //     ctx.quadraticCurveTo(bx-hw,by+hh,bx-hw,by+hh-rx);ctx.lineTo(bx-hw,by-hh+rx);
+    //     ctx.quadraticCurveTo(bx-hw,by-hh,bx-hw+rx,by-hh);ctx.closePath();
+    //     ctx.strokeStyle=p.t;ctx.lineWidth=3;ctx.stroke();
+    //     ctx.shadowBlur=0;
+    //   }
+    // }
 
     if(isFirst&&!dimmed){
       const glow=ctx.createRadialGradient(bx,by,hw,bx,by,hw*3);
@@ -1143,7 +1143,7 @@ function openRead(ep){
       <button class="rb-btn rb-close" style="position:absolute;top:0;right:0;background:${p.s}44;border:1px solid ${p.s}99;color:${p.t};font-weight:500" onclick="closeRead()">✕ 닫기</button>
       <div>
         <div class="rb-meta" style="color:${p.s}">#${String(ep.id).padStart(2,'0')} · ${ep.yymm}</div>
-        <h2 class="rb-title" style="color:${p.t};padding-right:65px">${ep.title}</h2>
+        <h2 class="rb-title" style="color:${p.t}">${ep.title}</h2>
       </div>
       <div class="rb-btns">
         <button class="rb-btn" style="border:1px solid ${p.s}33;color:${p.t}99" onclick="">▶️ 듣기 Listen</button>
