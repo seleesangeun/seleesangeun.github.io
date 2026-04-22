@@ -29,12 +29,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'No
 #startBtn{padding:12px 38px;background:rgba(16,22,62,0.80);border:1px solid var(--bd-hi);color:var(--tx);font-size:12px;font-weight:500;border-radius:3px;cursor:pointer;font-family:inherit;letter-spacing:.16em}
 #startBtn:active{background:rgba(35,50,115,0.90)}
 .gate-hint{margin-top:20px;font-size:10px;color:rgba(100,105,130,0.70);line-height:2.1;letter-spacing:.04em}
-#hint{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:5;background:var(--bg);backdrop-filter:blur(10px);color:var(--mu);padding:6px 18px;border-radius:2px;font-size:10px;font-weight:300;letter-spacing:.05em;white-space:nowrap;border:1px solid var(--bd);pointer-events:none;transition:opacity .8s}
-#caption{position:fixed;top:14px;left:14px;z-index:5;background:var(--bg);backdrop-filter:blur(10px);padding:9px 14px;border-radius:3px;border:1px solid var(--bd);pointer-events:none}
+#hint{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:5;background:var(--bg);backdrop-filter:blur(10px);color:var(--mu);padding:6px 18px;border-radius:2px;font-size:10px;font-weight:300;letter-spacing:.05em;white-space:nowrap;border:1px solid var(--bd);pointer-events:none;transition:opacity 1.8s}
+#caption{position:fixed;top:14px;left:14px;z-index:5;background:var(--bg);backdrop-filter:blur(10px);padding:9px 14px;border-radius:3px;border:1px solid var(--bd);pointer-events:none;transition:opacity 2s}
 #caption .t{font-size:12px;font-weight:600;color:var(--tx);letter-spacing:.06em}
 #caption .s{font-size:9px;font-weight:300;color:var(--mu);margin-top:3px;letter-spacing:.05em}
-#resetBtn{position:fixed;top:14px;right:14px;z-index:5;background:var(--bg);backdrop-filter:blur(10px);border:1px solid var(--bd);color:var(--mu);padding:7px 13px;border-radius:3px;cursor:pointer;font-size:10px;font-weight:400;font-family:inherit;letter-spacing:.07em}
-#resetBtn:active{border-color:var(--bd-hi);color:var(--tx)}
+#resetBtn{position:fixed;top:16px;right:16px;z-index:5;background:rgba(8,10,20,0.35);border:1px solid rgba(120,115,200,0.12);color:rgba(160,165,190,0.38);padding:6px 12px;border-radius:2px;cursor:pointer;font-size:9px;font-weight:300;font-family:inherit;letter-spacing:.08em;transition:opacity 1.5s,color .3s,border-color .3s;backdrop-filter:blur(6px)}
+#resetBtn:hover,#resetBtn:active{color:rgba(200,210,228,0.9);border-color:rgba(120,115,200,0.45);background:rgba(8,10,20,0.75)}
 #err{position:fixed;top:58px;left:14px;right:14px;z-index:50;background:rgba(20,20,30,0.82);border:1px solid rgba(120,115,200,0.20);color:rgba(180,185,205,0.75);padding:7px 14px;border-radius:2px;font-size:10px;display:none;line-height:1.7;letter-spacing:.04em;font-weight:300}
 #reader{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,0.94);backdrop-filter:blur(22px);display:none;justify-content:center;align-items:center;padding:20px}
 #reader.open{display:flex}
@@ -1012,8 +1012,8 @@ function buildScene(){
 function buildSpiralBoxes(){
   const N = EPS.length;
   const turns = 2.3;
-  const rMin = 0.50, rMax = 1.20; // 조각 중심에서 50cm~120cm
-  const yMin = -1.6, yMax = 1.6; // 3.2m: 바닥에서 시작 → 천장
+  const rMin = 0.48, rMax = 1.10;
+  const yMin = -1.7, yMax = 1.7; // 3.4m
   // 눕혀진 납작 직육면체 — 정면: bw×bh, 두께 bd
   // bw(가로)=0.42, bh(높이=두께)=0.055, bd(앞뒤)=0.30
   const bw = 0.42, bh = 0.055, bd = 0.30;
@@ -1065,7 +1065,7 @@ function buildConceptSpheres(){
   EPS.forEach(ep => ep.concepts.forEach(c => count[c] = (count[c]||0) + 1));
 
   const N = CONCEPTS.length; // 16
-  const baseR = 1.55; // 조각 중심에서 1.55m
+  const baseR = 1.65;
   const R = seed(123);
 
   for (let i = 0; i < N; i++){
@@ -1134,51 +1134,76 @@ function buildScatteredWords(){
   const R = seed(42);
   const prominent = WORDS.filter(w => w.p === 1);
   const nonProm   = WORDS.filter(w => w.p !== 1);
-  // 개수 줄임 — 겹침 방지
-  const keep = prominent.concat(nonProm.slice(0, 120));
 
-  for (let i = 0; i < keep.length; i++){
-    const w = keep[i];
-    const isProm = w.p === 1;
+  // ── 레이어 분류 ──────────────────────────────────────────────────
+  // 근경(inner):  축 1.2~2.5m, 눈높이±1.5m  — prominent 상위절반
+  // 중경(mid):    축 2.5~5m,   높이±2.5m    — prominent 나머지 + non-prom 앞부분
+  // 원경(outer):  축 5~10m,    높이±4m      — non-prominent
 
-    // ── 진짜 3D 공간 배치 (sceneRoot 좌표계) ──
-    // 나선 축 근처는 피하고, z 방향으로도 깊이 있게
-    let x, y, z, horizDist;
-    let tries = 0;
-    do {
-      // Prominent: 나선 주변 중거리 / non-prominent: 훨씬 넓게
-      const span = isProm ? 4.0 : 6.5;
-      x = (R() - 0.5) * span;
-      z = (R() - 0.5) * span;
-      y = (R() - 0.5) * 3.4;
-      horizDist = Math.sqrt(x*x + z*z);
-      tries++;
-    } while ((horizDist < 1.1 || horizDist > (isProm ? 3.5 : 5.5)) && tries < 30);
+  const pA = prominent.slice(0, Math.ceil(prominent.length * 0.45)); // inner
+  const pB = prominent.slice(Math.ceil(prominent.length * 0.45));    // mid
+  const nA = nonProm.slice(0, 120);  // mid
+  const nB = nonProm.slice(120, 280); // outer
 
-    // ── 크기: 거리 비례로 적당하게 (너무 크지 않게) ──
-    const baseH = isProm
-      ? 0.055 + Math.min(w.c, 12) * 0.004   // 0.055~0.103 m
-      : 0.025 + Math.min(w.c, 6)  * 0.002;  // 0.025~0.037 m
+  function place(words, rMin, rMax, ySpan, worldH, fontSize, weight, colorFn, outW){
+    words.forEach(w => {
+      let x, z, horizDist, tries = 0;
+      do {
+        const angle = R() * Math.PI * 2;
+        const r = rMin + R() * (rMax - rMin);
+        x = Math.cos(angle) * r;
+        z = Math.sin(angle) * r;
+        horizDist = Math.sqrt(x*x + z*z);
+        tries++;
+      } while ((horizDist < rMin * 0.9 || horizDist > rMax * 1.1) && tries < 20);
 
-    // 폰트 크기는 텍스처 해상도용 (worldH는 별도)
-    const fontSize = isProm ? 80 : 55;
-    const outlineW = isProm ? 12 : 7;
-
-    const spr = makeTextSprite(w.t, {
-      fontSize,
-      weight: isProm ? 700 : 500,
-      color: isProm ? '#ffffff' : 'rgba(210,215,225,0.85)',
-      outline: '#000000',
-      outlineW,
-      pad: 24
+      const y = (R() - 0.5) * ySpan * 2;
+      const h = typeof worldH === 'function' ? worldH(w) : worldH;
+      const spr = makeTextSprite(w.t, {
+        fontSize,
+        weight,
+        color: colorFn(w),
+        outline: '#000000',
+        outlineW: outW,
+        pad: 22
+      });
+      spr.scale.set(spr.userData.aspect * h, h, 1);
+      spr.position.set(x, y, z);
+      spr.renderOrder = 1;
+      spr.userData = { type:'word', data:w, isProm: w.p===1, origPos:spr.position.clone(), worldH:h };
+      sceneRoot.add(spr);
+      wordSprites.push(spr);
     });
-    spr.scale.set(spr.userData.aspect * baseH, baseH, 1);
-    spr.position.set(x, y, z);
-    spr.renderOrder = 1;
-    spr.userData = { type:'word', data:w, isProm, origPos:spr.position.clone(), worldH:baseH };
-    sceneRoot.add(spr);
-    wordSprites.push(spr);
   }
+
+  // 근경: 크고 밝게
+  place(pA,
+    1.2, 2.5, 1.5,
+    w => 0.07 + Math.min(w.c,12)*0.006,
+    88, 700,
+    () => '#ffffff', 13
+  );
+  // 중경 prominent
+  place(pB,
+    2.5, 5.0, 2.5,
+    w => 0.06 + Math.min(w.c,10)*0.005,
+    76, 600,
+    () => 'rgba(220,225,235,0.90)', 10
+  );
+  // 중경 non-prominent
+  place(nA,
+    2.0, 5.5, 2.8,
+    0.032,
+    52, 400,
+    () => 'rgba(195,200,215,0.78)', 7
+  );
+  // 원경: 작고 흐림
+  place(nB,
+    5.0, 10.0, 4.0,
+    0.022,
+    42, 300,
+    () => 'rgba(160,165,185,0.55)', 5
+  );
 }
 
 /* ═════════════════════════════════════════════════════════════════
@@ -1358,7 +1383,9 @@ function applyVisibilityState(){
       // words related to concept: we don't have that mapping, so show if prominent
       isActive = w.userData.isProm;
     }
-    w.material.opacity = isActive ? 1.0 : (w.userData.isProm ? 0.28 : 0.10);
+    // 원경 단어일수록 기본 opacity 낮게
+    const defOp = w.userData.isProm ? 0.72 : 0.22;
+    w.material.opacity = isActive ? (w.userData.isProm ? 1.0 : 0.72) : defOp * 0.35;
   });
 }
 
@@ -1467,6 +1494,48 @@ function animate(){
 /* ═════════════════════════════════════════════════════════════════
    RESET — re-center scene yaw to current viewing direction
    ═════════════════════════════════════════════════════════════════ */
+/* ═════════════════════════════════════════════════════════════════
+   3D TITLE PANEL — 조각 발치, 세계 공간에 고정
+   ═════════════════════════════════════════════════════════════════ */
+function buildTitlePanel(){
+  // 캔버스 텍스처로 제목 패널 생성
+  const W = 640, H = 160;
+  const c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const g = c.getContext('2d');
+  // 배경: 완전 투명 (텍스트만)
+  g.clearRect(0, 0, W, H);
+  // 라인
+  g.strokeStyle = 'rgba(120,115,200,0.35)';
+  g.lineWidth = 1;
+  g.beginPath(); g.moveTo(0, H-2); g.lineTo(W, H-2); g.stroke();
+  // 제목
+  g.font = '600 42px "Noto Sans KR",sans-serif';
+  g.fillStyle = 'rgba(200,210,228,0.88)';
+  g.textAlign = 'left';
+  g.fillText('Node Nods 경험노드', 0, 52);
+  // 서브
+  g.font = '300 26px "Noto Sans KR",sans-serif';
+  g.fillStyle = 'rgba(160,165,190,0.60)';
+  g.fillText('이상은 · 2023.12 – present', 2, 92);
+  // 힌트
+  g.font = '300 20px "Noto Sans KR",sans-serif';
+  g.fillStyle = 'rgba(120,125,155,0.50)';
+  g.fillText('조각 주위를 걸으며 탐험하세요 · 탭: 선택 · 구: 드래그', 2, 130);
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.minFilter = THREE.LinearFilter;
+  const geo = new THREE.PlaneGeometry(1.6, 0.4); // 4:1 비율
+  const mat = new THREE.MeshBasicMaterial({ map:tex, transparent:true, opacity:0.92, depthWrite:false, side:THREE.DoubleSide });
+  const panel = new THREE.Mesh(geo, mat);
+  // 나선 발치 바로 앞, 바닥 약간 위
+  panel.position.set(0, -1.85, 0.55);
+  // 살짝 위를 향해 기울임 (바닥에서 올려다보는 각도)
+  panel.rotation.x = -Math.PI * 0.12;
+  panel.renderOrder = 3;
+  sceneRoot.add(panel);
+}
+
 function resetView(){
   sphereMeshes.forEach(s => {
     s.position.copy(s.userData.origPos);
@@ -1504,11 +1573,34 @@ async function boot(){
   setupInput();
   document.getElementById('resetBtn').style.display = 'block';
   document.getElementById('resetBtn').addEventListener('click', resetView);
-  // hint auto-fade
-  setTimeout(() => {
-    const h = document.getElementById('hint');
-    if (h) h.style.opacity = '0.55';
-  }, 6000);
+
+  // ── UI 페이드아웃 타이머 ──────────────────────────────────────────
+  // 힌트: 3초 뒤 완전히 사라짐
+  setTimeout(()=>{
+    const h=document.getElementById('hint');
+    if(h){h.style.opacity='0';setTimeout(()=>{h.style.display='none';},2000);}
+  }, 3000);
+  // 캡션: 5초 뒤 완전히 사라짐
+  setTimeout(()=>{
+    const c=document.getElementById('caption');
+    if(c){c.style.opacity='0';setTimeout(()=>{c.style.display='none';},2000);}
+  }, 5000);
+  // 리셋버튼: 8초 뒤 반투명으로
+  setTimeout(()=>{
+    const r=document.getElementById('resetBtn');
+    if(r) r.style.opacity='0.18';
+  }, 8000);
+  // 화면 탭하면 리셋버튼 잠깐 나타남
+  renderer.domElement.addEventListener('touchstart', ()=>{
+    const r=document.getElementById('resetBtn');
+    if(!r||r.style.display==='none') return;
+    r.style.opacity='0.72';
+    clearTimeout(r._fadeTimer);
+    r._fadeTimer=setTimeout(()=>{r.style.opacity='0.18';}, 3000);
+  }, {passive:true});
+
+  // ── 3D 타이틀 패널: 조각 발치에 세계 공간으로 ──────────────────────
+  buildTitlePanel();
   animate();
 }
 
