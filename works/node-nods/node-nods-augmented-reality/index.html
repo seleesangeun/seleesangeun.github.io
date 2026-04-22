@@ -807,13 +807,8 @@ async function startCameraStream(){
    DEVICE ORIENTATION
    ═════════════════════════════════════════════════════════════════ */
 async function startOrientation(){
-  const DOE = window.DeviceOrientationEvent;
-  if (DOE && typeof DOE.requestPermission === 'function'){
-    try{
-      const r = await DOE.requestPermission();
-      if (r !== 'granted') throw new Error('motion permission denied');
-    }catch(e){ throw e; }
-  }
+  // 권한은 startBtn 탭 즉시 이미 요청됨 (_motionGranted 플래그)
+  if (window._motionGranted === false) throw new Error('motion permission denied');
   window.addEventListener('deviceorientation', onDeviceOrient, true);
   window.addEventListener('orientationchange', updateScreenOrient);
   updateScreenOrient();
@@ -1564,7 +1559,7 @@ async function boot(){
   try {
     await startOrientation();
   } catch(e) {
-    show('모션 권한이 거부되었습니다. 자이로 없이도 계속 진행합니다.');
+    console.warn('모션 권한 없음 — 자이로 비활성');
     // non-fatal — scene still shows, just without orientation tracking
   }
   setupThree();
@@ -1605,6 +1600,21 @@ async function boot(){
 }
 
 document.getElementById('startBtn').addEventListener('click', async () => {
+  // ── iOS: 모션 권한을 탭 즉시 요청 ──────────────────────────────────
+  // requestPermission은 반드시 제스처 핸들러의 첫 await여야 함.
+  // 카메라 권한 이후에 호출하면 이미 제스처 컨텍스트가 끊겨 자동 거부됨.
+  const DOE = window.DeviceOrientationEvent;
+  if (DOE && typeof DOE.requestPermission === 'function') {
+    try {
+      const r = await DOE.requestPermission();
+      window._motionGranted = (r === 'granted');
+    } catch(e) {
+      window._motionGranted = false;
+    }
+  } else {
+    window._motionGranted = true; // Android 등: 권한 불필요
+  }
+
   document.getElementById('gate').classList.add('hidden');
   try { await boot(); }
   catch(e){ console.error(e); }
