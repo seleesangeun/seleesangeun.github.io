@@ -35,7 +35,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'No
 #caption .s{font-size:9px;font-weight:300;color:var(--mu);margin-top:3px;letter-spacing:.05em}
 #resetBtn{position:fixed;top:14px;right:14px;z-index:5;background:var(--bg);backdrop-filter:blur(10px);border:1px solid var(--bd);color:var(--mu);padding:7px 13px;border-radius:3px;cursor:pointer;font-size:10px;font-weight:400;font-family:inherit;letter-spacing:.07em}
 #resetBtn:active{border-color:var(--bd-hi);color:var(--tx)}
-#err{position:fixed;top:58px;left:14px;right:14px;z-index:50;background:rgba(35,6,6,0.94);border:1px solid rgba(180,60,60,0.28);color:rgba(235,190,190,0.90);padding:10px 14px;border-radius:3px;font-size:11px;display:none;line-height:1.9;letter-spacing:.03em}
+#err{position:fixed;top:58px;left:14px;right:14px;z-index:50;background:rgba(20,20,30,0.82);border:1px solid rgba(120,115,200,0.20);color:rgba(180,185,205,0.75);padding:7px 14px;border-radius:2px;font-size:10px;display:none;line-height:1.7;letter-spacing:.04em;font-weight:300}
 #reader{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,0.94);backdrop-filter:blur(22px);display:none;justify-content:center;align-items:center;padding:20px}
 #reader.open{display:flex}
 #readBox{max-width:620px;width:100%;max-height:88vh;overflow-y:auto;padding:32px 28px;background:rgba(6,8,18,0.99);border-radius:4px;color:var(--tx);line-height:1.95;border:1px solid var(--bd)}
@@ -932,57 +932,43 @@ function makeTextSprite(text, opts){
 }
 
 function makeBoxTexture(ep, pal){
-  const W = 512, H = 720;
+  // 가로형 캔버스 — 눕혀진 박스 윗면(+Y) 및 앞면(-Z) 공용
+  const W = 512, H = 256;
   const c = document.createElement('canvas');
   c.width = W; c.height = H;
   const g = c.getContext('2d');
-  // background — slightly tinted paper
-  g.fillStyle = '#f6ecd4';
-  g.fillRect(0, 0, W, H);
-  // subtle paper texture via horizontal lines
-  g.strokeStyle = 'rgba(120,90,40,0.04)';
-  g.lineWidth = 1;
-  for (let y = 0; y < H; y += 3){
-    g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke();
-  }
-  // top accent band
-  g.fillStyle = pal.s;
-  g.fillRect(0, 0, W, 52);
-  // yymm in band
-  g.fillStyle = '#fff';
-  g.font = '700 28px "Noto Sans KR",sans-serif';
-  g.textAlign = 'left';
-  g.fillText(ep.yymm, 24, 36);
-  g.textAlign = 'right';
-  g.fillText(String(ep.id).padStart(2,'0'), W-24, 36);
-  // big number
+  // 배경: 짙은 팔레트 색 (f = fill dark)
   g.fillStyle = pal.f;
-  g.font = '800 140px "Noto Sans KR",sans-serif';
-  g.textAlign = 'center';
-  g.fillText(String(ep.id).padStart(2,'0'), W/2, 220);
-  // divider
-  g.strokeStyle = pal.s;
-  g.lineWidth = 2;
-  g.beginPath(); g.moveTo(80, 250); g.lineTo(W-80, 250); g.stroke();
-  // title, wrapped
-  g.fillStyle = '#2a1e0e';
-  g.font = '700 38px "Noto Sans KR",sans-serif';
-  g.textAlign = 'center';
-  const lines = wrapKorean(g, ep.title, W - 80);
-  let ty = 320;
-  for (let i = 0; i < Math.min(lines.length, 5); i++){
-    g.fillText(lines[i], W/2, ty);
-    ty += 52;
-  }
-  // concepts
+  g.fillRect(0, 0, W, H);
+  // 좌측 컬러 밴드 (s = stroke accent)
   g.fillStyle = pal.s;
-  g.font = '600 26px "Noto Sans KR",sans-serif';
-  const concepts = ep.concepts.slice(0,4).join('  ·  ');
-  g.fillText(concepts, W/2, H - 40);
-  // subtle corner marks (stitch reference to Coptic binding)
-  g.strokeStyle = 'rgba(60,40,20,0.4)';
+  g.fillRect(0, 0, 14, H);
+  // 번호 (우상단)
+  g.fillStyle = pal.t;
+  g.font = '300 20px "JetBrains Mono","Noto Sans KR",sans-serif';
+  g.textAlign = 'right';
+  g.fillText(String(ep.id).padStart(2,'0') + '  ' + ep.yymm, W - 18, 34);
+  // 제목
+  g.fillStyle = '#f0f2f8';
+  g.font = '600 36px "Noto Sans KR",sans-serif';
+  g.textAlign = 'left';
+  const lines = wrapKorean(g, ep.title, W - 60);
+  let ty = 82;
+  for (let i = 0; i < Math.min(lines.length, 3); i++){
+    g.fillText(lines[i], 26, ty);
+    ty += 46;
+  }
+  // 개념어 (하단)
+  g.fillStyle = pal.s;
+  g.font = '500 20px "Noto Sans KR",sans-serif';
+  g.textAlign = 'left';
+  g.fillText(ep.concepts.slice(0,3).join('  ·  '), 26, H - 20);
+  // 하단 경계선
+  g.strokeStyle = pal.s;
   g.lineWidth = 1;
-  g.strokeRect(8, 8, W-16, H-16);
+  g.globalAlpha = 0.4;
+  g.beginPath(); g.moveTo(26, H-36); g.lineTo(W-18, H-36); g.stroke();
+  g.globalAlpha = 1;
   const tex = new THREE.CanvasTexture(c);
   tex.anisotropy = 8;
   tex.minFilter = THREE.LinearMipmapLinearFilter;
@@ -1026,39 +1012,39 @@ function buildScene(){
 function buildSpiralBoxes(){
   const N = EPS.length;
   const turns = 2.3;
-  const rMin = 0.55, rMax = 1.35; // 조각 중심에서 55cm~135cm
-  const yMin = -1.5, yMax = 1.5; // 3m 높이 (바닥~천장)
-  // Box dimensions: 크고 물성이 느껴지도록
-  const bw = 0.34, bh = 0.46, bd = 0.09; // 실제 책 비율, 2.5m 거리 기준
+  const rMin = 0.50, rMax = 1.20; // 조각 중심에서 50cm~120cm
+  const yMin = -1.6, yMax = 1.6; // 3.2m: 바닥에서 시작 → 천장
+  // 눕혀진 납작 직육면체 — 정면: bw×bh, 두께 bd
+  // bw(가로)=0.42, bh(높이=두께)=0.055, bd(앞뒤)=0.30
+  const bw = 0.42, bh = 0.055, bd = 0.30;
 
   for (let i = 0; i < N; i++){
     const ep = EPS[i];
     const t = i / (N - 1);
-    // match original: angle starts at -PI/2, grows over turns*2PI
     const angle = -Math.PI/2 + t * turns * Math.PI * 2;
     const r = rMin + (rMax - rMin) * t;
-    const y = yMin + (yMax - yMin) * t;  // bottom→top as id grows
+    const y = yMin + (yMax - yMin) * t;  // 1번=바닥, 27번=천장
     const x = Math.cos(angle) * r;
-    const z = -Math.sin(angle) * r; // negative so it wraps in front/side
+    const z = -Math.sin(angle) * r;
 
     const pal = PAL[ep.color] || PAL.deepblue;
     const tex = makeBoxTexture(ep, pal);
 
-    // 6 faces: front = title, others = paper-colored
-    const paperCol = 0xece2c8;
-    const edgeCol = 0xd4c7a8;
+    // materials 순서: [+X, -X, +Y(윗면=텍스처), -Y, +Z(바깥), -Z(안쪽=축)]
+    // lookAt(0,y,0) 후: 로컬 -Z → 나선 축 향함(안쪽), +Z → 바깥(관객 방향)
+    const palHex = parseInt(pal.f.replace('#',''), 16);
+    const palSHex = parseInt(pal.s.replace('#',''), 16);
     const materials = [
-      new THREE.MeshStandardMaterial({ color: edgeCol, roughness: 0.9, metalness: 0 }), // +X
-      new THREE.MeshStandardMaterial({ color: edgeCol, roughness: 0.9, metalness: 0 }), // -X
-      new THREE.MeshStandardMaterial({ color: paperCol, roughness: 0.85, metalness: 0 }), // +Y top
-      new THREE.MeshStandardMaterial({ color: paperCol, roughness: 0.85, metalness: 0 }), // -Y bottom
-      new THREE.MeshStandardMaterial({ color: paperCol, roughness: 0.85, metalness: 0 }),  // +Z back (away)
-      new THREE.MeshStandardMaterial({ map: tex, roughness: 0.7, metalness: 0 })  // -Z front (faces center)
+      new THREE.MeshStandardMaterial({ color: palSHex, roughness: 0.8, metalness: 0.05 }), // +X 측면
+      new THREE.MeshStandardMaterial({ color: palSHex, roughness: 0.8, metalness: 0.05 }), // -X 측면
+      new THREE.MeshStandardMaterial({ map: tex, roughness: 0.65, metalness: 0 }),          // +Y 윗면 ← 텍스처
+      new THREE.MeshStandardMaterial({ color: palHex, roughness: 0.9, metalness: 0 }),      // -Y 아랫면
+      new THREE.MeshStandardMaterial({ color: palSHex, roughness: 0.75, metalness: 0.05 }), // +Z 바깥
+      new THREE.MeshStandardMaterial({ color: palHex, roughness: 0.9, metalness: 0 })       // -Z 안쪽
     ];
     const geo = new THREE.BoxGeometry(bw, bh, bd);
     const mesh = new THREE.Mesh(geo, materials);
     mesh.position.set(x, y, z);
-    // Face toward central vertical axis (0, y, 0)
     mesh.lookAt(0, y, 0);
     mesh.userData = { type: 'box', ep, index: i, origPos: mesh.position.clone(), origQuat: mesh.quaternion.clone() };
     sceneRoot.add(mesh);
@@ -1066,7 +1052,7 @@ function buildSpiralBoxes(){
   }
 
   // Subtle central spine line (shows the axis of the spiral)
-  const spineGeo = new THREE.CylinderGeometry(0.003, 0.003, yMax - yMin, 8);
+  const spineGeo = new THREE.CylinderGeometry(0.002, 0.002, yMax - yMin, 8);
   const spineMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.18 });
   const spine = new THREE.Mesh(spineGeo, spineMat);
   spine.position.set(0, (yMin + yMax)/2, 0);
@@ -1079,7 +1065,7 @@ function buildConceptSpheres(){
   EPS.forEach(ep => ep.concepts.forEach(c => count[c] = (count[c]||0) + 1));
 
   const N = CONCEPTS.length; // 16
-  const baseR = 1.6; // 조각 중심에서 1.6m
+  const baseR = 1.55; // 조각 중심에서 1.55m
   const R = seed(123);
 
   for (let i = 0; i < N; i++){
@@ -1091,7 +1077,7 @@ function buildConceptSpheres(){
     // distribute at slightly different depths (matches original "sp=750+(i%3)*70")
     const sp = baseR + (i % 3) * 0.12;
     // compressed vertical, scattered
-    const yBase = Math.sin(angle*1.7) * 0.35 + (i % 2 === 0 ? 0.08 : -0.08);
+    const yBase = Math.sin(angle*1.7) * 0.80 + (i % 3 - 1) * 0.4; // 높이 더 분산
 
     const x = Math.cos(angle) * sp;
     const z = -Math.sin(angle) * sp;
@@ -1145,53 +1131,51 @@ function buildConceptSpheres(){
 }
 
 function buildScatteredWords(){
-  // Distribute WORDS on a shell around the viewer
   const R = seed(42);
-  // Filter/cap for perf — keep all prominent, cap non-prominent
   const prominent = WORDS.filter(w => w.p === 1);
-  const nonProm = WORDS.filter(w => w.p !== 1);
-  const keep = prominent.concat(nonProm.slice(0, Math.min(nonProm.length, 200)));
+  const nonProm   = WORDS.filter(w => w.p !== 1);
+  // 개수 줄임 — 겹침 방지
+  const keep = prominent.concat(nonProm.slice(0, 120));
 
   for (let i = 0; i < keep.length; i++){
     const w = keep[i];
     const isProm = w.p === 1;
 
-    // Point on sphere, avoiding the inner shell (where concepts/boxes live)
-    const u = R(), v = R();
-    const theta = 2 * Math.PI * u;
-    const phi = Math.acos(1 - 2 * v);
-    // Prominent words closer & more readable; non-prominent further out
-    const dist = isProm ? (1.0 + R() * 0.6) : (1.4 + R() * 1.2); // 조각 주변
+    // ── 진짜 3D 공간 배치 (sceneRoot 좌표계) ──
+    // 나선 축 근처는 피하고, z 방향으로도 깊이 있게
+    let x, y, z, horizDist;
+    let tries = 0;
+    do {
+      // Prominent: 나선 주변 중거리 / non-prominent: 훨씬 넓게
+      const span = isProm ? 4.0 : 6.5;
+      x = (R() - 0.5) * span;
+      z = (R() - 0.5) * span;
+      y = (R() - 0.5) * 3.4;
+      horizDist = Math.sqrt(x*x + z*z);
+      tries++;
+    } while ((horizDist < 1.1 || horizDist > (isProm ? 3.5 : 5.5)) && tries < 30);
 
-    const x = dist * Math.sin(phi) * Math.cos(theta);
-    const y = dist * Math.cos(phi) * 0.75; // compress vertical
-    const z = dist * Math.sin(phi) * Math.sin(theta);
+    // ── 크기: 거리 비례로 적당하게 (너무 크지 않게) ──
+    const baseH = isProm
+      ? 0.055 + Math.min(w.c, 12) * 0.004   // 0.055~0.103 m
+      : 0.025 + Math.min(w.c, 6)  * 0.002;  // 0.025~0.037 m
 
-    // Font size — prominent big, non-prominent smaller but with outline for readability
-    const fontSize = isProm ? (90 + Math.min(w.c, 10) * 14) : (55 + Math.min(w.c, 5) * 7);
-    const outlineW = isProm ? 14 : 8;
-    const colorFill = isProm ? '#ffffff' : 'rgba(224,218,202,0.92)';
+    // 폰트 크기는 텍스처 해상도용 (worldH는 별도)
+    const fontSize = isProm ? 80 : 55;
+    const outlineW = isProm ? 12 : 7;
 
     const spr = makeTextSprite(w.t, {
       fontSize,
-      weight: isProm ? 800 : 600,
-      color: colorFill,
+      weight: isProm ? 700 : 500,
+      color: isProm ? '#ffffff' : 'rgba(210,215,225,0.85)',
       outline: '#000000',
       outlineW,
-      pad: 30
+      pad: 24
     });
-    // 3D 실공간에서 크게 보여야 함
-    const worldH = isProm ? 0.22 : 0.11;
-    spr.scale.set(spr.userData.aspect * worldH, worldH, 1);
+    spr.scale.set(spr.userData.aspect * baseH, baseH, 1);
     spr.position.set(x, y, z);
     spr.renderOrder = 1;
-    spr.userData = {
-      type: 'word',
-      data: w,
-      isProm,
-      origPos: spr.position.clone(),
-      worldH
-    };
+    spr.userData = { type:'word', data:w, isProm, origPos:spr.position.clone(), worldH:baseH };
     sceneRoot.add(spr);
     wordSprites.push(spr);
   }
@@ -1501,7 +1485,7 @@ function resetView(){
    ═════════════════════════════════════════════════════════════════ */
 async function boot(){
   const errEl = document.getElementById('err');
-  const show = (m) => { errEl.textContent = m; errEl.style.display = 'block'; };
+  const show = (m) => { errEl.textContent = m; errEl.style.display = 'block'; setTimeout(()=>{errEl.style.display='none';}, 5000); };
   try {
     await startCameraStream();
   } catch(e) {
