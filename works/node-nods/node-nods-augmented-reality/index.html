@@ -64,6 +64,24 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'No
 
 <div id="reader"><div id="readBox"></div></div>
 
+<!-- WebXR 배치 패널 (boot 후 WebXR 지원시 표시) -->
+<div id="xr-panel" style="display:none;position:fixed;inset:0;z-index:80;
+     background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);
+     display:none;flex-direction:column;justify-content:flex-end;
+     align-items:center;padding-bottom:56px;text-align:center">
+  <div id="xr-reticle-hint" style="font-size:13px;font-weight:300;
+       color:rgba(200,210,228,0.85);letter-spacing:.06em;margin-bottom:24px;
+       text-shadow:0 1px 8px rgba(0,0,0,0.8)">
+       바닥을 비추세요 · 원이 나타나면 탭하여 조각 배치
+  </div>
+  <button id="xrPlaceBtn" style="display:none;padding:13px 36px;
+    background:rgba(20,28,70,0.82);border:1px solid rgba(120,115,200,0.45);
+    color:rgba(200,210,228,0.92);font-size:13px;font-weight:500;
+    border-radius:3px;cursor:pointer;font-family:inherit;letter-spacing:.14em">
+    여기에 조각 배치
+  </button>
+</div>
+
 <div id="gate">
   <div class="gate-title"><strong>Node Nods</strong> — 경험노드</div>
   <div class="gate-sub">
@@ -761,6 +779,10 @@ import * as THREE from 'three';
    GLOBAL STATE
    ═════════════════════════════════════════════════════════════════ */
 let scene, sceneRoot, camera, renderer, videoEl;
+// ── WebXR ──────────────────────────────────────────────────────────
+let xrSession = null, xrRefSpace = null, hitTestSource = null;
+let reticle = null, sceneAnchored = false, useWebXR = false;
+let xrHitPos = new THREE.Vector3(); // 현재 hit-test 위치
 let boxMeshes = [], sphereMeshes = [], wordSprites = [], sphereLabels = new Map();
 let connectionLines = [];
 let selectedSphere = null, selectedEp = null;
@@ -846,6 +868,7 @@ function setupThree(){
   camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 0.01, 100);
   camera.position.set(0, 0, 0);
   renderer = new THREE.WebGLRenderer({ alpha:true, antialias:true });
+  renderer.xr.enabled = true; // WebXR 준비 (세션 연결 전엔 비활성)
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.setSize(innerWidth, innerHeight);
   renderer.setClearColor(0x000000, 0);
@@ -867,6 +890,126 @@ function setupThree(){
 // Rotate sceneRoot around Y so the current camera-forward direction
 // ends up pointing at the scene's "front" (-Z). Ensures the spiral is in
 // front of the viewer regardless of compass heading at boot.
+
+/* ═════════════════════════════════════════════════════════════════
+   WEBXR — immersive-ar 진짜 공간 추적
+   ═════════════════════════════════════════════════════════════════ */
+async function checkWebXR(){
+  if (!navigator.xr) return false;
+  return await navigator.xr.isSessionSupported('immersive-ar').catch(()=>false);
+}
+
+function buildReticle(){
+  // 바닥 배치 안내 링
+  const outer = new THREE.RingGeometry(0.08, 0.12, 36);
+  const inner = new THREE.RingGeometry(0.01, 0.015, 16);
+  outer.rotateX(-Math.PI / 2);
+  inner.rotateX(-Math.PI / 2);
+  const mat = new THREE.MeshBasicMaterial({
+    color: 0xaaaaff, transparent: true, opacity: 0.85,
+    side: THREE.DoubleSide, depthTest: false
+  });
+  reticle = new THREE.Group();
+  reticle.add(new THREE.Mesh(outer, mat));
+  reticle.add(new THREE.Mesh(inner, mat.clone()));
+  reticle.matrixAutoUpdate = false;
+  reticle.visible = false;
+  scene.add(reticle); // sceneRoot 아닌 scene에 직접 (월드 공간)
+}
+
+async function enterWebXR(){
+  try {
+    xrSession = await navigator.xr.requestSession('immersive-ar', {
+      requiredFeatures: ['hit-test'],
+      optionalFeatures: ['local-floor', 'dom-overlay'],
+      domOverlay: { root: document.body }
+    });
+  } catch(e) {
+    console.warn('WebXR 세션 실패:', e);
+    return false;
+  }
+
+  // Three.js에 세션 연결
+  await renderer.xr.setSession(xrSession);
+
+  // 기준 공간: local-floor(Y=0이 바닥) 또는 local
+  xrRefSpace = await xrSession.requestReferenceSpace('local-floor')
+    .catch(() => xrSession.requestReferenceSpace('local'));
+
+  // hit-test 소스: viewer 기준 (카메라 정면)
+  const viewerSpace = await xrSession.requestReferenceSpace('viewer');
+  hitTestSource = await xrSession.requestHitTestSource({ space: viewerSpace })
+    .catch(() => null);
+
+  buildReticle();
+
+  // 씬을 일단 숨김 — 배치 전까지
+  sceneRoot.visible = false;
+  useWebXR = true;
+
+  // XR 애니메이션 루프로 전환
+  renderer.setAnimationLoop(xrAnimationLoop);
+
+  // 배치 UI 표시
+  const panel = document.getElementById('xr-panel');
+  if (panel) { panel.style.display = 'flex'; }
+
+  // 세션 종료 시 정리
+  xrSession.addEventListener('end', () => {
+    useWebXR = false; sceneAnchored = false;
+    hitTestSource = null; xrRefSpace = null; xrSession = null;
+    renderer.setAnimationLoop(null);
+    renderer.xr.enabled = false;
+    if (panel) panel.style.display = 'none';
+    // 자이로 모드로 복귀
+    animate();
+  });
+
+  return true;
+}
+
+function xrAnimationLoop(time, frame){
+  if (!frame) { renderer.render(scene, camera); return; }
+
+  // hit-test: 바닥 위치 추적
+  if (hitTestSource && !sceneAnchored && xrRefSpace) {
+    const results = frame.getHitTestResults(hitTestSource);
+    if (results.length > 0) {
+      const pose = results[0].getPose(xrRefSpace);
+      if (pose) {
+        reticle.visible = true;
+        reticle.matrix.fromArray(pose.transform.matrix);
+        xrHitPos.setFromMatrixPosition(reticle.matrix);
+
+        // 배치 버튼 표시
+        const btn = document.getElementById('xrPlaceBtn');
+        if (btn) btn.style.display = 'block';
+      }
+    } else {
+      reticle.visible = false;
+    }
+  }
+
+  // 구 부유 애니메이션
+  driftSpheres(time * 0.001);
+
+  renderer.render(scene, camera);
+}
+
+function placeSculpture(){
+  // 조각을 hit-test 위치에 고정
+  sceneRoot.position.copy(xrHitPos);
+  // local-floor 기준: Y=0이 바닥 → 나선 yMin이 바닥에서 시작
+  sceneRoot.visible = true;
+  reticle.visible = false;
+  sceneAnchored = true;
+  if (hitTestSource){ hitTestSource.cancel(); hitTestSource = null; }
+
+  // 배치 UI 숨김
+  const panel = document.getElementById('xr-panel');
+  if (panel) panel.style.display = 'none';
+}
+
 function recenterSculpture(){
   // 현재 카메라가 바라보는 수평 방향 2.5m 앞으로 조각 이동
   const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
@@ -1465,17 +1608,12 @@ function escapeHtml(s){
 /* ═════════════════════════════════════════════════════════════════
    ANIMATE
    ═════════════════════════════════════════════════════════════════ */
-function animate(){
-  requestAnimationFrame(animate);
-  if (hasMotion){
-    camera.quaternion.copy(deviceQ);
-  }
-  // 구: 각자 독립적인 3D 궤도로 부유 (선택 중이 아닐 때)
-  const t = performance.now() * 0.00012;
+// 구 부유: WebXR 루프와 자이로 루프 공용
+function driftSpheres(t){
   sphereMeshes.forEach((sp, i) => {
     if (selectedSphere === sp || dragging === sp) return;
     const op = sp.userData.origPos;
-    const fi = i * 1.37; // 황금각 오프셋으로 각자 다른 위상
+    const fi = i * 1.37;
     const dx = Math.sin(t * 0.8 + fi)       * 0.06 + Math.cos(t * 0.5 + fi * 0.7) * 0.03;
     const dy = Math.cos(t * 1.1 + fi * 1.3) * 0.05 + Math.sin(t * 0.7 + fi * 0.4) * 0.02;
     const dz = Math.sin(t * 0.6 + fi * 0.9) * 0.05 + Math.cos(t * 1.2 + fi * 1.1) * 0.03;
@@ -1489,6 +1627,13 @@ function animate(){
       );
     }
   });
+}
+
+function animate(){
+  if (useWebXR) return; // WebXR 모드면 xrAnimationLoop가 처리
+  requestAnimationFrame(animate);
+  if (hasMotion) camera.quaternion.copy(deviceQ);
+  driftSpheres(performance.now() * 0.00012);
   renderer.render(scene, camera);
 }
 
@@ -1600,10 +1745,48 @@ async function boot(){
     r._fadeTimer=setTimeout(()=>{r.style.opacity='0.18';}, 3000);
   }, {passive:true});
 
-  // ── 3D 타이틀 패널: 조각 발치에 세계 공간으로 ──────────────────────
+  // ── 3D 타이틀 패널 ─────────────────────────────────────────────
   buildTitlePanel();
-  animate();
+
+  // ── WebXR 지원 여부 확인 → 분기 ─────────────────────────────────
+  const xrOk = await checkWebXR();
+  if (xrOk) {
+    // WebXR 지원: "실공간 AR" 버튼 표시
+    const xrBtn = document.createElement('button');
+    xrBtn.id = 'enterXRBtn';
+    xrBtn.textContent = '실공간 AR 시작';
+    xrBtn.style.cssText = `position:fixed;bottom:32px;left:50%;transform:translateX(-50%);
+      z-index:10;padding:14px 40px;background:rgba(20,28,70,0.88);
+      border:1px solid rgba(120,115,200,0.50);color:rgba(200,210,228,0.95);
+      font-size:13px;font-weight:500;border-radius:3px;cursor:pointer;
+      font-family:inherit;letter-spacing:.14em;display:block`;
+    document.body.appendChild(xrBtn);
+
+    // 자이로 미리보기는 일단 돌려둠
+    animate();
+
+    xrBtn.addEventListener('click', async () => {
+      xrBtn.remove();
+      const ok = await enterWebXR();
+      if (!ok) {
+        // WebXR 진입 실패 → 자이로 모드 유지
+        console.warn('WebXR 진입 실패, 자이로 모드 유지');
+      }
+    });
+  } else {
+    // WebXR 미지원: 자이로 모드로 바로 시작
+    animate();
+  }
 }
+
+// WebXR 배치 버튼
+document.addEventListener('click', (e) => {
+  if (e.target.id === 'xrPlaceBtn') placeSculpture();
+});
+// WebXR 배치: 화면 탭할 때도 작동 (hit-test 있을 때)
+document.getElementById('three').addEventListener('click', () => {
+  if (useWebXR && !sceneAnchored && reticle && reticle.visible) placeSculpture();
+});
 
 document.getElementById('startBtn').addEventListener('click', async () => {
   // ── iOS: 모션 권한을 탭 즉시 요청 ──────────────────────────────────
